@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const RUN_FILE = path.join(new URL('..', import.meta.url).pathname.replace(/\/$/, ''), 'exports', 'run.json');
-const DATA_DIR = path.join(new URL('..', import.meta.url).pathname.replace(/\/$/, ''), 'data');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const RUN_FILE = path.join(ROOT, 'exports', 'run.json');
+const DATA_DIR = path.join(ROOT, 'data');
 
 function readJsonl(filePath, skipEmpty = false) {
   if (!fs.existsSync(filePath)) return [];
@@ -72,6 +74,6 @@ const report = {
     `SBL proper-name extraction: ${sblNameExtractionStatus}`
   ]
 };
-const reportPath = path.join(new URL('..', import.meta.url).pathname.replace(/\/$/, ''), 'exports', 'report.json');
+const reportPath = path.join(ROOT, 'exports', 'report.json');
 fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));

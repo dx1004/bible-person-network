@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 
 const argv = process.argv.slice(2);
 const args = Object.create(null);
@@ -18,7 +19,7 @@ for (let i = 0; i < argv.length; i += 1) {
   }
 }
 
-const ROOT = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_STEP_DIR = '/private/tmp/ntpeople-stepdata';
 const DEFAULT_SBL_DIR = '/private/tmp/ntpeople-sblgnt';
 const DEFAULT_OUT_DIR = path.join(ROOT, 'data');
