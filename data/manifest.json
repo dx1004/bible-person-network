@@ -1,0 +1,36 @@
+{
+  "dataset": "new-testament-person-network",
+  "version": "0.1.0",
+  "source_revision": "initial-candidate-2026-08-26",
+  "created_at": "2026-08-26T00:00:00Z",
+  "curator": "nt-people data pipeline",
+  "source_revisions": [
+    {
+      "source_id": "source:0001",
+      "provider": "SBLGNT",
+      "license": "CC BY 4.0",
+      "commit": "c4d241a9c1c479a55b989ba35a4976c1d0b8052c"
+    },
+    {
+      "source_id": "source:0002",
+      "provider": "STEPBible TIPNR",
+      "license": "CC BY 4.0",
+      "commit": "efe428a0047bf7b9c3ce2624f60c252c6e435945",
+      "tipnr_sha256": "403c6c74b4e133d9814d73099921937e3a4140d2bdae7e990ac8cf25359f5f91"
+    },
+    {
+      "source_id": "source:0003",
+      "provider": "CUV Chinese Union Version",
+      "license": "public_domain",
+      "url": "https://ebible.org/cmn-cu89s"
+    }
+  ],
+  "supplemental_source": {
+    "cuv_zip_sha256": "68df122e9195e071dc286f19ef53e530fcaadb3a16a7dc34b8430b7062f70598"
+  },
+  "scope": {
+    "nt_books": 27,
+    "object_type": ["human_person"],
+    "language_default": "zh-hans"
+  }
+}

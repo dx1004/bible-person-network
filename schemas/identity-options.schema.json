@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Identity option",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["option_id", "person_id", "identity_key", "status", "identity_scope", "rationale", "created_at", "updated_at"],
+  "properties": {
+    "option_id": { "type": "string", "pattern": "^idopt-\\d{4}$" },
+    "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "identity_key": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["independent", "merged", "linked", "disputed"] },
+    "identity_scope": { "type": "string", "enum": ["default", "conservative", "common_tradition"] },
+    "rationale": { "type": "string" },
+    "editor_note": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

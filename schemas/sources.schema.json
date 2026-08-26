@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Source registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_id", "short_name", "license", "edition", "language", "url", "status", "created_at", "updated_at"],
+  "properties": {
+    "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
+    "short_name": { "type": "string", "minLength": 1 },
+    "license": { "type": "string", "enum": ["public_domain", "cc_by_4.0", "cc0", "proprietary_restricted"] },
+    "edition": { "type": "string", "minLength": 1 },
+    "language": { "type": "string", "minLength": 1 },
+    "url": { "type": "string", "format": "uri" },
+    "status": { "type": "string", "enum": ["active", "deprecated", "pending"] },
+    "scope": { "type": "string", "enum": ["nt", "nt+history", "reference"] },
+    "notes": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

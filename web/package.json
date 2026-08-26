@@ -1,0 +1,22 @@
+{
+  "name": "new-testament-person-network-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Interactive New Testament people relationship network frontend.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:data": "node ./scripts/build-graph-data.mjs",
+    "build": "npm run build:data && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "cytoscape": "^3.30.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^8.2.2"
+  }
+}

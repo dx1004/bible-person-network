@@ -1,0 +1,17 @@
+{
+  "sourceFiles": {
+    "step": "/private/tmp/ntpeople-stepdata/Proper Nouns/TIPNR - Translators Individualised Proper Names with all References - STEPBible.org CC BY.txt",
+    "sblgnt": "/private/tmp/ntpeople-sblgnt"
+  },
+  "snapshot": "2026-08-26",
+  "total_person_records_seen": 6263,
+  "excluded_non_human_or_non_person": 3227,
+  "excluded_placeholder_entity": 53,
+  "excluded_no_nt_reference": 2612,
+  "nt_person_count": 371,
+  "name_count": 983,
+  "mention_count": 3385,
+  "assertion_count": 568,
+  "ledger_count": 8310,
+  "generatedAt": "2026-08-26T22:49:29.608Z"
+}

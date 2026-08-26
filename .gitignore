@@ -1,0 +1,8 @@
+node_modules/
+exports/
+reconciliation/
+coverage/
+neo4j/.env
+neo4j/neo4j-data/
+web/dist/
+.sources/

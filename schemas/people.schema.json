@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "People catalog entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["person_id", "canonical_chinese", "status", "source_decisions", "created_at", "updated_at"],
+  "properties": {
+    "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "canonical_chinese": { "type": ["string", "null"] },
+    "canonical_greek": { "type": ["string", "null"], "minLength": 1 },
+    "latinized": { "type": "string", "minLength": 1 },
+    "sex": { "type": "string", "enum": ["male", "female", "mixed", "unknown"] },
+    "status": { "type": "string", "enum": ["provisional", "accepted", "pending", "rejected"] },
+    "identity_group": { "type": ["string", "null"], "pattern": "^nt-idgrp-\\d{4}$" },
+    "editor_note": { "type": "string" },
+    "review_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "chinese_label_status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "chinese_label_note": { "type": "string" }
+      }
+    },
+    "source_decisions": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^source:\\d{4}$" }
+    },
+    "nt_ref_count": { "type": "number", "minimum": 0 },
+    "source_snapshot": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

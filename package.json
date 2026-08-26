@@ -1,0 +1,26 @@
+{
+  "name": "new-testament-person-network-data",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Versioned people and relationship corpus for New Testament person network (data pipeline only).",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "fetch:sources": "node scripts/fetch-sources.mjs",
+    "ingest": "node scripts/build-stepbible-corpus.js",
+    "ingest:locked": "node scripts/build-stepbible-corpus.js --step-data-dir .sources/stepbible-data --sblgnt-dir .sources/sblgnt",
+    "validate:data": "node scripts/validate-and-build.js",
+    "reconcile": "node scripts/reconcile-sources.js",
+    "report": "node scripts/report.js",
+    "build:web": "npm --prefix web run build",
+    "typecheck:web": "npm --prefix web run typecheck",
+    "check": "npm run validate:data && npm run reconcile && npm run report && npm run typecheck:web && npm run build:web"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1"
+  }
+}

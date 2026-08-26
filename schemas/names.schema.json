@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Name variant",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name_id", "person_id", "name_text", "language", "source_scope", "status", "created_at", "updated_at"],
+  "properties": {
+    "name_id": { "type": "string", "pattern": "^name-\\d{4}$" },
+    "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "name_text": { "type": "string", "minLength": 1 },
+    "language": { "type": "string", "enum": ["zh-hans", "grc", "latn", "en"] },
+    "source_scope": { "type": "string", "enum": ["canonical", "variant", "alias", "editorial"] },
+    "status": { "type": "string", "enum": ["accepted", "pending", "rejected"] },
+    "notes": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

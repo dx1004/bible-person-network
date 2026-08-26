@@ -1,0 +1,4 @@
+source_id,short_name,license,edition,language,scope
+"source:0001","SBLGNT","cc_by_4.0","SBLGNT 1.2","grc","nt"
+"source:0002","STEPBible Proper Names","cc_by_4.0","STEPBible Proper Names (TIPNR snapshot)","eng","nt+history"
+"source:0003","CCV Chinese Names (CUV)","public_domain","CUV simplified USFM","zh-hans","reference"

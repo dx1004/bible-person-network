@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  neo4j:
+    image: neo4j:5
+    container_name: nt-people-neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER}/${NEO4J_PASSWORD}
+      NEO4J_dbms_security_auth__minimum__password__length: 8
+      NEO4J_dbms_databases_default__to__read__only: "false"
+    env_file:
+      - .env
+    volumes:
+      - ./import:/var/lib/neo4j/import:ro
+      - ./neo4j-data:/data

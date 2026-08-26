@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Assertion",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assertion_id", "subject_person_id", "object_person_id", "relation_type", "direction", "evidence", "status", "confidence", "editorial_status", "created_at", "updated_at"],
+  "properties": {
+    "assertion_id": { "type": "string", "pattern": "^asrt-\\d{4}$" },
+    "subject_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "object_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "relation_type": {
+      "type": "string",
+      "enum": ["kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile"]
+    },
+    "relation_subtype": {
+      "type": "string",
+      "enum": ["parent", "child", "sibling", "partner"]
+    },
+    "direction": { "type": "string", "enum": ["directed", "undirected"] },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "passage", "evidence_level", "note"],
+        "properties": {
+          "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
+          "passage": { "type": "string", "minLength": 1 },
+          "evidence_level": { "type": "string", "enum": ["nt_text", "ancient_text", "reference", "modern_reference", "editorial"] },
+          "note": { "type": "string" },
+          "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+    }},
+    "status": { "type": "string", "enum": ["active", "inactive", "superseded"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "editorial_status": { "type": "string", "enum": ["conservative", "common_tradition", "pending"] },
+    "editor_note": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}
