@@ -53,8 +53,6 @@ The selected option supplied the information architecture: searchable people ind
 
 **passed**
 
----
-
 # Design QA — Luminous Pilgrimage Redesign (Option 2)
 
 ## QA target
@@ -99,8 +97,6 @@ The selected option supplied the information architecture: searchable people ind
 
 **passed**
 
----
-
 # Design QA — Relationship Route Readability Refinement
 
 ## QA target
@@ -131,6 +127,46 @@ The selected option supplied the information architecture: searchable people ind
 ## Governance note
 
 - This is a readability refinement within the already selected luminous-pilgrimage runtime direction. `DESIGN.md` remains unchanged pending explicit approval to update the canonical design record.
+
+## Final result
+
+**passed**
+
+---
+
+# Design QA — Pale Astral Atlas Trial
+
+## Reference and implementation
+
+- Visual reference: `/var/folders/6x/d1g8hh216r57md7fjqfn1qw00000gn/T/codex-clipboard-18ca57bc-c1bf-4702-9468-9d586c47c74e.png` (1487 × 1058).
+- Generated a text-free, high-key silver-blue astral background and stored the production asset at `web/public/assets/astral-atlas-world.png`.
+- Rebuilt the main graph as a radial one-degree relationship view with a centered focus person, evenly distributed neighboring people, restrained straight evidence lines, and a persistent research inspector.
+- Kept the result intentionally lighter than the supplied reference in response to the requested pale visual direction.
+
+## Visual evidence
+
+- Exact reference-size desktop capture: `/tmp/nt-people-light-atlas-qa/04-reference-size.png`.
+- Side-by-side reference comparison: `/tmp/nt-people-light-atlas-qa/05-reference-vs-build.png`.
+- Mobile capture after compact radial recentering: `/tmp/nt-people-light-atlas-qa/07-final-mobile-scale1.png`.
+- Desktop inspection confirmed that the focus crystal, all visible neighboring labels, relationship labels, and the complete right-hand detail panel remain readable without page overflow.
+- Mobile keeps the three-panel navigation, places the evidence ribbon inside the safe viewport, hides edge labels, and reduces the ring radius to protect node labels at narrow widths.
+
+## Interaction and accessibility evidence
+
+- Search, topic selection, identity presets, evidence-level filters, graph fitting, focus recentering, zoom controls, person navigation, and relationship selection retain their existing handlers.
+- The selected person automatically exposes a first relationship in both the evidence ribbon and the detailed source card.
+- Every graph relationship remains available as text in the inspector; keyboard focus states and reduced-motion behavior remain defined.
+- The production build completed with the static graph data and no public Neo4j dependency.
+
+## Validation evidence
+
+- Frontend Design Premium strict audit passed with zero findings.
+- TypeScript checking, derived-data validation, deterministic STEP boundary tests, production build, person-era checks, and identity checks passed.
+- Published data remains consistent at 364 people and 222 accepted relationships; 83 assertions remain pending and 50 rejected assertions remain retained for audit.
+
+## Governance note
+
+- This is a reversible runtime trial based on the supplied screenshot. `DESIGN.md` remains unchanged until the pale astral-atlas direction is explicitly adopted as the canonical design.
 
 ## Final result
 
