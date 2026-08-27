@@ -1,0 +1,16 @@
+{
+  "sourceRoots": ["web/src"],
+  "locale": "zh-Hans",
+  "ownership": {
+    "Select/Listbox": "native"
+  },
+  "requiredCommands": ["typecheck", "build", "release"],
+  "commands": {
+    "typecheck": "npm --prefix web run typecheck",
+    "build": "npm --prefix web run build",
+    "release": "npm run release:check"
+  },
+  "evidence": {
+    "failurePaths": "design-qa.md"
+  }
+}

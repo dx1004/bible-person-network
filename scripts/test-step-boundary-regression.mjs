@@ -55,6 +55,84 @@ function makeRelationFixture(root) {
   fs.mkdirSync(path.join(root, 'sbl'), { recursive: true });
 }
 
+function makeSameNameRelationFixture(root) {
+  const row = (name, parents = '', siblings = '', offspring = '') =>
+    [name, '', parents, siblings, '', offspring, '', '', 'Male'].join('\t');
+  const stepRows = [
+    '$========== PERSON',
+    row('James@Mat.4.21=G1', 'Zebedee@Mat.4.21', 'John@Mat.4.21'),
+    '\u2013 named\tJames\t\t\t\tMat.4.21',
+    row('James@Mat.10.3=G2', 'Alphaeus@Mat.10.3'),
+    '\u2013 named\tJames\t\t\t\tMat.10.3',
+    row('Zebedee@Mat.4.21=G3', '', '', 'James@Mat.4.21'),
+    '\u2013 named\tZebedee\t\t\t\tMat.4.21',
+    row('John@Mat.4.21=G4', '', 'James@Mat.4.21'),
+    '\u2013 named\tJohn\t\t\t\tMat.4.21',
+    row('Alphaeus@Mat.10.3=G5', '', '', 'James@Mat.10.3'),
+    '\u2013 named\tAlphaeus\t\t\t\tMat.10.3'
+  ].join('\n');
+  const properNounsDir = path.join(root, 'Proper Nouns');
+  fs.mkdirSync(properNounsDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(properNounsDir, 'TIPNR - Translators Individualised Proper Names with all References - STEPBible.org CC BY.txt'),
+    stepRows,
+    'utf8'
+  );
+  fs.mkdirSync(path.join(root, 'sbl'), { recursive: true });
+}
+
+function makeSplitFixture(root) {
+  const stepRows = [
+    '$========== PERSON',
+    ['Demetrius@Act.19.24-3Jn=G1216', 'Man living at the time of the New Testament', '', '', '', '', '', '', 'Male'].join('\t'),
+    '\u2013 Named\tDemetrius@Act.19.24-3Jn\tG1216\u00abG1216=\u0394\u03b7\u03bc\u1f75\u03c4\u03c1\u03b9\u03bf\u03c2\tDemetrius\t\tAct.19.24; Act.19.38; 3Jn.1.12'
+  ].join('\n');
+  const properNounsDir = path.join(root, 'Proper Nouns');
+  fs.mkdirSync(properNounsDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(properNounsDir, 'TIPNR - Translators Individualised Proper Names with all References - STEPBible.org CC BY.txt'),
+    stepRows,
+    'utf8'
+  );
+  fs.mkdirSync(path.join(root, 'sbl'), { recursive: true });
+}
+
+function makeSplitOverrideFixture(root) {
+  const stepRows = [
+    '$========== PERSON',
+    'Simon@Act.8.13-=G4613N\tA person living in the time of the New Testament\t\t\t\t\t\t\t\tMale',
+    '\u2013 Named\tSimon\t\t\t\tAct.8.13; Act.9.43; Act.10.6; Act.10.17; Act.10.32',
+    'Simon@Mat.26.6-Luk=G4613I\tA leper host in the gospels\t\t\t\t\t\t\tMale',
+    '\u2013 Named\tSimon\t\t\t\tMat.26.6; Mrk.14.3; Luk.7.40; Luk.7.43; Luk.7.44',
+    'Alexander@1Ti.1.20-2Ti=G0223J\tA man mentioned in Timothy letters\t\t\t\t\t\t\tMale',
+    '\u2013 Named\tAlexander\t\t\t\t1Ti.1.20; 2Ti.4.14'
+  ].join('\n');
+  const properNounsDir = path.join(root, 'Proper Nouns');
+  fs.mkdirSync(properNounsDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(properNounsDir, 'TIPNR - Translators Individualised Proper Names with all References - STEPBible.org CC BY.txt'),
+    stepRows,
+    'utf8'
+  );
+  fs.mkdirSync(path.join(root, 'sbl'), { recursive: true });
+}
+
+function makeJezebelSplitFixture(root) {
+  const stepRows = [
+    '$========== PERSON',
+    'Jezebel@1Ki.16.31-Rev=H0348\tA woman mentioned by John in Revelation\tSomeSource@1Ki.16.31-Rev=H0001\t\t\t\t\tFemale',
+    '\u2013 named\tJezebel\t\t\t\tRev.2.20'
+  ].join('\n');
+  const properNounsDir = path.join(root, 'Proper Nouns');
+  fs.mkdirSync(properNounsDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(properNounsDir, 'TIPNR - Translators Individualised Proper Names with all References - STEPBible.org CC BY.txt'),
+    stepRows,
+    'utf8'
+  );
+  fs.mkdirSync(path.join(root, 'sbl'), { recursive: true });
+}
+
 function readJsonl(filePath) {
   return fs.readFileSync(filePath, 'utf8')
     .split('\n')
@@ -90,6 +168,8 @@ function runIngest(stepDir, outDir, sblDir) {
       stepDir,
       '--sblgnt-dir',
       sblDir,
+      '--ignore-relationship-seeds',
+      'true',
       '--output-dir',
       outDir,
       '--snapshot',
@@ -107,14 +187,26 @@ function withEmptyRelationshipSeed(run) {
   const hadSeeds = fs.existsSync(seeds);
   const original = hadSeeds ? fs.readFileSync(seeds, 'utf8') : '';
 
-  fs.writeFileSync(seeds, '', 'utf8');
+  let canWriteSeeds = true;
+  try {
+    fs.writeFileSync(seeds, '', 'utf8');
+  } catch (error) {
+    if (error?.code === 'EPERM') {
+      canWriteSeeds = false;
+      console.warn('[warn] relationship-seeds.jsonl is not writable in this environment; running regression with existing seeds.');
+    } else {
+      throw error;
+    }
+  }
   try {
     return run();
   } finally {
-    if (hadSeeds) {
-      fs.writeFileSync(seeds, original, 'utf8');
-    } else {
-      fs.unlinkSync(seeds);
+    if (canWriteSeeds) {
+      if (hadSeeds) {
+        fs.writeFileSync(seeds, original, 'utf8');
+      } else {
+        fs.unlinkSync(seeds);
+      }
     }
   }
 }
@@ -237,6 +329,116 @@ function main() {
       throw new Error('Sibling assertion should use lexical endpoint ordering.');
     }
     console.log('[pass] kinship normalization regression: duplicates are deduplicated and directed correctly.');
+
+    const sameNameStepDir = path.join(tmpRoot, 'same-name-relations');
+    const sameNameOut = path.join(tmpRoot, 'same-name-relations-out');
+    makeSameNameRelationFixture(sameNameStepDir);
+    fs.mkdirSync(sameNameOut, { recursive: true });
+    withEmptyRelationshipSeed(() => runIngest(sameNameStepDir, sameNameOut, sblDir));
+    const samePeople = readJsonl(path.join(sameNameOut, 'people.jsonl'));
+    const sameNames = readJsonl(path.join(sameNameOut, 'names.jsonl'));
+    const sameAssertions = readJsonl(path.join(sameNameOut, 'assertions.jsonl'));
+    const idsByIdentity = new Map(
+      sameNames
+        .filter((name) => name.notes.startsWith('Unified name from STEP: '))
+        .map((name) => [name.notes.slice('Unified name from STEP: '.length).replace(/=\S+$/, ''), name.person_id])
+    );
+    const expectedParentPairs = [
+      [idsByIdentity.get('Zebedee@Mat.4.21'), idsByIdentity.get('James@Mat.4.21')],
+      [idsByIdentity.get('Alphaeus@Mat.10.3'), idsByIdentity.get('James@Mat.10.3')]
+    ];
+    for (const [parentId, childId] of expectedParentPairs) {
+      if (!samePeople.some((person) => person.person_id === parentId) || !samePeople.some((person) => person.person_id === childId)) {
+        throw new Error('Same-name fixture did not produce distinct stable person identities.');
+      }
+      if (!sameAssertions.some((a) => a.relation_subtype === 'parent' && a.subject_person_id === parentId && a.object_person_id === childId)) {
+        throw new Error(`Exact STEP identity relation endpoint was not preserved: ${parentId} -> ${childId}`);
+      }
+    }
+    if (idsByIdentity.get('James@Mat.4.21') === idsByIdentity.get('James@Mat.10.3')) {
+      throw new Error('Same-name STEP records were merged unexpectedly.');
+    }
+    console.log('[pass] exact relation endpoint regression: same-name STEP people remain distinct.');
+
+    const splitStepDir = path.join(tmpRoot, 'split-person');
+    const splitOut = path.join(tmpRoot, 'split-person-out');
+    makeSplitFixture(splitStepDir);
+    fs.mkdirSync(splitOut, { recursive: true });
+    withEmptyRelationshipSeed(() => runIngest(splitStepDir, splitOut, sblDir));
+    const splitPeople = readJsonl(path.join(splitOut, 'people.jsonl'));
+    const splitMentions = readJsonl(path.join(splitOut, 'mentions.jsonl'));
+    if (splitPeople.length !== 2) throw new Error(`Expected Demetrius override to create two people, got ${splitPeople.length}.`);
+    const mentionSets = splitPeople.map((person) =>
+      splitMentions.filter((mention) => mention.person_id === person.person_id).map((mention) => mention.passage).sort().join('|')
+    ).sort();
+    if (mentionSets.join(',') !== ['3JN 1:12', 'ACT 19:24|ACT 19:38'].sort().join(',')) {
+      throw new Error(`Person split override did not partition mentions exactly: ${mentionSets.join(',')}`);
+    }
+    console.log('[pass] person split override regression: one STEP record becomes conservative verse-partitioned identities.');
+
+    const splitOverrideStepDir = path.join(tmpRoot, 'split-person-overrides');
+    const splitOverrideOut = path.join(tmpRoot, 'split-person-overrides-out');
+    makeSplitOverrideFixture(splitOverrideStepDir);
+    fs.mkdirSync(splitOverrideOut, { recursive: true });
+    withEmptyRelationshipSeed(() => runIngest(splitOverrideStepDir, splitOverrideOut, sblDir));
+    const overridePeople = readJsonl(path.join(splitOverrideOut, 'people.jsonl'));
+    const overrideMentions = readJsonl(path.join(splitOverrideOut, 'mentions.jsonl'));
+    if (overridePeople.length !== 6) {
+      throw new Error(`Expected 6 partitioned identities from conservative split overrides, got ${overridePeople.length}.`);
+    }
+    const overrideMentionSets = overridePeople.map((person) =>
+      overrideMentions
+        .filter((mention) => mention.person_id === person.person_id)
+        .map((mention) => mention.passage)
+        .sort()
+        .join('|')
+    ).sort();
+    const expectedOverrideMentionSets = [
+      'ACT 8:13',
+      'ACT 10:17|ACT 10:32|ACT 10:6|ACT 9:43',
+      'MAT 26:6|MRK 14:3',
+      'LUK 7:40|LUK 7:43|LUK 7:44',
+      '1TI 1:20',
+      '2TI 4:14'
+    ].sort();
+    if (overrideMentionSets.join('|') !== expectedOverrideMentionSets.join('|')) {
+      throw new Error(`Person split override regression failed partition coverage: ${overrideMentionSets.join(' ; ')}`);
+    }
+    console.log('[pass] person split override regression: new Simon and Alexander split prerequisites partition mentions exactly.');
+
+    const jezebelStepDir = path.join(tmpRoot, 'jezebel-split');
+    const jezebelOut = path.join(tmpRoot, 'jezebel-split-out');
+    makeJezebelSplitFixture(jezebelStepDir);
+    fs.mkdirSync(jezebelOut, { recursive: true });
+    withEmptyRelationshipSeed(() => runIngest(jezebelStepDir, jezebelOut, sblDir));
+    const jezebelPeople = readJsonl(path.join(jezebelOut, 'people.jsonl'));
+    const jezebelNames = readJsonl(path.join(jezebelOut, 'names.jsonl'));
+    const jezebelMentions = readJsonl(path.join(jezebelOut, 'mentions.jsonl'));
+    const jezebelAssertions = readJsonl(path.join(jezebelOut, 'assertions.jsonl'));
+    const jezebelPersonIds = new Set(
+      jezebelMentions
+        .filter((m) => m.passage === 'REV 2:20')
+        .map((m) => m.person_id)
+    );
+    if (jezebelPersonIds.size !== 1) {
+      throw new Error(`Expected a single replacement identity for REV 2:20 Jezebel fixture, got ${jezebelPersonIds.size}.`);
+    }
+    const [jezebelPersonId] = [...jezebelPersonIds];
+    const replacementName = jezebelNames.find((n) => n.person_id === jezebelPersonId && n.name_text === 'Jezebel');
+    if (!replacementName || replacementName.notes !== 'Unified name from STEP: Jezebel@Rev.2.20-H0348') {
+      throw new Error('Expected split replacement identity to preserve explicit one-part partition unified_raw identity key.');
+    }
+    const replacementNames = jezebelNames.filter((n) => n.person_id === jezebelPersonId).map((n) => n.name_text);
+    if (!replacementNames.includes('Jezebel')) {
+      throw new Error(`Expected replacement identity to retain canonical name text "Jezebel", got ${replacementNames.join(', ')}`);
+    }
+    const hasRelation = jezebelAssertions.some(
+      (a) => a.subject_person_id === jezebelPersonId || a.object_person_id === jezebelPersonId
+    );
+    if (hasRelation) {
+      throw new Error('One-part split replacement should clear OT-derived relation fields for the new Rev 2:20 identity.');
+    }
+    console.log('[pass] person split replacement regression: Rev 2:20 Jezebel can be represented as a distinct NT-only identity with cleared relations.');
   } finally {
     fs.rmSync(tmpRoot, { recursive: true, force: true });
   }

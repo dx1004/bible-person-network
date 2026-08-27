@@ -8,7 +8,7 @@
     "person_key": { "type": "string", "minLength": 1 },
     "decision": { "const": "exclude" },
     "reason": {
-      "enum": ["not_explicitly_named_in_sblgnt", "inferred_historical_identity"]
+      "enum": ["not_explicitly_named_in_sblgnt", "inferred_historical_identity", "identity_replaced_by_conservative_nt_person"]
     },
     "evidence_passages": {
       "type": "array",

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Editorial mention verification override",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "override_id",
+    "person_key",
+    "passage",
+    "decision",
+    "reason",
+    "evidence_location",
+    "editor_note"
+  ],
+  "properties": {
+    "override_id": { "type": "string", "pattern": "^mention-override-\\d{4}$" },
+    "person_key": { "type": "string", "minLength": 1 },
+    "passage": { "type": "string", "pattern": "^[1-3]?[A-Z]{2,3} \\d+:\\d+$" },
+    "decision": { "type": "string", "enum": ["exclude"] },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "alternate_versification_duplicate",
+        "textual_variant_absent_from_sblgnt",
+        "epistle_subscription_absent_from_sblgnt",
+        "locked_sblgnt_source_omission"
+      ]
+    },
+    "evidence_location": { "type": "string", "minLength": 1 },
+    "editor_note": { "type": "string", "minLength": 1 }
+  }
+}

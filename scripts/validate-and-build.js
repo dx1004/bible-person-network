@@ -135,7 +135,29 @@ function main() {
     identityOptions: collectionsData['identity-options']
   };
 
+  const sblAuditPath = path.join(DATA_DIR, 'sblgnt-name-audit.jsonl');
+  const sblAuditSchemaPath = path.join(SCHEMA_DIR, 'sblgnt-name-audit.schema.json');
+  assert(fs.existsSync(sblAuditPath), `Missing data file: ${sblAuditPath}`);
+  assert(fs.existsSync(sblAuditSchemaPath), `Missing schema: ${sblAuditSchemaPath}`);
+  const sblAudit = readJsonl(sblAuditPath);
+  const validateSblAudit = buildValidator(JSON.parse(fs.readFileSync(sblAuditSchemaPath, 'utf8')));
+  const seenAuditPersonKeys = new Set();
+  sblAudit.forEach((row, index) => {
+    for (const msg of validateSblAudit(row)) errors.push(`sblgnt-name-audit.jsonl#${index + 1}: ${msg}`);
+    if (seenAuditPersonKeys.has(row.person_key)) errors.push(`sblgnt-name-audit.jsonl: duplicate person_key ${row.person_key}`);
+    seenAuditPersonKeys.add(row.person_key);
+  });
+
   const peopleSet = ids.people;
+  const defaultIdentityKeys = new Set(identityOptions
+    .filter((option) => option.status === 'independent' && option.identity_scope === 'default')
+    .map((option) => option.identity_key));
+  assert(sblAudit.length === people.length, `sblgnt-name-audit.jsonl: expected ${people.length} rows, got ${sblAudit.length}`);
+  for (const key of defaultIdentityKeys) {
+    assert(seenAuditPersonKeys.has(key), `sblgnt-name-audit.jsonl: missing default identity ${key}`);
+  }
+  assert(!sblAudit.some((row) => row.status === 'pending'), 'sblgnt-name-audit.jsonl: unresolved pending person-name audit remains');
+  assert(!mentions.some((mention) => mention.status === 'pending'), 'mentions.jsonl: unresolved pending mention remains');
   for (const n of names) {
     assert(peopleSet.has(n.person_id), `names.jsonl: person_id not found ${n.person_id}`);
   }

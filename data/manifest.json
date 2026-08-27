@@ -1,7 +1,7 @@
 {
   "dataset": "new-testament-person-network",
   "version": "0.1.0",
-  "source_revision": "initial-candidate-2026-08-26",
+  "source_revision": "v1-editorial-2026-08-27",
   "created_at": "2026-08-26T00:00:00Z",
   "curator": "nt-people data pipeline",
   "source_revisions": [
@@ -23,6 +23,12 @@
       "provider": "CUV Chinese Union Version",
       "license": "public_domain",
       "url": "https://ebible.org/cmn-cu89s"
+    },
+    {
+      "source_id": "source:0004",
+      "provider": "Josephus, Jewish Antiquities",
+      "license": "public_domain",
+      "url": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0146%3Abook%3D18%3Awhiston+chapter%3D5%3Awhiston+section%3D2"
     }
   ],
   "supplemental_source": {

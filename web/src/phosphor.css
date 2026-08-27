@@ -1,0 +1,43 @@
+@font-face {
+  font-family: "Phosphor";
+  src: url("../node_modules/@phosphor-icons/web/src/regular/Phosphor.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.ph {
+  font-family: "Phosphor" !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  letter-spacing: 0;
+  font-feature-settings: "liga";
+  font-variant-ligatures: discretionary-ligatures;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ph-git-branch::before { content: "\e278"; }
+.ph-magnifying-glass::before { content: "\e30c"; }
+.ph-x::before { content: "\e4f6"; }
+.ph-warning-circle::before { content: "\e4e2"; }
+.ph-users::before { content: "\e4d6"; }
+.ph-book-open-text::before { content: "\e8f2"; }
+.ph-sliders-horizontal::before { content: "\e434"; }
+.ph-arrow-counter-clockwise::before { content: "\e038"; }
+.ph-arrows-out::before { content: "\e0a2"; }
+.ph-crosshair::before { content: "\e1d6"; }
+.ph-circle::before { content: "\e18a"; }
+.ph-plus::before { content: "\e3d4"; }
+.ph-minus::before { content: "\e32a"; }
+.ph-dots-three::before { content: "\e1fe"; }
+.ph-arrow-right::before { content: "\e06c"; }
+.ph-spinner-gap::before { content: "\e66c"; }
+.ph-arrow-square-out::before { content: "\e5de"; }
+.ph-user-circle::before { content: "\e4c4"; }
+.ph-info::before { content: "\e2ce"; }
+.ph-caret-right::before { content: "\e13a"; }

@@ -2,19 +2,21 @@
 
 ## 底本与校验源
 
-- `source:0001`（SBLGNT 1.2）：用于新约位点核验，并通过受 STEP 词形表驱动的保守 token 扫描生成有限核对清单；人物候选主流程仍来自 STEP Proper Names。
+- `source:0001`（SBLGNT 1.2）：用于新约位点核验，并通过受 STEP 词形表驱动的保守 token 扫描生成核对清单；人物候选主流程仍来自 STEP Proper Names。
   - 许可：CC BY 4.0
   - 提交：`c4d241a9c1c479a55b989ba35a4976c1d0b8052c`
 - `source:0002`（STEPBible Proper Names）：用于完整性核对与补漏识别，不在公开页面重发完整经文文本。
   - 许可：CC BY 4.0
   - 代码库提交：`efe428a0047bf7b9c3ce2624f60c252c6e435945`
   - TIPNR 文件 SHA-256：`403c6c74b4e133d9814d73099921937e3a4140d2bdae7e990ac8cf25359f5f91`
-- `SBL` 人名覆盖阶段：使用方法 `step_lexicon_sbl_token_scan`（基于 STEP TIPNR 人名希腊词形与 SBLGNT 逐经文 token 匹配的保守扫描）；该方法不构成人名自动 NER，仅保留可核验与待决差异。
+- `SBL` 人名覆盖阶段先使用 STEP TIPNR 希腊词形与锁定 SBLGNT 逐经文 token 的保守扫描，再以 `independent_reviewer_merge_sbl_surface_match` 合并两位审校员的表面词形、经文位置与人物端点判断。当前 363 条审计记录中，360 条接受、3 条排除、0 条待决；完整决定见 `data/sblgnt-name-audit.jsonl` 与 `editorial/sblgnt-name-review.jsonl`。此流程可核查覆盖差异，但不声称是与词表无关的全量自动 NER。
 - `source:0003`（CUV 简体中文）：用于中文名映射辅助检索（人工核验为主），不用于程序性抽取或改写中文主标签。
   - 地址：`https://ebible.org/cmn-cu89s`
   - USFM 压缩包：`https://ebible.org/Scriptures/cmn-cu89s_usfm.zip`
   - 许可：Public Domain
 - CUV 简体 USFM（仅供中文映射辅助）：SHA-256 `68df122e9195e071dc286f19ef53e530fcaadb3a16a7dc34b8430b7062f70598`（见 `data/manifest.json` 的 `supplemental_source.cuv_zip_sha256`）
+- `source:0004`（Josephus, *Jewish Antiquities* 18.116–119）：仅用作希律安提帕与施洗约翰司法行为的古代原始史料定位。版本为 Perseus Digital Library 收录的 William Whiston 英译，标记为 Public Domain；公共网页只发布定位与编辑摘要，不转载全文。
+  - 地址：`https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0146%3Abook%3D18%3Awhiston+chapter%3D5%3Awhiston+section%3D2`
 
 ## 版本管理
 

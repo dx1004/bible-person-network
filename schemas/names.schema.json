@@ -8,7 +8,7 @@
     "name_id": { "type": "string", "pattern": "^name-\\d{4}$" },
     "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
     "name_text": { "type": "string", "minLength": 1 },
-    "language": { "type": "string", "enum": ["zh-hans", "grc", "latn", "en"] },
+    "language": { "type": "string", "enum": ["zh-hans", "grc", "hbo", "latn", "en"] },
     "source_scope": { "type": "string", "enum": ["canonical", "variant", "alias", "editorial"] },
     "status": { "type": "string", "enum": ["accepted", "pending", "rejected"] },
     "notes": { "type": "string" },

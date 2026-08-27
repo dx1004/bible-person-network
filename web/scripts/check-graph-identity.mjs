@@ -169,23 +169,33 @@ function computeVisibleState(graph, preset, searchTerm) {
 }
 
 function collectTerms(graph) {
-  const terms = [];
-  for (let i = 0; i < 30 && i < graph.people.length; i += 1) {
-    const person = graph.people[i];
-    if (person.nameZh) terms.push(person.nameZh);
-    for (const alias of person.aliases.slice(0, 2)) {
-      if (alias) terms.push(alias);
-      if (terms.length >= 40) break;
-    }
-    if (terms.length >= 40) break;
-  }
-  return terms.filter(Boolean).map((v) => String(v));
+  return [...new Set(
+    graph.people.flatMap((person) => [person.nameZh, person.nameLat, ...(person.aliases || [])])
+      .filter(Boolean)
+      .map((value) => String(value))
+  )];
+}
+
+function relationshipBooks(relation) {
+  return Array.isArray(relation.books) && relation.books.length ? relation.books : [relation.book].filter(Boolean);
 }
 
 async function main() {
   const dataPath = path.resolve(process.cwd(), 'public', 'data', 'graph.json');
   const raw = await fs.readFile(dataPath, 'utf8');
   const graph = JSON.parse(raw);
+
+  const validPersonEras = new Set(['旧约背景', '耶稣时期', '使徒时期', '时代待审']);
+  for (const person of graph.people) {
+    if (!validPersonEras.has(person.era)) throw new Error(`person ${person.id} has invalid era ${person.era}`);
+  }
+  const moses = graph.people.find((person) => person.nameLat === 'Moses');
+  const jesus = graph.people.find((person) => person.nameLat === 'Jesus');
+  const paulByLatin = graph.people.find((person) => person.nameLat === 'Paul');
+  if (moses?.era !== '旧约背景') throw new Error(`Moses era mismatch: ${moses?.era}`);
+  if (jesus?.era !== '耶稣时期') throw new Error(`Jesus era mismatch: ${jesus?.era}`);
+  if (paulByLatin?.era !== '使徒时期') throw new Error(`Paul era mismatch: ${paulByLatin?.era}`);
+  console.log(`[era-check] Moses=${moses.era}; Jesus=${jesus.era}; Paul=${paulByLatin.era}`);
 
   const selectionConservative = computeSelections(graph, 'conservative');
   const mergeGroups = getMergeGroups(graph.people);
@@ -217,6 +227,44 @@ async function main() {
 
   console.log(`[identity-check] search-hidden-node invariant passed (${terms.length} terms × conservative/traditional)`);
 
+  for (const person of graph.people) {
+    if (!Array.isArray(person.mentions) || !person.mentions.length) {
+      throw new Error(`person ${person.id} has no public mention locators`);
+    }
+    for (const mention of person.mentions) {
+      if (!mention.passage || !mention.sourceId) throw new Error(`person ${person.id} has an incomplete mention locator`);
+    }
+    for (const option of person.identityOptions || []) {
+      if ((scopeText(option) === 'common_tradition' || statusText(option) === 'disputed') && option.status === '独立') {
+        throw new Error(`traditional identity option ${option.id} is incorrectly labelled 独立`);
+      }
+    }
+  }
+
+  const josephusSource = graph.sources.find((source) => source.id === 'source:0004');
+  if (!josephusSource) throw new Error('Josephus source source:0004 is missing from the published graph');
+  if (josephusSource.kind !== 'ancient') {
+    throw new Error(`Josephus source source:0004 kind mismatch: ${josephusSource.kind} != ancient`);
+  }
+  const josephusAssertions = graph.relationships.filter((relation) => relation.sources.includes('source:0004'));
+  if (!graph.meta.editorialReviewRequired && !josephusAssertions.length) {
+    throw new Error('ready graph contains no published Josephus assertion');
+  }
+  for (const assertion of josephusAssertions) {
+    if (assertion.evidenceLevel !== 'ancient') {
+      throw new Error(`historical assertion ${assertion.id} evidence mismatch: ${assertion.evidenceLevel} != ancient`);
+    }
+  }
+
+  const activeKinship = graph.relationships.filter((relation) => String(relation.rawRelationType || '').startsWith('kinship:'));
+  if (!activeKinship.length) throw new Error('published graph contains no active kinship relationships');
+  for (const relation of activeKinship) {
+    if (String(relation.type || '').startsWith('候选')) {
+      throw new Error(`active kinship relationship ${relation.id} is incorrectly labelled as a candidate`);
+    }
+  }
+  console.log(`[evidence-check] Josephus-source=ancient; published-Josephus=${josephusAssertions.length}; active-kinship=${activeKinship.length}`);
+
   for (const topic of graph.topicPresets || []) {
     if (topic.id === 'all') continue;
     const includedPeople = new Set(topic.personIncludes || []);
@@ -227,7 +275,7 @@ async function main() {
     }
     const matches = graph.relationships.filter((rel) => {
       if (topic.relationTypes.length && !topic.relationTypes.includes(rel.type)) return false;
-      if (topic.bookIncludes.length && !topic.bookIncludes.includes(rel.book)) return false;
+      if (topic.bookIncludes.length && !relationshipBooks(rel).some((book) => topic.bookIncludes.includes(book))) return false;
       if (topic.eraIncludes.length && !topic.eraIncludes.includes(rel.era)) return false;
       if (topic.evidenceIncludes.length && !topic.evidenceIncludes.includes(rel.evidenceLevel)) return false;
       if (includedPeople.size && (!includedPeople.has(rel.fromPerson) || !includedPeople.has(rel.toPerson))) return false;
@@ -236,6 +284,36 @@ async function main() {
     if (!matches.length) throw new Error(`topic preset ${topic.id} has no matching relationships`);
     console.log(`[topic-check] ${topic.id}=${matches.length}`);
   }
+
+  const familyTopic = graph.topicPresets.find((topic) => topic.id === 'family');
+  const allKinship = graph.relationships.filter((relation) => String(relation.rawRelationType || '').startsWith('kinship:'));
+  const familyMatches = graph.relationships.filter((relation) => familyTopic.relationTypes.includes(relation.type));
+  if (familyMatches.length !== allKinship.length) {
+    throw new Error(`family topic is incomplete: ${familyMatches.length} != ${allKinship.length}`);
+  }
+
+  const discipleshipTopic = graph.topicPresets.find((topic) => topic.id === 'discipleship');
+  const discipleshipMatches = graph.relationships.filter((relation) => discipleshipTopic.relationTypes.includes(relation.type));
+  if (discipleshipMatches.some((relation) => relation.type === '长期同工')) {
+    throw new Error('discipleship topic incorrectly includes coworker relationships');
+  }
+  if (discipleshipMatches.length !== graph.relationships.filter((relation) => relation.type === '师徒').length) {
+    throw new Error('discipleship topic does not cover every published 师徒 relationship');
+  }
+
+  const paul = graph.people.find((person) => person.nameZh === '保罗');
+  const paulTeamTopic = graph.topicPresets.find((topic) => topic.id === 'paulTeam');
+  const paulCoworker = graph.relationships.filter((relation) =>
+    relation.type === '长期同工' && (relation.fromPerson === paul.id || relation.toPerson === paul.id)
+  );
+  const paulTeamSet = new Set(paulTeamTopic.personIncludes || []);
+  const paulTeamMatches = graph.relationships.filter((relation) =>
+    paulTeamTopic.relationTypes.includes(relation.type) && paulTeamSet.has(relation.fromPerson) && paulTeamSet.has(relation.toPerson)
+  );
+  if (paulTeamMatches.length !== paulCoworker.length) {
+    throw new Error(`Paul coworker topic is incomplete: ${paulTeamMatches.length} != ${paulCoworker.length}`);
+  }
+  console.log(`[topic-completeness] family=${familyMatches.length}; discipleship=${discipleshipMatches.length}; paulTeam=${paulTeamMatches.length}`);
 }
 
 main().catch((error) => {

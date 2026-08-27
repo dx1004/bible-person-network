@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SBLGNT human-review ledger rows (independent reviewer merge)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_id",
+    "person_key",
+    "latinized",
+    "sbl_surface_form",
+    "sbl_passage",
+    "sbl_surface_verified",
+    "sbl_verification_source",
+    "scan_status",
+    "scan_status_note",
+    "scan_greek_tokens",
+    "scan_classification",
+    "scan_checked_passages",
+    "scan_matched_passages",
+    "scan_unmatched_passages",
+    "scan_uncheckable_passages",
+    "reviewer_a",
+    "reviewer_b",
+    "round1",
+    "round2",
+    "final_status",
+    "final_decision",
+    "final_decision_note",
+    "method",
+    "source_snapshot",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "review_id": {
+      "type": "string",
+      "pattern": "^sbl-audit-\\d{4}$"
+    },
+    "person_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "latinized": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sbl_surface_form": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sbl_passage": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]{3} \\d+:\\d+$"
+    },
+    "sbl_surface_verified": {
+      "type": "boolean"
+    },
+    "sbl_verification_source": {
+      "type": "string",
+      "enum": ["sblgnt-text"]
+    },
+    "scan_status": {
+      "type": ["string", "null"]
+    },
+    "scan_status_note": {
+      "type": "string"
+    },
+    "scan_greek_tokens": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "scan_classification": {
+      "type": ["string", "null"]
+    },
+    "scan_checked_passages": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "scan_matched_passages": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "scan_unmatched_passages": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "scan_uncheckable_passages": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "reviewer_a": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "status", "passage", "sbl_surface_form", "decision_note"],
+      "properties": {
+        "reviewer": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["accepted", "pending", "rejected"] },
+        "passage": { "type": "string", "minLength": 1 },
+        "sbl_surface_form": { "type": "string", "minLength": 1 },
+        "decision_note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "reviewer_b": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "status", "passage", "sbl_surface_form", "decision_note"],
+      "properties": {
+        "reviewer": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["accepted", "pending", "rejected"] },
+        "passage": { "type": "string", "minLength": 1 },
+        "sbl_surface_form": { "type": "string", "minLength": 1 },
+        "decision_note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "round1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "status", "passage", "sbl_surface_form", "decision_note"],
+      "properties": {
+        "reviewer": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["accepted", "pending", "rejected"] },
+        "passage": { "type": "string", "minLength": 1 },
+        "sbl_surface_form": { "type": "string", "minLength": 1 },
+        "decision_note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "round2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "status", "passage", "sbl_surface_form", "decision_note"],
+      "properties": {
+        "reviewer": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["accepted", "pending", "rejected"] },
+        "passage": { "type": "string", "minLength": 1 },
+        "sbl_surface_form": { "type": "string", "minLength": 1 },
+        "decision_note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "final_status": {
+      "type": "string",
+      "enum": ["accepted", "pending", "excluded"]
+    },
+    "final_decision": {
+      "type": "string",
+      "enum": ["accepted", "pending", "rejected"]
+    },
+    "final_decision_note": {
+      "type": "string",
+      "minLength": 1
+    },
+    "method": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_snapshot": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}Z)?$"
+    },
+    "created_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}Z)?$"
+    },
+    "updated_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}Z)?$"
+    }
+  }
+}

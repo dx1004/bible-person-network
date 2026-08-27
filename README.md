@@ -4,7 +4,13 @@
 
 GitHub：<https://github.com/dx1004/new-testament-person-network>
 
-网站：<https://nt-people.coudx.com>
+网站：<https://nt-people.coudx.com>（旧预览；当前版本在审校完成前暂停部署）
+
+## 收录范围
+
+v1 收录新约二十七卷中被明确点名的人类人物。因此，亚伯拉罕、摩西、大卫等旧约人物会被收录，因为新约正文点名提到他们；并不扩展为“旧约全部人物库”。部族、地区、象征称号及未被新约具名的人物不纳入人物节点。
+
+网页将人物生活时代分为 `旧约背景`、`耶稣时期`、`使徒时期` 与 `时代待审`。其中“旧约背景”明确表示人物生活在旧约时期，但因被新约点名而进入本项目。关系自身的 `era` 仍表示证据所在的经文语境，不与人物生活时代混用。
 
 ## 运行方式
 
@@ -26,9 +32,9 @@ npm run check
 
 `npm run generate:chinese-name-candidates` 在未显式设置 `--cuv-usfm-dir` / `CUV_USFM_DIR` 时，默认从 `.sources/cmn-cu89s-usfm` 读取。该目录由 `npm run fetch:sources` 按 `data/manifest.json` 锁定哈希下载并解压。
 
-当前状态：`editorial_review_required`。当前可重复构建的资料库包含 361 位人物、916 个名称变体、3060 处经文提及和 288 条审计主张。两位独立审校员一致接受 355 个中文主名与 161 条关系；25 条关系继续作为候选显示，102 条共同否决的错误连线保留在审计资料中但不发布到关系网。另有 6 个中文主名待决。SBLGNT 已完成基于 STEP 希腊词形的保守核对，但不是完整的独立 NER，报表会明确保留差异和待决项。
+当前状态：`editorial_review_required`。当前可重复抽取的资料库包含 364 位人物、918 个名称变体、3056 处经文提及、355 条审计主张和 368 个身份选项。中文名清单有 360 条已接受、4 条待审；关系审校快照已重建并迁移旧决定，现有 222 条已接受、50 条拒绝、83 条待审。只有已接受的 222 条关系会进入公共图谱；网页与正式部署在剩余编辑闸口完成前不得标记为 `ready`。
 
-这意味着当前网页仍是研究版，不是已经定稿的人物学结论。待决关系会明确显示为候选关系。
+SBLGNT 希腊文词项覆盖审计共有 363 条记录：360 条接受、3 条排除、0 条待决；其中 28 条进入独立差异复核，复核结果为 25 条接受、3 条排除、0 条待决。自动部分仍是受 STEP 词形表辅助的保守扫描，并不声称完成与任何词表无关的全量 NER；独立审校记录、词形、位点与决定说明均保存在版本库中。网页呈现的是有出处、可追溯的研究数据，而不是对所有历史身份争议作最终裁决；有争议的同名或传统身份继续通过“全部保守／常见传统／逐项自定义”明确区分。
 
 CI 会在 Ubuntu 与 Windows 上执行完整数据/网页检查，并在独立 Linux job 中启动 Neo4j、从空库连续导入两次，核对节点、关系、孤立项和两次快照一致性。
 
@@ -43,6 +49,9 @@ CI 会在 Ubuntu 与 Windows 上执行完整数据/网页检查，并在独立 L
 - `editorial/`：中文名候选（`chinese-name-candidates.jsonl`）及审校报告
 - `editorial/chinese-name-review.jsonl`：中文名二轮人工审核清单（默认 `pending`）
 - `editorial/relationship-review.jsonl`：关系主张二轮+终审清单（默认 `pending`）
+- `DESIGN.md`：界面设计系统、视觉约束与运行时 token 映射
+- `design-qa.md`：桌面/手机视觉、交互与无障碍验收记录
+- `premium-ui.json` / `premium-audit.json`：前端严格审计配置与结果
 
 常用命令：
 
@@ -78,9 +87,13 @@ Neo4j 仅供本地研究与构建，不作为公开网站后端。复制 `neo4j/
 
 两种脚本都会清空项目专用 Neo4j 容器中的数据库、连续导入两次，并比较人物、主张和提及计数。请勿指向存有其他资料的 Neo4j 实例。
 
+若本机未运行 Docker，GitHub Actions 的 `neo4j-import-idempotence` job 会在独立 Ubuntu runner 中执行同一双重空库导入；发布验收以该 job 的完整日志为准。
+
 ## Cloudflare Pages
 
 公开网页是纯静态 HTML、CSS、JavaScript 和 JSON，不连接 Neo4j，也不使用 Cloudflare Functions。Neo4j 仅用于本地研究、导入复核与构建验收；Cloudflare Pages 免费静态托管即可运行当前版本。
+
+默认界面采用人物索引、焦点人物一度关系图和出处面板三栏结构；手机端切换“人物／图谱／详情”。图谱只绘制当前焦点网络，完整关系仍可通过可访问的文字列表读取。
 
 - 预览发布：`npm run pages:preview`
 - 正式发布：`npm run pages:production`

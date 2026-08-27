@@ -29,6 +29,14 @@ const SEED_PATH = path.join(ROOT, 'editorial', 'relationship-seeds.jsonl');
 const SEED_SCHEMA_PATH = path.join(ROOT, 'schemas', 'relationship-seeds.schema.json');
 const SCOPE_OVERRIDE_PATH = path.join(ROOT, 'editorial', 'person-scope-overrides.jsonl');
 const SCOPE_OVERRIDE_SCHEMA_PATH = path.join(ROOT, 'schemas', 'person-scope-overrides.schema.json');
+const SPLIT_OVERRIDE_PATH = path.join(ROOT, 'editorial', 'person-split-overrides.jsonl');
+const SPLIT_OVERRIDE_SCHEMA_PATH = path.join(ROOT, 'schemas', 'person-split-overrides.schema.json');
+const NAME_OVERRIDE_PATH = path.join(ROOT, 'editorial', 'person-name-overrides.jsonl');
+const NAME_OVERRIDE_SCHEMA_PATH = path.join(ROOT, 'schemas', 'person-name-overrides.schema.json');
+const MENTION_OVERRIDE_PATH = path.join(ROOT, 'editorial', 'mention-verification-overrides.jsonl');
+const MENTION_OVERRIDE_SCHEMA_PATH = path.join(ROOT, 'schemas', 'mention-verification-overrides.schema.json');
+const SBL_AUDIT_REVIEW_PATH = path.join(ROOT, 'editorial', 'sblgnt-name-review.jsonl');
+const SBL_AUDIT_REVIEW_SCHEMA_PATH = path.join(ROOT, 'schemas', 'sblgnt-name-review.schema.json');
 
 const SOURCE_ID_STEP = 'source:0002';
 const SOURCE_ID_SBL = 'source:0001';
@@ -43,11 +51,16 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(manifestSnapshot)) {
 const snapshot = args.snapshot || manifestSnapshot;
 const includeNonNt = args['include-non-nt'] === 'true';
 const includeNonHuman = args['include-non-human'] === 'true';
+const ignoreRelationshipSeeds = args['ignore-relationship-seeds'] === 'true';
 const seedSchema = JSON.parse(fs.readFileSync(SEED_SCHEMA_PATH, 'utf8'));
 const ajv = new Ajv({ allErrors: true, strict: false, validateSchema: false });
 addFormats(ajv);
 const seedValidator = ajv.compile(seedSchema);
 const scopeOverrideValidator = ajv.compile(JSON.parse(fs.readFileSync(SCOPE_OVERRIDE_SCHEMA_PATH, 'utf8')));
+const splitOverrideValidator = ajv.compile(JSON.parse(fs.readFileSync(SPLIT_OVERRIDE_SCHEMA_PATH, 'utf8')));
+const nameOverrideValidator = ajv.compile(JSON.parse(fs.readFileSync(NAME_OVERRIDE_SCHEMA_PATH, 'utf8')));
+const mentionOverrideValidator = ajv.compile(JSON.parse(fs.readFileSync(MENTION_OVERRIDE_SCHEMA_PATH, 'utf8')));
+const sblAuditReviewValidator = ajv.compile(JSON.parse(fs.readFileSync(SBL_AUDIT_REVIEW_SCHEMA_PATH, 'utf8')));
 
 const NT_BOOK_MAP = new Map([
   ['Mat', 'MAT'], ['Matt', 'MAT'], ['Mt', 'MAT'], ['Matthew', 'MAT'],
@@ -114,7 +127,6 @@ const SBL_FILE_STEM_MAP = new Map([
   ['1Pet', '1PE'], ['2Pet', '2PE'], ['1John', '1JN'], ['2John', '2JN'], ['3John', '3JN'],
   ['Jude', 'JUD'], ['Rev', 'REV']
 ]);
-
 function unifiedBaseName(rawUnified) {
   const raw = String(rawUnified || '').trim();
   return normalizePersonName(raw).split('|')[0].split('@')[0].split('=')[0]
@@ -171,19 +183,27 @@ function parseSeedPassage(passage) {
 }
 
 function parseSeedEvidence(evidenceRow) {
-  if (!Array.isArray(evidenceRow) || evidenceRow.length !== 1) {
-    throw new Error('seed evidence must be an array with one nt_text item');
+  if (!Array.isArray(evidenceRow) || evidenceRow.length < 1) {
+    throw new Error('seed evidence must be a non-empty array');
   }
-  const [evidence] = evidenceRow;
-  if (!evidence || typeof evidence !== 'object') {
-    throw new Error('seed evidence item must be an object');
-  }
-  const normalizedPassage = parseSeedPassage(evidence.passage);
-  if (!normalizedPassage) {
-    throw new Error(`seed passage invalid: ${evidence.passage}`);
-  }
-  evidence.passage = normalizedPassage;
-  return evidence;
+  return evidenceRow.map((item) => {
+    const evidence = { ...item };
+    if (!evidence || typeof evidence !== 'object') {
+      throw new Error('seed evidence item must be an object');
+    }
+    if (evidence.evidence_level === 'nt_text') {
+      const normalizedPassage = parseSeedPassage(evidence.passage);
+      if (!normalizedPassage) throw new Error(`seed passage invalid: ${evidence.passage}`);
+      evidence.passage = normalizedPassage;
+    } else if (evidence.evidence_level === 'ancient_text') {
+      if (evidence.source_id !== 'source:0004' || !/^Josephus, Antiquities 18\.116-119$/.test(evidence.passage)) {
+        throw new Error(`ancient seed locator invalid: ${evidence.passage}`);
+      }
+    } else {
+      throw new Error(`unsupported seed evidence level: ${evidence.evidence_level}`);
+    }
+    return evidence;
+  });
 }
 
 function parseSeedRows(seedPath) {
@@ -226,7 +246,7 @@ function parseSeedRows(seedPath) {
     const evidence = parseSeedEvidence(seed.evidence);
     out.push({
       ...seed,
-      evidence: [evidence]
+      evidence
     });
   }
   return out;
@@ -242,6 +262,49 @@ function parseScopeOverrides() {
     }
     if (byKey.has(row.person_key)) throw new Error(`Duplicate person scope override: ${row.person_key}`);
     byKey.set(row.person_key, row);
+  }
+  return byKey;
+}
+
+function parsePersonSplitOverrides() {
+  const rows = readJsonl(SPLIT_OVERRIDE_PATH);
+  const byKey = new Map();
+  for (const [index, row] of rows.entries()) {
+    if (!splitOverrideValidator(row)) {
+      const detail = (splitOverrideValidator.errors || []).map((e) => `${e.instancePath || '/'} ${e.message}`).join('; ');
+      throw new Error(`Invalid person split override at row ${index + 1}: ${detail}`);
+    }
+    if (byKey.has(row.person_key)) throw new Error(`Duplicate person split override: ${row.person_key}`);
+    byKey.set(row.person_key, row);
+  }
+  return byKey;
+}
+
+function parsePersonNameOverrides() {
+  const rows = readJsonl(NAME_OVERRIDE_PATH);
+  const byKey = new Map();
+  for (const [index, row] of rows.entries()) {
+    if (!nameOverrideValidator(row)) {
+      const detail = (nameOverrideValidator.errors || []).map((e) => `${e.instancePath || '/'} ${e.message}`).join('; ');
+      throw new Error(`Invalid person name override at row ${index + 1}: ${detail}`);
+    }
+    if (byKey.has(row.person_key)) throw new Error(`Duplicate person name override: ${row.person_key}`);
+    byKey.set(row.person_key, row);
+  }
+  return byKey;
+}
+
+function parseMentionVerificationOverrides() {
+  const rows = readJsonl(MENTION_OVERRIDE_PATH);
+  const byKey = new Map();
+  for (const [index, row] of rows.entries()) {
+    if (!mentionOverrideValidator(row)) {
+      const detail = (mentionOverrideValidator.errors || []).map((e) => `${e.instancePath || '/'} ${e.message}`).join('; ');
+      throw new Error(`Invalid mention verification override at row ${index + 1}: ${detail}`);
+    }
+    const key = `${row.person_key}\u0000${row.passage}`;
+    if (byKey.has(key)) throw new Error(`Duplicate mention verification override: ${row.person_key} ${row.passage}`);
+    byKey.set(key, row);
   }
   return byKey;
 }
@@ -432,6 +495,7 @@ function parseSubrecord(line) {
   let status = 'accepted';
   const sig = significance.toLowerCase();
   if (isGreekLike(formName)) language = 'grc';
+  if (isHebrewLike(formName) || isHebrewLike(rawName) || isHebrewLike(translated)) language = 'hbo';
   if (sig === 'named') {
     scope = 'canonical';
   } else if (sig === 'greek') {
@@ -477,6 +541,14 @@ function parsePersonRelationship(raw) {
   return out;
 }
 
+function stepIdentityKey(raw) {
+  return normalizePersonName(raw)
+    .replace(/=\S+$/, '')
+    .replace(/\?+$/, '')
+    .trim()
+    .toLowerCase();
+}
+
 function canonicalPersonLabel(raw) {
   return String(raw || '')
     .split('@')[0]
@@ -493,14 +565,14 @@ function isGreekLike(raw) {
   return /\p{Script=Greek}/u.test(String(raw || ''));
 }
 
+function isHebrewLike(raw) {
+  return /\p{Script=Hebrew}/u.test(String(raw || ''));
+}
+
 function extractGreekNameForms(raw) {
-  return String(raw || '')
-    .replace(/[«»]/g, '')
-    .split(/[;,]/)
-    .map((x) => x.trim())
-    .filter((x) => x && isGreekLike(x))
+  return [...new Set((String(raw || '').match(/\p{Script=Greek}[\p{Script=Greek}\p{M}]*/gu) || [])
     .map((x) => normalizeUnicodeText(x))
-    .filter((x) => x.length > 1);
+    .filter((x) => x.length > 1))];
 }
 
 function greekNameStem(raw) {
@@ -517,7 +589,9 @@ function greekNameStem(raw) {
 
 function greekNameMatchesVerse(token, verseText) {
   if (!token || !verseText) return false;
-  const words = String(verseText).split(/\s+/).filter(Boolean);
+  const words = String(verseText)
+    .match(/\p{Script=Greek}[\p{Script=Greek}\p{M}]*/gu)
+    ?.map((word) => normalizeUnicodeText(word)) || [];
   const tokenStem = greekNameStem(token);
   return words.some((word) => {
     if (word === token) return true;
@@ -656,26 +730,42 @@ function buildSblLexiconScan(records, sbl) {
       for (const token of extractGreekNameForms(sr.text)) {
         tokens.push(token);
         if (!tokenToPersons.has(token)) tokenToPersons.set(token, []);
-        if (!tokenToPersons.get(token).includes(person.unifiedName)) tokenToPersons.get(token).push(person.unifiedName);
+        if (!tokenToPersons.get(token).includes(person.unifiedRaw)) tokenToPersons.get(token).push(person.unifiedRaw);
         const stem = greekNameStem(token);
         if (!stemToPersons.has(stem)) stemToPersons.set(stem, []);
-        if (!stemToPersons.get(stem).includes(person.unifiedName)) stemToPersons.get(stem).push(person.unifiedName);
+        if (!stemToPersons.get(stem).includes(person.unifiedRaw)) stemToPersons.get(stem).push(person.unifiedRaw);
       }
     }
     if (tokens.length) {
-      personToTokens.set(person.unifiedName, [...new Set(tokens)]);
+      personToTokens.set(person, [...new Set(tokens)]);
     }
   }
 
   const sblPersons = [];
   const seenPerson = new Set();
+  const entries = [];
 
   for (const person of records) {
-    const tokens = personToTokens.get(person.unifiedName) || [];
+    const tokens = personToTokens.get(person) || [];
     const refs = collectRefs(person).filter((r) => r && r.book);
+    const matchedPassages = [];
+    const unmatchedPassages = [];
+    const uncheckablePassages = [];
 
     if (!tokens.length || !refs.length) {
       report.person_status.pending += 1;
+      entries.push({
+        person_key: person.unifiedRaw,
+        latinized: person.unifiedName,
+        greek_tokens: tokens,
+        checked_passages: [],
+        matched_passages: [],
+        unmatched_passages: [],
+        uncheckable_passages: refs.map((ref) => ref.key),
+        status: 'pending',
+        classification: tokens.length ? 'no_checkable_reference' : 'no_greek_name_form',
+        notes: tokens.length ? 'No SBLGNT verse text was available for the STEP references.' : 'STEP supplies no Greek person-name form for automated SBLGNT matching.'
+      });
       continue;
     }
 
@@ -686,6 +776,7 @@ function buildSblLexiconScan(records, sbl) {
       const verseText = sbl.verseTextByRef.get(ref.key);
       if (!verseText) {
         report.uncheckable_refs += 1;
+        uncheckablePassages.push(ref.key);
         continue;
       }
 
@@ -693,11 +784,13 @@ function buildSblLexiconScan(records, sbl) {
       const hitTokens = tokens.filter((token) => greekNameMatchesVerse(token, verseText));
       if (!hitTokens.length) {
         report.unmatched_refs += 1;
+        unmatchedPassages.push(ref.key);
         continue;
       }
 
       matchedAny = true;
       report.matched_refs += 1;
+      matchedPassages.push(ref.key);
       const hitPersonSet = new Set();
       for (const token of hitTokens) {
         const names = [
@@ -725,6 +818,21 @@ function buildSblLexiconScan(records, sbl) {
       report.person_status.pending += 1;
     }
 
+    entries.push({
+      person_key: person.unifiedRaw,
+      latinized: person.unifiedName,
+      greek_tokens: tokens,
+      checked_passages: [...new Set([...matchedPassages, ...unmatchedPassages])],
+      matched_passages: [...new Set(matchedPassages)],
+      unmatched_passages: [...new Set(unmatchedPassages)],
+      uncheckable_passages: [...new Set(uncheckablePassages)],
+      status: matchedAny ? 'accepted' : 'pending',
+      classification: matchedAny ? (ambiguousCount ? 'matched_with_lexical_ambiguity' : 'matched') : 'unmatched',
+      notes: matchedAny
+        ? 'At least one STEP-attributed occurrence matches a Greek person-name form in the locked SBLGNT verse text.'
+        : 'No supplied Greek person-name form matched at the STEP-attributed SBLGNT passages; retained for explicit editorial follow-up.'
+    });
+
     if (matchedAny && !seenPerson.has(person.unifiedName)) {
       sblPersons.push(person.unifiedName);
       seenPerson.add(person.unifiedName);
@@ -733,12 +841,112 @@ function buildSblLexiconScan(records, sbl) {
 
   return {
     sblPersons,
+    entries,
     report: {
       ...report,
       ambiguous_examples: report.ambiguous_examples.slice(0, 30),
-      notes: 'Conservative scan by normalized Greek token match in SBLGNT verse text. Not a full NER; ambiguity and missing-reference cases stay pending.'
+      notes: 'Conservative, STEP-lexicon-assisted scan over the NT-scoped person records. This is not independent full NER; every record receives an explicit accepted or pending audit row.'
     }
   };
+}
+
+function loadSblAuditReview() {
+  if (!fs.existsSync(SBL_AUDIT_REVIEW_PATH)) return null;
+  const raw = readJsonl(SBL_AUDIT_REVIEW_PATH);
+  if (!raw.length) return null;
+  const map = new Map();
+  for (const [index, row] of raw.entries()) {
+    if (!sblAuditReviewValidator(row)) {
+      const detail = (sblAuditReviewValidator.errors || []).map((e) => `${e.instancePath || '/'} ${e.message}`).join('; ');
+      throw new Error(`Invalid SBL audit review row ${index + 1}: ${detail}`);
+    }
+    const key = row.person_key;
+    if (!key || map.has(key)) throw new Error(`Invalid or duplicate SBL audit review row for ${key || 'unknown'}`);
+    if (typeof row.final_status !== 'string' || !['accepted', 'pending', 'excluded'].includes(row.final_status)) {
+      throw new Error(`Invalid final_status in SBL audit review row for ${key}`);
+    }
+    map.set(key, row);
+  }
+  return map;
+}
+
+function applySblAuditToScanEntries(scanEntries, auditReviewMap) {
+  if (!auditReviewMap) return scanEntries;
+  const scanKeys = new Set(scanEntries.map((entry) => String(entry.person_key || '').trim()).filter(Boolean));
+  const reviewedEntries = scanEntries.filter((entry) => auditReviewMap.has(entry.person_key));
+  const reviewKeys = [...auditReviewMap.keys()].filter((key) => scanKeys.has(key)).sort();
+  const unresolvedKeys = [...new Set(reviewedEntries
+    .map((entry) => String(entry.person_key || '').trim())
+    .filter(Boolean))].sort();
+  if (unresolvedKeys.length !== reviewKeys.length || unresolvedKeys.join('\u0000') !== reviewKeys.join('\u0000')) {
+    const missingFromEntries = reviewKeys.filter((k) => !unresolvedKeys.includes(k));
+    const extraEntries = unresolvedKeys.filter((k) => !reviewKeys.includes(k));
+    const reviewedCount = reviewedEntries.length;
+    const uniqueReviewedCount = unresolvedKeys.length;
+    throw new Error([
+      'SBL audit review must exactly cover the externally reviewed SBL rows',
+      `review map rows: ${reviewKeys.length} (size ${reviewKeys.length})`,
+      `reviewed scan rows total: ${reviewedCount}, unique keys: ${uniqueReviewedCount}`,
+      `missing in scan: ${missingFromEntries.join(', ') || '(none)'}`,
+      `extra in scan: ${extraEntries.join(', ') || '(none)'}`,
+    ].join('\n'));
+  }
+  return scanEntries.map((entry) => {
+    const row = auditReviewMap.get(entry.person_key);
+    if (!row) return entry;
+    const mappedStatus = row.final_status === 'excluded' ? 'excluded' : row.final_status;
+    const reviewedPassage = row.sbl_passage;
+    const matchedPassages = mappedStatus === 'accepted'
+      ? [...new Set([...(entry.matched_passages || []), reviewedPassage])]
+      : [...new Set(entry.matched_passages || [])];
+    const unmatchedPassages = mappedStatus === 'accepted'
+      ? [...new Set(entry.unmatched_passages || [])].filter((passage) => passage !== reviewedPassage)
+      : [...new Set(entry.unmatched_passages || [])];
+    return {
+      ...entry,
+      status: mappedStatus,
+      classification: mappedStatus === 'accepted'
+        ? 'independently_verified_surface_identity'
+        : mappedStatus === 'excluded'
+          ? 'independently_rejected_identity'
+          : entry.classification,
+      notes: row.final_decision_note ? `${entry.notes} | SBL review: ${row.final_decision_note}` : entry.notes,
+      checked_passages: [...new Set([...(entry.checked_passages || []), ...(row.scan_checked_passages || [])])],
+      matched_passages: matchedPassages,
+      unmatched_passages: unmatchedPassages,
+      uncheckable_passages: [...new Set([...(entry.uncheckable_passages || []), ...(row.scan_uncheckable_passages || [])])]
+    };
+  });
+}
+
+function applyConservativeReplacementAudit(scanEntries, splitOverrides, auditReviewMap, sbl) {
+  if (!auditReviewMap) return scanEntries;
+  const replacementByKey = new Map();
+  for (const override of splitOverrides.values()) {
+    for (const partition of override.partitions || []) {
+      if (!partition.unified_raw) continue;
+      const rejectedIdentity = auditReviewMap.get(override.person_key);
+      if (rejectedIdentity?.final_status !== 'excluded') continue;
+      const passage = rejectedIdentity.sbl_passage;
+      if (!partition.refs.includes(passage)) continue;
+      const verse = normalizeUnicodeText(sbl.verseTextByRef.get(passage) || '');
+      const surface = normalizeUnicodeText(rejectedIdentity.sbl_surface_form || '');
+      if (!surface || !verse.includes(surface)) continue;
+      replacementByKey.set(partition.unified_raw, { passage, sourceKey: override.person_key });
+    }
+  }
+  return scanEntries.map((entry) => {
+    const replacement = replacementByKey.get(entry.person_key);
+    if (!replacement) return entry;
+    return {
+      ...entry,
+      status: 'accepted',
+      classification: 'identity_replacement_from_rejected_equivalence',
+      matched_passages: [...new Set([...(entry.matched_passages || []), replacement.passage])],
+      unmatched_passages: [...new Set(entry.unmatched_passages || [])].filter((passage) => passage !== replacement.passage),
+      notes: `${entry.notes} | Conservative replacement: ${replacement.sourceKey} was independently rejected as the historical identity, while the locked SBLGNT explicitly names the distinct NT person at ${replacement.passage}.`
+    };
+  });
 }
 
 function parseStepPersons(filePath) {
@@ -871,8 +1079,91 @@ function collectRefs(person) {
   return out.filter((x) => x && x.book);
 }
 
+function applyPersonSplitOverrides(records, splitOverrides, requireAllOverrides = false) {
+  if (!splitOverrides.size) return records;
+  const seenOverrides = new Set();
+  const output = [];
+  for (const person of records) {
+    const override = splitOverrides.get(person.unifiedRaw);
+    if (!override) {
+      output.push(person);
+      continue;
+    }
+    seenOverrides.add(person.unifiedRaw);
+    const originalRefs = new Set(collectRefs(person).map((ref) => ref.key));
+    const assignedRefs = new Set();
+    for (const [partitionIndex, partition] of override.partitions.entries()) {
+      const partitionRefs = new Set(partition.refs);
+      for (const ref of partitionRefs) {
+        if (!originalRefs.has(ref)) throw new Error(`${override.split_id}: split ref not present in source record: ${ref}`);
+        if (assignedRefs.has(ref)) throw new Error(`${override.split_id}: split ref assigned more than once: ${ref}`);
+        assignedRefs.add(ref);
+      }
+      const subrecords = person.subrecords
+        .map((subrecord) => ({
+          ...subrecord,
+          refs: (subrecord.refs || []).filter((ref) => partitionRefs.has(ref.key))
+        }))
+        .filter((subrecord) => subrecord.refs.length > 0);
+      if (!subrecords.length) throw new Error(`${override.split_id}: partition has no matching person-name subrecords: ${partition.partition_id}`);
+      const replacementRaw = partition.unified_raw ? String(partition.unified_raw).trim() : null;
+      output.push({
+        ...person,
+        unifiedRaw: replacementRaw
+          ? replacementRaw
+          : partitionIndex === 0
+            ? person.unifiedRaw
+            : `${person.unifiedRaw}#split:${partition.partition_id}`,
+        unifiedName: partition.unified_name,
+        unifiedKey: normalizePersonName(partition.unified_name),
+        description: partition.editor_note,
+        summary: partition.editor_note,
+        parentsRaw: partition.keep_relation_fields ? person.parentsRaw : '',
+        siblingsRaw: partition.keep_relation_fields ? person.siblingsRaw : '',
+        partnersRaw: partition.keep_relation_fields ? person.partnersRaw : '',
+        offspringRaw: partition.keep_relation_fields ? person.offspringRaw : '',
+        subrecords,
+        split_id: override.split_id,
+        split_partition_id: partition.partition_id
+      });
+    }
+    if (assignedRefs.size !== originalRefs.size) {
+      const missing = [...originalRefs].filter((ref) => !assignedRefs.has(ref));
+      throw new Error(`${override.split_id}: source refs missing from partitions: ${missing.join(', ')}`);
+    }
+  }
+  const missingOverrides = [...splitOverrides.keys()].filter((key) => !seenOverrides.has(key));
+  if (requireAllOverrides && missingOverrides.length) {
+    throw new Error(`Person split overrides did not match STEP records: ${missingOverrides.join(', ')}`);
+  }
+  return output;
+}
+
+function applyPersonNameOverrides(records, nameOverrides, requireAllOverrides = false) {
+  const seen = new Set();
+  const output = records.map((person) => {
+    const override = nameOverrides.get(person.unifiedRaw);
+    if (!override) return person;
+    seen.add(person.unifiedRaw);
+    return {
+      ...person,
+      unifiedName: override.unified_name,
+      unifiedKey: normalizePersonName(override.unified_name),
+      summary: `${person.summary || person.description || ''} Editorial canonical-name correction: ${override.rationale}`.trim()
+    };
+  });
+  const missing = [...nameOverrides.keys()].filter((key) => !seen.has(key));
+  if (requireAllOverrides && missing.length) {
+    throw new Error(`Person name overrides did not match STEP records: ${missing.join(', ')}`);
+  }
+  return output;
+}
+
 function buildCorpus() {
   const scopeOverrides = parseScopeOverrides();
+  const splitOverrides = parsePersonSplitOverrides();
+  const nameOverrides = parsePersonNameOverrides();
+  const mentionOverrides = parseMentionVerificationOverrides();
   const identitySeedPath = path.join(DATA_DIR, 'identity-options.jsonl');
   const existingIdentityOptions = readJsonl(identitySeedPath);
   const identitySeed = existingIdentityOptions.filter((opt) => {
@@ -884,11 +1175,52 @@ function buildCorpus() {
   const stepPath = findStepFile(SOURCE_DIR);
   if (!stepPath) throw new Error(`Cannot find TIPNR file in ${SOURCE_DIR}`);
   const sbl = buildSblReferenceSet(SBL_DIR);
-  const records = parseStepPersons(stepPath);
-  const sblLexiconScan = buildSblLexiconScan(
-    records.filter((person) => !person._skipForType && scopeOverrides.get(person.unifiedRaw)?.decision !== 'exclude'),
+  const strictEditorialOverrides = path.resolve(SOURCE_DIR) === path.resolve(DEFAULT_STEP_DIR);
+  const records = applyPersonNameOverrides(
+    applyPersonSplitOverrides(parseStepPersons(stepPath), splitOverrides, strictEditorialOverrides),
+    nameOverrides,
+    strictEditorialOverrides
+  );
+  const sblAuditReview = strictEditorialOverrides ? loadSblAuditReview() : null;
+  const sblLexiconScan = {
+    ...buildSblLexiconScan(
+      records.filter((person) => !person._skipForType
+        && scopeOverrides.get(person.unifiedRaw)?.decision !== 'exclude'
+        && collectRefs(person).some((ref) => ref?.book)),
+      sbl
+    )
+  };
+  sblLexiconScan.entries = applyConservativeReplacementAudit(
+    applySblAuditToScanEntries(sblLexiconScan.entries, sblAuditReview),
+    splitOverrides,
+    sblAuditReview,
     sbl
   );
+  sblLexiconScan.sblPersons = sblLexiconScan.entries
+    .filter((entry) => entry.status === 'accepted')
+    .map((entry) => entry.latinized);
+  sblLexiconScan.report.person_status = {
+    accepted: sblLexiconScan.entries.filter((entry) => entry.status === 'accepted').length,
+    pending: sblLexiconScan.entries.filter((entry) => entry.status === 'pending').length,
+    excluded: sblLexiconScan.entries.filter((entry) => entry.status === 'excluded').length
+  };
+
+  const scanStatus = sblAuditReview ? 'implemented_independent_review' : 'implemented_lexicon_assisted';
+  sblLexiconScan.report = {
+    ...sblLexiconScan.report,
+    method: sblAuditReview ? 'independent_reviewer_merge_sbl_surface_match' : sblLexiconScan.report.method,
+    review_rows: sblAuditReview ? sblAuditReview.size : 0,
+    review_method: sblAuditReview ? 'reviewer-a+reviewer-b pairwise consensus' : null
+  };
+  const sblPersonScan = {
+    method: sblLexiconScan.report.method,
+    status: scanStatus,
+    total_audit_rows: sblLexiconScan.entries.length,
+    accepted_audit_rows: sblLexiconScan.entries.filter((entry) => entry.status === 'accepted').length,
+    pending_audit_rows: sblLexiconScan.entries.filter((entry) => entry.status === 'pending').length,
+    excluded_audit_rows: sblLexiconScan.entries.filter((entry) => entry.status === 'excluded').length,
+    total_sbl_scan_persons: sblLexiconScan.sblPersons.length
+  };
 
   const ledger = [];
   const people = [];
@@ -896,6 +1228,7 @@ function buildCorpus() {
   const mentions = [];
   const assertions = [];
   const identityOptions = [];
+  const seenMentionOverrides = new Set();
 
   let nNo = 1;
   let mNo = 1;
@@ -907,7 +1240,9 @@ function buildCorpus() {
   const buildTimestamp = snapshot.includes('T') ? snapshot : `${snapshot}T00:00:00Z`;
   const now = buildTimestamp;
 
-  const nameToId = new Map();
+  const personIdByRecord = new Map();
+  const personIdByStepIdentity = new Map();
+  const personCandidatesByLabel = new Map();
   const ntPeople = [];
   const existingPeople = readJsonl(path.join(DATA_DIR, 'people.jsonl'));
   const existingNames = readJsonl(path.join(DATA_DIR, 'names.jsonl'));
@@ -1023,7 +1358,12 @@ function buildCorpus() {
     };
     people.push(personRow);
     ntPeople.push(person);
-    nameToId.set(person.unifiedKey.toLowerCase(), personId);
+    personIdByRecord.set(person, personId);
+    personIdByStepIdentity.set(stepIdentityKey(person.unifiedRaw), personId);
+    const labelKey = canonicalPersonLabel(person.unifiedName).toLowerCase();
+    const candidates = personCandidatesByLabel.get(labelKey) ?? [];
+    candidates.push({ person, personId });
+    personCandidatesByLabel.set(labelKey, candidates);
 
     names.push({
       name_id: allocateNameId(),
@@ -1080,19 +1420,40 @@ function buildCorpus() {
 
     for (const ref of uniqueNtRefs) {
       const verified = sbl.refs.has(ref);
+      const mentionOverrideKey = `${person.unifiedRaw}\u0000${ref}`;
+      const mentionOverride = mentionOverrides.get(mentionOverrideKey);
+      if (mentionOverride) seenMentionOverrides.add(mentionOverrideKey);
+      const mentionStatus = mentionOverride?.decision === 'exclude'
+        ? 'excluded'
+        : verified
+          ? 'accepted'
+          : 'pending';
       mentions.push({
         mention_id: allocateMentionId(),
         person_id: personId,
         source_id: SOURCE_ID_STEP,
         passage: ref,
         location: 'STEP Proper Names',
-        status: verified ? 'accepted' : 'pending',
-        notes: verified ? '' : 'Reference not verified in SBLGNT verse map',
-        editorial_rationale: 'Automated extraction from STEP Proper Names PERSON record.',
+        status: mentionStatus,
+        notes: mentionOverride?.editor_note || (verified ? '' : 'Reference not verified in SBLGNT verse map'),
+        editorial_rationale: mentionOverride
+          ? `Editorial verification override ${mentionOverride.override_id}: ${mentionOverride.reason}`
+          : 'Automated extraction from STEP Proper Names PERSON record.',
         created_at: now,
         updated_at: now
       });
-      if (!verified) {
+      if (mentionOverride) {
+        ledger.push({
+          kind: 'reconcile',
+          reason: mentionOverride.reason,
+          person_id: personId,
+          passage: ref,
+          decision: mentionOverride.decision,
+          source: SOURCE_ID_STEP,
+          evidence_location: mentionOverride.evidence_location,
+          note: mentionOverride.editor_note
+        });
+      } else if (!verified) {
         ledger.push({
           kind: 'reconcile',
           reason: 'missing_in_sblgnt',
@@ -1115,6 +1476,13 @@ function buildCorpus() {
       updated_at: now
     };
     identityOptions.push(defaultIdentityOption);
+  }
+
+  if (strictEditorialOverrides) {
+    const unmatchedMentionOverrides = [...mentionOverrides.keys()].filter((key) => !seenMentionOverrides.has(key));
+    if (unmatchedMentionOverrides.length) {
+      throw new Error(`Mention verification overrides did not match STEP records: ${unmatchedMentionOverrides.join(', ')}`);
+    }
   }
 
   const personIds = new Set(identityOptions.map((item) => item.person_id));
@@ -1153,15 +1521,23 @@ function buildCorpus() {
     return String(a.option_id || '').localeCompare(String(b.option_id || ''));
   });
 
-  const keyToPersonId = new Map();
-  for (const p of ntPeople) {
-    const pid = nameToId.get(p.unifiedKey.toLowerCase());
-    if (!pid) continue;
-    keyToPersonId.set(canonicalPersonLabel(p.unifiedKey).toLowerCase(), pid);
-    for (const sr of p.subrecords) {
-      if (sr.text) keyToPersonId.set(canonicalPersonLabel(sr.text).toLowerCase(), pid);
+  const resolveRelationshipTarget = (item) => {
+    const exact = personIdByStepIdentity.get(stepIdentityKey(item.raw));
+    if (exact) return { personId: exact, resolution: 'exact_step_identity' };
+
+    const labelKey = canonicalPersonLabel(item.key).toLowerCase();
+    const candidates = personCandidatesByLabel.get(labelKey) ?? [];
+    if (candidates.length === 1) return { personId: candidates[0].personId, resolution: 'unique_label' };
+
+    const relationRefs = new Set(item.refs.map((ref) => ref.key));
+    if (relationRefs.size) {
+      const overlapping = candidates.filter(({ person }) =>
+        collectRefs(person).some((ref) => relationRefs.has(ref.key))
+      );
+      if (overlapping.length === 1) return { personId: overlapping[0].personId, resolution: 'reference_overlap' };
     }
-  }
+    return { personId: null, resolution: candidates.length ? 'ambiguous_label' : 'missing_label' };
+  };
 
   const seenRelations = new Map();
   const addAssertion = (entry) => {
@@ -1188,7 +1564,7 @@ function buildCorpus() {
   };
 
   for (const subject of ntPeople) {
-    const subjectId = nameToId.get(subject.unifiedKey.toLowerCase());
+    const subjectId = personIdByRecord.get(subject);
     if (!subjectId) continue;
     const subjectRefs = collectRefs(subject).map((r) => r.key);
     const relationSchema = [
@@ -1200,7 +1576,8 @@ function buildCorpus() {
 
     for (const rel of relationSchema) {
       for (const item of parsePersonRelationship(rel.field)) {
-        const targetId = keyToPersonId.get(canonicalPersonLabel(item.key).toLowerCase());
+        const targetResolution = resolveRelationshipTarget(item);
+        const targetId = targetResolution.personId;
         const primaryRef = item.refs[0]?.key || subjectRefs[0] || '';
         const evidence = [{
           source_id: SOURCE_ID_STEP,
@@ -1212,7 +1589,7 @@ function buildCorpus() {
         if (!targetId) {
           ledger.push({
             kind: 'relation',
-            reason: 'relation_target_missing',
+            reason: targetResolution.resolution === 'ambiguous_label' ? 'relation_target_ambiguous' : 'relation_target_missing',
             source: SOURCE_ID_STEP,
             subject: subject.unifiedRaw,
             target: item.raw,
@@ -1286,7 +1663,7 @@ function buildCorpus() {
     }
   }
 
-  const seedRows = fs.existsSync(SEED_PATH) ? parseSeedRows(SEED_PATH) : [];
+  const seedRows = (!ignoreRelationshipSeeds && fs.existsSync(SEED_PATH)) ? parseSeedRows(SEED_PATH) : [];
   const seedSeen = new Set();
   for (const seed of seedRows.sort((a, b) => String(a.seed_id).localeCompare(String(b.seed_id)))) {
     if (seedSeen.has(seed.seed_id)) {
@@ -1326,6 +1703,7 @@ function buildCorpus() {
   writeJsonl(path.join(DATA_DIR, 'review-ledger.jsonl'), ledger);
   writeJson(path.join(DATA_DIR, 'stepbible.persons.json'), [...new Set(ntPeople.map((p) => p.unifiedName))]);
   writeJson(path.join(DATA_DIR, 'sblgnt.persons.json'), sblLexiconScan.sblPersons);
+  writeJsonl(path.join(DATA_DIR, 'sblgnt-name-audit.jsonl'), sblLexiconScan.entries);
   writeJson(path.join(DATA_DIR, 'reconciliation.json'), {
     generatedAt: now,
     stepFile: `${SOURCE_ID_STEP}/${path.basename(stepPath)}`,
@@ -1333,11 +1711,7 @@ function buildCorpus() {
     sbl_verified_refs: [...new Set(mentions.filter((m) => m.status === 'accepted').map((m) => m.passage))],
     sbl_missing_refs: [...new Set(mentions.filter((m) => m.status === 'pending').map((m) => m.passage))],
     sbl_greek_verification: sblLexiconScan.report,
-    sbl_person_scan: {
-      method: SBL_GREEK_SCAN,
-      status: 'implemented_limited',
-      total_sbl_scan_persons: sblLexiconScan.sblPersons.length
-    },
+    sbl_person_scan: sblPersonScan,
     completeness: {
       sbl_book_count: sbl.bookOrder.size,
       total_nt_refs_in_step: new Set(mentions.map((m) => m.passage)).size

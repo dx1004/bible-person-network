@@ -2,6 +2,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { classifyPersonEra } from './person-era.mjs';
 
 const rootDir = path.resolve(process.cwd(), '..');
 const exportsDir = path.join(rootDir, 'exports');
@@ -43,9 +44,9 @@ function stripNameDecorators(text) {
 
 function mapEvidenceLevel(level = '') {
   const lowered = String(level).toLowerCase();
-  if (lowered.includes('nt')) return 'nt_text';
   if (lowered.includes('ancient')) return 'ancient';
   if (lowered.includes('modern')) return 'modern';
+  if (lowered.includes('nt')) return 'nt_text';
   return 'modern';
 }
 
@@ -204,6 +205,7 @@ function parseErasFromBooks(books) {
 
 function statusToChineseIdentity(raw = '') {
   const status = String(raw).toLowerCase();
+  if (status.includes('disputed')) return '传统辨识（有争议）';
   if (status.includes('traditional') || status.includes('merge')) return '传统同一';
   if (status.includes('pending')) return '待判';
   if (status.includes('conservative')) return '保守';
@@ -234,6 +236,7 @@ async function loadJSON(fileName, fallback = []) {
 
     const namesByPerson = new Map();
     for (const item of names) {
+      if (item?.status !== 'accepted') continue;
       if (!item?.person_id) continue;
       const list = namesByPerson.get(item.person_id) ?? [];
       list.push(item);
@@ -242,6 +245,7 @@ async function loadJSON(fileName, fallback = []) {
 
     const mentionsByPerson = new Map();
     for (const item of mentions) {
+      if (item?.status !== 'accepted') continue;
       if (!item?.person_id) continue;
       const list = mentionsByPerson.get(item.person_id) ?? [];
       list.push(item);
@@ -260,11 +264,18 @@ async function loadJSON(fileName, fallback = []) {
     const reportNamesCount = Number(report?.counts?.names ?? names.length);
     const reportMentionsCount = Number(report?.counts?.mentions ?? mentions.length);
     const reportAssertionsCount = Number(report?.counts?.assertions ?? assertions.length);
+    const acceptedNames = names.filter((item) => item?.status === 'accepted');
+    const acceptedMentions = mentions.filter((item) => item?.status === 'accepted');
+    const nonAcceptedNames = names.filter((item) => item?.status !== 'accepted').length;
+    const nonAcceptedMentions = mentions.filter((item) => item?.status !== 'accepted').length;
+    if (nonAcceptedNames || nonAcceptedMentions) {
+      console.warn(`[build:data] 跳过未接受条目: 名称 ${nonAcceptedNames}, 提及 ${nonAcceptedMentions}`);
+    }
     const reportIdentityCount = Number(report?.counts?.identityOptions ?? identityOptionsInput.length);
 
     const graphPeople = people.map((person) => {
-      const personNames = namesByPerson.get(person.person_id) ?? [];
-      const personMentions = mentionsByPerson.get(person.person_id) ?? [];
+        const personNames = acceptedNames.filter((n) => n.person_id === person.person_id);
+      const personMentions = acceptedMentions.filter((item) => item.person_id === person.person_id);
       const personIdentityOptions = identityByPerson.get(person.person_id) ?? [];
 
       const chinesePrimary = normalizeText(person.canonical_chinese || '');
@@ -287,12 +298,14 @@ async function loadJSON(fileName, fallback = []) {
 
       const aliases = unique(allNames.filter((name) => name !== nameZh)).slice(0, 40);
       const books = unique(personMentions.map((item) => passageToBook(item.passage || '')).filter(Boolean));
-      const eras = parseErasFromBooks(books);
+      const personEra = classifyPersonEra(person, books);
 
       const notes = unique([
         person.review_status?.chinese_label_note,
         usedFallback ? '中文名待审校：未命中和合本映射，当前为清洗回退名' : '',
-        person.review_status?.chinese_label_status ? `中文名审核：${person.review_status.chinese_label_status}` : ''
+        person.review_status?.chinese_label_status
+          ? `中文名审核：${person.review_status.chinese_label_status === 'accepted' ? '已接受' : person.review_status.chinese_label_status}`
+          : ''
       ]).filter(Boolean);
 
       const identityOptions = personIdentityOptions.length
@@ -328,13 +341,41 @@ async function loadJSON(fileName, fallback = []) {
         nameZh,
         nameLat: latinFallback || greekFallback || nameZh,
         aliases,
-        era: eras[0] || '待审校',
+        era: personEra,
         books: books.length ? books : ['新约背景'],
+        mentions: unique(
+          personMentions.map((item) =>
+            JSON.stringify({
+              passage: passageClean(item.passage || ''),
+              location: normalizeText(item.location || ''),
+              sourceId: normalizeText(item.source_id || '')
+            })
+          )
+        ).map((item) => JSON.parse(item)),
         identityOptions,
         selectedPresetDefault: 'conservative',
-        notes: notes.length ? notes.join('；') : undefined
+        notes: notes.length
+          ? `${notes.map((note) => String(note).replace(/[。；]+$/g, '')).join('；')}。`
+          : undefined
       };
     });
+
+    const evidenceKindsBySource = new Map();
+    for (const assertion of assertions) {
+      for (const evidence of assertion.evidence || []) {
+        const sourceId = evidence.source_id;
+        if (!sourceId) continue;
+        const kinds = evidenceKindsBySource.get(sourceId) ?? new Set();
+        kinds.add(mapEvidenceLevel(evidence.evidence_level));
+        evidenceKindsBySource.set(sourceId, kinds);
+      }
+    }
+    const preferredSourceKind = (sourceId) => {
+      const kinds = evidenceKindsBySource.get(sourceId) ?? new Set();
+      if (kinds.has('ancient')) return 'ancient';
+      if (kinds.has('nt_text')) return 'nt_text';
+      return 'modern';
+    };
 
     const graphSources = unique(sources.map((source) => `${source.source_id}|${source.short_name}|${source.url || ''}`))
       .map((entry) => {
@@ -343,21 +384,23 @@ async function loadJSON(fileName, fallback = []) {
         return {
           id,
           label: source?.short_name || shortName || '来源',
-          kind: mapEvidenceLevel(source?.scope || source?.license || ''),
+          kind: preferredSourceKind(id),
           url: source?.url || (url ? url : undefined)
         };
       });
 
-    const relationships = assertions.filter((rel) => rel.status !== 'superseded').map((rel) => {
+    const publishedAssertions = assertions.filter((rel) => rel.status === 'active' && rel.editorial_status !== 'pending');
+    const relationships = publishedAssertions.map((rel) => {
       const evidenceEntries = Array.isArray(rel.evidence) ? rel.evidence : [];
       const passages = unique(evidenceEntries.map((e) => passageClean(e.passage || '')));
+      const books = unique(passages.map((passage) => passageToBook(passage)).filter(Boolean));
       const sourceIds = unique(evidenceEntries.map((e) => e.source_id || '').filter(Boolean));
-      const book = passages.length ? passageToBook(passages[0]) : '新约';
+      const book = books[0] || '新约';
       const rawEvidenceLevels = unique(evidenceEntries.map((e) => String(e.evidence_level || '').trim()).filter(Boolean));
 
       const relationType = mapRelationTypeLabel(rel.relation_type, rel.relation_subtype, rel.editorial_status);
       const isPendingCandidate =
-        rel.status !== 'active' || rel.editorial_status === 'pending' || rel.relation_type === 'kinship';
+        rel.status !== 'active' || rel.editorial_status === 'pending';
 
       const type = isPendingCandidate ? `候选${relationType}` : relationType;
       const evidenceLevel = unique(evidenceEntries.map((e) => mapEvidenceLevel(e.evidence_level)))[0] || 'modern';
@@ -385,10 +428,21 @@ async function loadJSON(fileName, fallback = []) {
         sources: sourceIds,
         passages,
         book,
+        books,
         era: bookEraMap[passageToBook(book).toUpperCase()] || '待审校',
         identityGuards: []
       };
     });
+
+    const paulPersonId = graphPeople.find((person) => person.nameZh === '保罗')?.id || 'nt-people-0266';
+    const paulTeamPersonIds = unique(
+      relationships
+        .filter((relationship) =>
+          relationship.type === '长期同工' &&
+          (relationship.fromPerson === paulPersonId || relationship.toPerson === paulPersonId)
+        )
+        .flatMap((relationship) => [relationship.fromPerson, relationship.toPerson])
+    );
 
     const topicPresets = [
       { id: 'all', name: '全部', relationTypes: [], bookIncludes: [], eraIncludes: [], evidenceIncludes: [] },
@@ -396,8 +450,8 @@ async function loadJSON(fileName, fallback = []) {
         id: 'herodFamily',
         name: '希律家族',
         relationTypes: [],
-        bookIncludes: ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'GAL', 'COL'],
-        eraIncludes: ['使徒时代', '旧约背景', '待审校'],
+        bookIncludes: [],
+        eraIncludes: [],
         evidenceIncludes: ['nt_text', 'ancient', 'modern'],
         personIncludes: [
           'nt-people-0014',
@@ -427,25 +481,26 @@ async function loadJSON(fileName, fallback = []) {
           '候选亲属关系-婚姻/伴侣',
           '候选亲属关系-其他'
         ],
-        bookIncludes: ['GEN', 'EXO', 'LUK', 'MAT', 'MRK', 'JHN', 'ACT'],
-        eraIncludes: ['使徒时代', '旧约背景', '待审校'],
-        evidenceIncludes: ['modern']
+        bookIncludes: [],
+        eraIncludes: [],
+        evidenceIncludes: ['nt_text', 'ancient', 'modern']
       },
       {
         id: 'discipleship',
         name: '门徒关系',
-        relationTypes: withCandidateVariants(['师徒', '长期同工']),
-        bookIncludes: ['MAT', 'MRK', 'LUK', 'ACT', 'JHN'],
-        eraIncludes: ['使徒时代'],
+        relationTypes: withCandidateVariants(['师徒']),
+        bookIncludes: [],
+        eraIncludes: [],
         evidenceIncludes: ['nt_text', 'ancient', 'modern']
       },
       {
         id: 'paulTeam',
         name: '保罗同工',
         relationTypes: withCandidateVariants(['长期同工']),
-        bookIncludes: ['ROM', '1CO', '2CO', 'GAL', 'EPH', 'COL', 'PHP', 'THA', '1TI', '2TI'],
-        eraIncludes: ['使徒时代'],
-        evidenceIncludes: ['nt_text', 'ancient', 'modern']
+        bookIncludes: [],
+        eraIncludes: [],
+        evidenceIncludes: ['nt_text', 'ancient', 'modern'],
+        personIncludes: paulTeamPersonIds
       },
       {
         id: 'acts',
@@ -463,7 +518,7 @@ async function loadJSON(fileName, fallback = []) {
           '候选亲属关系-其他'
         ]),
         bookIncludes: ['ACT'],
-        eraIncludes: ['使徒时代'],
+        eraIncludes: [],
         evidenceIncludes: ['nt_text', 'ancient', 'modern']
       }
     ];
@@ -491,7 +546,7 @@ async function loadJSON(fileName, fallback = []) {
     };
 
     const expectedPeople = reportPeopleCount;
-    const expectedRelationships = Number(report?.counts?.publishedRelationships ?? reportAssertionsCount);
+    const expectedRelationships = Number(report?.counts?.publishedRelationships ?? publishedAssertions.length);
     const peopleCount = graph.people.length;
 
     if (!Number.isFinite(expectedPeople) || expectedPeople <= 0) {

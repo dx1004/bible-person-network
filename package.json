@@ -17,6 +17,10 @@
     "apply:relationship-review": "node scripts/apply-relationship-review.js",
     "validate:relationship-review": "node scripts/init-relationship-review.js --validate-only",
     "merge:independent-reviews": "node scripts/merge-independent-reviews.js",
+    "merge:v2-independent-reviews": "node scripts/merge-v2-independent-reviews.js",
+    "merge:history-independent-reviews": "node scripts/merge-history-independent-reviews.js",
+    "merge:sbl-greek-audit": "node scripts/merge-sbl-greek-audit.js",
+    "validate:sbl-greek-audit": "node scripts/merge-sbl-greek-audit.js --validate-only",
     "generate:chinese-name-candidates": "node scripts/generate-chinese-name-candidates.js",
     "validate:chinese-name-candidates": "node scripts/generate-chinese-name-candidates.js --validate-only",
     "reconcile": "node scripts/reconcile-sources.js",
@@ -24,9 +28,10 @@
     "test:step-boundary": "node scripts/test-step-boundary-regression.mjs",
     "build:web": "npm --prefix web run build",
     "typecheck:web": "npm --prefix web run typecheck",
-    "pages:preview": "npm run build:web && wrangler pages deploy web/dist --project-name new-testament-person-network --branch preview",
-    "pages:production": "npm run build:web && wrangler pages deploy web/dist --project-name new-testament-person-network --branch main",
-    "check": "npm run validate:data && npm run validate:chinese-name-candidates && npm run validate:chinese-name-review && npm run apply:chinese-name-review -- --check && npm run validate:relationship-review && npm run apply:relationship-review -- --check && npm run reconcile && npm run report && npm run test:step-boundary && npm run typecheck:web && npm run build:web && npm --prefix web run check-identity"
+    "release:check": "npm run check",
+    "pages:preview": "npm run release:check && wrangler pages deploy web/dist --project-name new-testament-person-network --branch preview",
+    "pages:production": "npm run release:check && wrangler pages deploy web/dist --project-name new-testament-person-network --branch main",
+    "check": "npm run validate:sbl-greek-audit && npm run validate:data && npm run validate:chinese-name-candidates && npm run validate:chinese-name-review && npm run apply:chinese-name-review -- --check && npm run validate:relationship-review && npm run apply:relationship-review -- --check && npm run reconcile && npm run report && npm run test:step-boundary && npm run typecheck:web && npm --prefix web run check-person-era && npm run build:web && npm --prefix web run check-identity"
   },
   "engines": {
     "node": ">=18"

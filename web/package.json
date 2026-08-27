@@ -9,11 +9,13 @@
     "dev": "vite",
     "build:data": "node ./scripts/build-graph-data.mjs",
     "build": "npm run build:data && vite build",
+    "check-person-era": "node ./scripts/check-person-era.mjs",
     "check-identity": "node ./scripts/check-graph-identity.mjs",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@phosphor-icons/web": "^2.1.2",
     "cytoscape": "^3.30.4"
   },
   "devDependencies": {

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SBLGNT lexicon-assisted person-name audit row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "person_key", "latinized", "greek_tokens", "checked_passages", "matched_passages",
+    "unmatched_passages", "uncheckable_passages", "status", "classification", "notes"
+  ],
+  "properties": {
+    "person_key": { "type": "string", "minLength": 1 },
+    "latinized": { "type": "string", "minLength": 1 },
+    "greek_tokens": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "checked_passages": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "matched_passages": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "unmatched_passages": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "uncheckable_passages": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "status": { "type": "string", "enum": ["accepted", "pending", "excluded"] },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "matched",
+        "matched_with_lexical_ambiguity",
+        "unmatched",
+        "no_checkable_reference",
+        "no_greek_name_form",
+        "independently_verified_surface_identity",
+        "independently_rejected_identity",
+        "identity_replacement_from_rejected_equivalence"
+      ]
+    },
+    "notes": { "type": "string", "minLength": 1 }
+  }
+}

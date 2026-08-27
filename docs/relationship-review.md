@@ -58,3 +58,26 @@ npm run validate:relationship-review -- --validate-only
 ```
 
 默认会在 `editorial/relationship-review.jsonl` 按断言文件计数生成同样数量的审校行，ID 从 `rrr-0001` 起。
+
+### 非亲属关系覆盖核对（v1）
+
+`editorial/relationship-coverage-inventory.json` 保存了 v1 非亲属关系的“高置信启动清单”。执行：
+
+```bash
+node scripts/generate-relationship-coverage-report.js
+```
+
+会生成 `exports/relationship-coverage-report.json`，用于检查：
+
+- 各关系型别的目标覆盖目标是否就位；
+- `target_id` 级别是否在 `assertions.jsonl` 中有对应边；
+- 明确列出“deliberate gaps”（当前 v1 有意暂缓的扩展范围）。
+
+本轮覆盖清单经第二轮经文核对、错误类型修正与重复边合并后为 98 条唯一目标，覆盖 7 类非亲属关系：师徒 9、长期同工 21、差派 18、接待 13、政治权属 10、司法行为 14、明确敌对 13。一个目标可保存多条精确证据位点，但同一主体、客体、类型、细分和方向只保留一个目标键。
+
+重点边界：
+
+- 不包含 `source:0004` 的史料边；
+- 不包含 co-mention 推断边；
+- 不将模糊关系（如“群体同工”“间接归属”）放入 v1；
+- 当前清单已经完成两轮文本核对和种子级修正，但尚未获准把机器辅助复核记录写成 canonical 审校决定；因此相关断言继续保持 `pending`，不得提前发布。

@@ -25,22 +25,22 @@
       "type": ["null", "string"],
       "enum": ["parent", "child", "sibling", "partner", null]
     },
-    "source_id": { "type": "string", "const": "source:0001" },
+    "source_id": { "type": "string", "enum": ["source:0001", "source:0004"] },
     "evidence": {
       "type": "array",
       "minItems": 1,
-      "maxItems": 1,
+      "maxItems": 12,
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": ["source_id", "passage", "evidence_level", "note", "certainty"],
         "properties": {
-          "source_id": { "type": "string", "const": "source:0001" },
+          "source_id": { "type": "string", "enum": ["source:0001", "source:0004"] },
           "passage": {
             "type": "string",
-            "pattern": "^(?:MAT|MRK|LUK|JHN|ACT|ROM|1CO|2CO|GAL|EPH|PHP|COL|1TH|2TH|1TI|2TI|TIT|PHM|HEB|JAS|1PE|2PE|1JN|2JN|3JN|JUD|REV) \\d+:\\d+(?:-\\d+)?$"
+            "pattern": "^(?:(?:MAT|MRK|LUK|JHN|ACT|ROM|1CO|2CO|GAL|EPH|PHP|COL|1TH|2TH|1TI|2TI|TIT|PHM|HEB|JAS|1PE|2PE|1JN|2JN|3JN|JUD|REV) \\d+:\\d+(?:-\\d+)?|Josephus, Antiquities 18\\.116-119)$"
           },
-          "evidence_level": { "type": "string", "const": "nt_text" },
+          "evidence_level": { "type": "string", "enum": ["nt_text", "ancient_text"] },
           "note": { "type": "string" },
           "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
         }

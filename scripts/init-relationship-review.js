@@ -484,7 +484,8 @@ function validateOnly() {
       ) {
         throw new Error(`final accepted must match round2 exactly: ${row.assertion_id}`);
       }
-      if (
+      const acceptedDecisionNotApplied = evidenceMatches(currentSnapshot, row.assertion_snapshot);
+      if (!acceptedDecisionNotApplied && (
         assertion.subject_person_id !== row.assertion_snapshot.subject_person_id
         || assertion.object_person_id !== row.assertion_snapshot.object_person_id
         || assertion.relation_type !== finalDecision.decision_relation_type
@@ -493,7 +494,7 @@ function validateOnly() {
         || !evidenceMatches(currentEvidence, finalDecision.decision_evidence_refs)
         || assertion.status !== 'active'
         || assertion.editorial_status !== 'conservative'
-      ) {
+      )) {
         throw new Error(`accepted decision application drift for ${row.assertion_id}`);
       }
     }

@@ -1,334 +1,319 @@
 {
   "generatedAt": "2026-08-26T00:00:00Z",
-  "stepCount": 304,
-  "sblCount": 278,
+  "stepCount": 303,
+  "sblCount": 364,
   "sblNameExtraction": {
-    "status": "implemented_limited",
-    "note": "SBL 人名比较基于 STEP希腊词形与SBL经文位点的保守词形匹配，不是完整NER。",
-    "stepCount": 304,
-    "sblCount": 278
+    "status": "implemented",
+    "note": "SBL proper-name list available.",
+    "stepCount": 303,
+    "sblCount": 364
   },
   "sblCoverage": {
     "sbl_book_count": 27,
-    "total_nt_refs_in_step": 2228,
-    "sbl_verified_refs": 2222,
-    "sbl_missing_refs": 6
+    "total_nt_refs_in_step": 2226,
+    "sbl_verified_refs": 2220,
+    "sbl_missing_refs": 0
   },
   "sbl_greek_verification": {
-    "method": "step_lexicon_sbl_token_scan",
+    "method": "independent_reviewer_merge_sbl_surface_match",
     "generatedAt": "2026-08-26T00:00:00Z",
-    "total_records": 2981,
-    "checked_refs": 3527,
-    "matched_refs": 3269,
-    "unmatched_refs": 258,
+    "total_records": 364,
+    "checked_refs": 3523,
+    "matched_refs": 3273,
+    "unmatched_refs": 250,
     "uncheckable_refs": 12,
-    "ambiguous_refs": 1606,
+    "ambiguous_refs": 1911,
     "person_status": {
-      "matched": 247,
-      "partial": 85,
-      "pending": 2649
+      "accepted": 364,
+      "pending": 0,
+      "excluded": 0
     },
     "ambiguous_examples": [
       {
+        "passage": "LUK 1:5",
+        "persons": [
+          "Abijah@1Ch.24.10-Luk=H0029L",
+          "Abijah@1Ki.14.31-Mat=H0029I"
+        ],
+        "token": "αβια"
+      },
+      {
+        "passage": "MAT 1:7",
+        "persons": [
+          "Abijah@1Ch.24.10-Luk=H0029L",
+          "Abijah@1Ki.14.31-Mat=H0029I"
+        ],
+        "token": "αβια"
+      },
+      {
+        "passage": "MAT 1:7",
+        "persons": [
+          "Abijah@1Ch.24.10-Luk=H0029L",
+          "Abijah@1Ki.14.31-Mat=H0029I"
+        ],
+        "token": "αβια"
+      },
+      {
+        "passage": "1TI 1:20",
+        "persons": [
+          "Alexander@1Ti.1.20-2Ti=G0223J",
+          "Alexander@1Ti.1.20-2Ti=G0223J#split:alexander-coppersmith",
+          "Alexander@Act.19.33=G0223I",
+          "Alexander@Act.4.6=G0223H",
+          "Alexander@Mrk.15.21=G0223G"
+        ],
+        "token": "αλεξανδρος"
+      },
+      {
+        "passage": "2TI 4:14",
+        "persons": [
+          "Alexander@1Ti.1.20-2Ti=G0223J",
+          "Alexander@1Ti.1.20-2Ti=G0223J#split:alexander-coppersmith",
+          "Alexander@Act.19.33=G0223I",
+          "Alexander@Act.4.6=G0223H",
+          "Alexander@Mrk.15.21=G0223G"
+        ],
+        "token": "αλεξανδρος"
+      },
+      {
+        "passage": "ACT 19:33",
+        "persons": [
+          "Alexander@1Ti.1.20-2Ti=G0223J",
+          "Alexander@1Ti.1.20-2Ti=G0223J#split:alexander-coppersmith",
+          "Alexander@Act.19.33=G0223I",
+          "Alexander@Act.4.6=G0223H",
+          "Alexander@Mrk.15.21=G0223G"
+        ],
+        "token": "αλεξανδρος"
+      },
+      {
+        "passage": "ACT 19:33",
+        "persons": [
+          "Alexander@1Ti.1.20-2Ti=G0223J",
+          "Alexander@1Ti.1.20-2Ti=G0223J#split:alexander-coppersmith",
+          "Alexander@Act.19.33=G0223I",
+          "Alexander@Act.4.6=G0223H",
+          "Alexander@Mrk.15.21=G0223G"
+        ],
+        "token": "αλεξανδρος"
+      },
+      {
+        "passage": "ACT 4:6",
+        "persons": [
+          "Alexander@1Ti.1.20-2Ti=G0223J",
+          "Alexander@1Ti.1.20-2Ti=G0223J#split:alexander-coppersmith",
+          "Alexander@Act.19.33=G0223I",
+          "Alexander@Act.4.6=G0223H",
+          "Alexander@Mrk.15.21=G0223G"
+        ],
+        "token": "αλεξανδρος"
+      },
+      {
+        "passage": "MRK 15:21",
+        "persons": [
+          "Alexander@1Ti.1.20-2Ti=G0223J",
+          "Alexander@1Ti.1.20-2Ti=G0223J#split:alexander-coppersmith",
+          "Alexander@Act.19.33=G0223I",
+          "Alexander@Act.4.6=G0223H",
+          "Alexander@Mrk.15.21=G0223G"
+        ],
+        "token": "αλεξανδρος"
+      },
+      {
         "passage": "MAT 1:10",
         "persons": [
-          "Amon",
-          "Amos"
+          "Amon@2Ki.21.18-Mat=H0526H",
+          "Amos@Luk.3.25=G0301G"
         ],
         "token": "αμως"
       },
       {
         "passage": "MAT 1:10",
         "persons": [
-          "Amon",
-          "Amos"
+          "Amon@2Ki.21.18-Mat=H0526H",
+          "Amos@Luk.3.25=G0301G"
         ],
         "token": "αμως"
       },
       {
         "passage": "MAT 1:10",
         "persons": [
-          "Amon",
-          "Amos"
+          "Amon@2Ki.21.18-Mat=H0526H",
+          "Amos@Luk.3.25=G0301G"
         ],
         "token": "αμως"
       },
       {
         "passage": "MAT 1:10",
         "persons": [
-          "Amon",
-          "Amos"
+          "Amon@2Ki.21.18-Mat=H0526H",
+          "Amos@Luk.3.25=G0301G"
         ],
         "token": "αμως"
       },
       {
         "passage": "LUK 3:25",
         "persons": [
-          "Amon",
-          "Amos"
+          "Amon@2Ki.21.18-Mat=H0526H",
+          "Amos@Luk.3.25=G0301G"
         ],
         "token": "αμως"
       },
       {
+        "passage": "ACT 23:2",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 24:1",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 5:1",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 5:3",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 5:5",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 9:10",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 9:10",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 9:12",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 9:13",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 9:17",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
+        "passage": "ACT 22:12",
+        "persons": [
+          "Ananias@Act.23.2-=G0367I",
+          "Ananias@Act.5.1-=G0367G",
+          "Ananias@Act.9.10-=G0367H"
+        ],
+        "token": "ανανιας"
+      },
+      {
         "passage": "LUK 2:36",
         "persons": [
-          "Anna",
-          "Annas"
+          "Anna@Luk.2.36=G0451",
+          "Annas@Luk.3.2-Act=G0452"
         ],
         "token": "αννα"
       },
       {
         "passage": "LUK 3:2",
         "persons": [
-          "Anna",
-          "Annas"
+          "Anna@Luk.2.36=G0451",
+          "Annas@Luk.3.2-Act=G0452"
         ],
         "token": "αννας"
       },
       {
         "passage": "JHN 18:13",
         "persons": [
-          "Anna",
-          "Annas"
+          "Anna@Luk.2.36=G0451",
+          "Annas@Luk.3.2-Act=G0452"
         ],
         "token": "αννας"
       },
       {
         "passage": "JHN 18:24",
         "persons": [
-          "Anna",
-          "Annas"
+          "Anna@Luk.2.36=G0451",
+          "Annas@Luk.3.2-Act=G0452"
         ],
         "token": "αννας"
       },
       {
         "passage": "ACT 4:6",
         "persons": [
-          "Anna",
-          "Annas"
+          "Anna@Luk.2.36=G0451",
+          "Annas@Luk.3.2-Act=G0452"
         ],
         "token": "αννας"
-      },
-      {
-        "passage": "LUK 2:1",
-        "persons": [
-          "Augustus",
-          "Claudius",
-          "Tiberius"
-        ],
-        "token": "αυγουστος | καισαρ"
-      },
-      {
-        "passage": "ACT 25:21",
-        "persons": [
-          "Augustus",
-          "Claudius",
-          "Tiberius"
-        ],
-        "token": "σεβαστος | καισαρ"
-      },
-      {
-        "passage": "LUK 2:1",
-        "persons": [
-          "Augustus",
-          "Claudius",
-          "Tiberius"
-        ],
-        "token": "αυγουστος | καισαρ"
-      },
-      {
-        "passage": "LUK 3:1",
-        "persons": [
-          "Augustus",
-          "Claudius",
-          "Tiberius"
-        ],
-        "token": "καισαρ"
-      },
-      {
-        "passage": "ACT 4:36",
-        "persons": [
-          "Barnabas",
-          "Josech",
-          "Joseph",
-          "Joses"
-        ],
-        "token": "βαρναβας | ιωσηφ"
-      },
-      {
-        "passage": "ACT 4:36",
-        "persons": [
-          "Barnabas",
-          "Josech",
-          "Joseph",
-          "Joses"
-        ],
-        "token": "βαρναβας | ιωσηφ"
-      },
-      {
-        "passage": "ACT 4:36",
-        "persons": [
-          "Barnabas",
-          "Josech",
-          "Joseph",
-          "Joses"
-        ],
-        "token": "βαρναβας | ιωσηφ"
-      },
-      {
-        "passage": "HEB 11:4",
-        "persons": [
-          "Cain",
-          "Cainan",
-          "Kenan"
-        ],
-        "token": "καιν"
-      },
-      {
-        "passage": "1JN 3:12",
-        "persons": [
-          "Cain",
-          "Cainan",
-          "Kenan"
-        ],
-        "token": "καιν"
-      },
-      {
-        "passage": "JUD 1:11",
-        "persons": [
-          "Cain",
-          "Cainan",
-          "Kenan"
-        ],
-        "token": "καιν"
-      },
-      {
-        "passage": "LUK 3:36",
-        "persons": [
-          "Cain",
-          "Cainan",
-          "Kenan"
-        ],
-        "token": "καιναν | καιναμ"
-      },
-      {
-        "passage": "2TI 4:21",
-        "persons": [
-          "Claudia",
-          "Claudius",
-          "Lysias"
-        ],
-        "token": "κλαυδια"
-      },
-      {
-        "passage": "ACT 11:28",
-        "persons": [
-          "Claudia",
-          "Claudius",
-          "Lysias"
-        ],
-        "token": "κλαυδιος"
-      },
-      {
-        "passage": "ACT 18:2",
-        "persons": [
-          "Claudia",
-          "Claudius",
-          "Lysias"
-        ],
-        "token": "κλαυδιος"
-      },
-      {
-        "passage": "ACT 11:28",
-        "persons": [
-          "Claudia",
-          "Claudius",
-          "Lysias"
-        ],
-        "token": "κλαυδιος"
-      },
-      {
-        "passage": "ACT 17:7",
-        "persons": [
-          "Augustus",
-          "Claudius",
-          "Tiberius"
-        ],
-        "token": "καισαρ"
-      },
-      {
-        "passage": "ACT 25:8",
-        "persons": [
-          "Augustus",
-          "Claudius",
-          "Tiberius"
-        ],
-        "token": "καισαρ"
-      },
-      {
-        "passage": "ACT 25:10",
-        "persons": [
-          "Augustus",
-          "Claudius",
-          "Tiberius"
-        ],
-        "token": "καισαρ"
-      },
-      {
-        "passage": "ACT 25:11",
-        "persons": [
-          "Augustus",
-          "Claudius",
-          "Tiberius"
-        ],
-        "token": "καισαρ"
-      },
-      {
-        "passage": "ACT 25:12",
-        "persons": [
-          "Augustus",
-          "Claudius",
-          "Tiberius"
-        ],
-        "token": "καισαρ"
       }
     ],
-    "notes": "Conservative scan by normalized Greek token match in SBLGNT verse text. Not a full NER; ambiguity and missing-reference cases stay pending."
+    "notes": "Conservative, STEP-lexicon-assisted scan over the NT-scoped person records. This is not independent full NER; every record receives an explicit accepted or pending audit row.",
+    "review_rows": 28,
+    "review_method": "reviewer-a+reviewer-b pairwise consensus"
   },
   "sbl_person_scan": {
-    "method": "step_lexicon_sbl_token_scan",
-    "status": "implemented_limited",
-    "total_sbl_scan_persons": 278
+    "method": "independent_reviewer_merge_sbl_surface_match",
+    "status": "implemented_independent_review",
+    "total_audit_rows": 364,
+    "accepted_audit_rows": 364,
+    "pending_audit_rows": 0,
+    "excluded_audit_rows": 0,
+    "total_sbl_scan_persons": 364
   },
-  "onlyInStepCount": 26,
+  "onlyInStepCount": 0,
   "onlyInSblCount": 0,
-  "onlyInStep": [
-    "Achim",
-    "Asa",
-    "Boaz",
-    "Clement",
-    "Eliakim",
-    "Elisha",
-    "Elmadam",
-    "Hamor",
-    "Issachar",
-    "Jairus",
-    "Jared",
-    "Jezebel",
-    "Jonam",
-    "Jorim",
-    "Lois",
-    "Menna",
-    "Naphtali",
-    "Nathan",
-    "Nicanor",
-    "Obed",
-    "Philemon",
-    "Phlegon",
-    "Sapphira",
-    "Sergius_Paulus",
-    "Serug",
-    "Stachys"
-  ],
+  "onlyInStep": [],
   "onlyInSbl": []
 }

@@ -37,6 +37,10 @@ function reconciliationStatus() {
     const r = JSON.parse(fs.readFileSync(reconPath, 'utf8'));
     if (r?.sblNameExtraction?.status === 'not_implemented') return 'not_implemented';
     if (r?.sblNameExtraction?.status) return r.sblNameExtraction.status;
+    if (
+      r?.sbl_person_scan?.status === 'implemented_independent_review' &&
+      Number(r?.sbl_person_scan?.pending_audit_rows) === 0
+    ) return 'implemented_independent_review';
     if (r?.sbl_person_scan?.method === 'step_lexicon_sbl_token_scan') return 'implemented_limited';
     return 'unknown';
   } catch {
@@ -61,7 +65,9 @@ if (versionParts.length !== 3 || versionParts.some((part) => !Number.isInteger(p
 const people = readJsonl(path.join(DATA_DIR, 'people.jsonl')).map((line) => JSON.parse(line));
 const assertions = readJsonl(path.join(DATA_DIR, 'assertions.jsonl')).map((line) => JSON.parse(line));
 const { chinesePending, relationPending, relationRejected } = countPendingReview({ people, assertions });
-const publishedRelationships = assertions.filter((row) => row.status !== 'superseded').length;
+const publishedRelationships = assertions.filter(
+  (row) => row.status === 'active' && row.editorial_status !== 'pending'
+).length;
 const sblNameExtractionStatus = reconciliationStatus();
 
 const needsReview = (
