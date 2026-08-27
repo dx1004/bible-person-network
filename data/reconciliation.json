@@ -1,25 +1,25 @@
 {
-  "generatedAt": "2026-08-26T23:06:57.269Z",
-  "stepCount": 312,
-  "sblCount": 108,
+  "generatedAt": "2026-08-26T00:00:00Z",
+  "stepCount": 311,
+  "sblCount": 106,
   "sblNameExtraction": {
     "status": "implemented_limited",
     "note": "SBL 人名比较基于 STEP希腊词形与SBL经文位点的保守词形匹配，不是完整NER。",
-    "stepCount": 312,
-    "sblCount": 108
+    "stepCount": 311,
+    "sblCount": 106
   },
   "sblCoverage": {
     "sbl_book_count": 27,
-    "total_nt_refs_in_step": 2370,
-    "sbl_verified_refs": 1082,
-    "sbl_missing_refs": 1288
+    "total_nt_refs_in_step": 2366,
+    "sbl_verified_refs": 1080,
+    "sbl_missing_refs": 1286
   },
   "sbl_person_scan": {
     "method": "step_lexicon_sbl_token_scan",
     "status": "implemented_limited",
-    "total_sbl_scan_persons": 108
+    "total_sbl_scan_persons": 106
   },
-  "onlyInStepCount": 204,
+  "onlyInStepCount": 205,
   "onlyInSblCount": 0,
   "onlyInStep": [
     "Abiud",
@@ -172,6 +172,7 @@
     "Paul",
     "Persis",
     "Peter",
+    "Phanuel",
     "Philemon",
     "Philetus",
     "Philip",

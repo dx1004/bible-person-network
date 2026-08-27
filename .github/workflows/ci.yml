@@ -1,0 +1,39 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  data-and-web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            web/package-lock.json
+      - name: Install data dependencies
+        run: npm ci
+      - name: Install web dependencies
+        run: npm --prefix web ci
+      - name: Validate data and build the static site
+        run: npm run check
+      - name: Dependency audit
+        run: |
+          npm audit --audit-level=high
+          npm --prefix web audit --audit-level=high
+      - name: Upload static build
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-pages-dist
+          path: web/dist
+          if-no-files-found: error

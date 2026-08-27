@@ -20,8 +20,8 @@ for (let i = 0; i < argv.length; i += 1) {
 }
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const DEFAULT_STEP_DIR = '/private/tmp/ntpeople-stepdata';
-const DEFAULT_SBL_DIR = '/private/tmp/ntpeople-sblgnt';
+const DEFAULT_STEP_DIR = path.join(ROOT, '.sources', 'stepbible-data');
+const DEFAULT_SBL_DIR = path.join(ROOT, '.sources', 'sblgnt');
 const DEFAULT_OUT_DIR = path.join(ROOT, 'data');
 
 const SOURCE_ID_STEP = 'source:0002';
@@ -29,7 +29,12 @@ const SOURCE_ID_SBL = 'source:0001';
 const SOURCE_DIR = args['step-data-dir'] || args['step_data_dir'] || DEFAULT_STEP_DIR;
 const SBL_DIR = args['sblgnt-dir'] || args['sblgnt_dir'] || DEFAULT_SBL_DIR;
 const DATA_DIR = args['output-dir'] || args['output_dir'] || args.output || DEFAULT_OUT_DIR;
-const snapshot = args.snapshot || new Date().toISOString().slice(0, 10);
+const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'manifest.json'), 'utf8'));
+const manifestSnapshot = String(manifest.created_at || '').slice(0, 10);
+if (!/^\d{4}-\d{2}-\d{2}$/.test(manifestSnapshot)) {
+  throw new Error('data/manifest.json must provide a deterministic created_at date');
+}
+const snapshot = args.snapshot || manifestSnapshot;
 const includeNonNt = args['include-non-nt'] === 'true';
 const includeNonHuman = args['include-non-human'] === 'true';
 
@@ -455,9 +460,10 @@ function buildSblReferenceSet(sblDir) {
 }
 
 function buildSblLexiconScan(records, sbl) {
+  const buildTimestamp = snapshot.includes('T') ? snapshot : `${snapshot}T00:00:00Z`;
   const report = {
     method: SBL_GREEK_SCAN,
-    generatedAt: new Date().toISOString(),
+    generatedAt: buildTimestamp,
     total_records: records.length,
     checked_refs: 0,
     matched_refs: 0,
@@ -567,9 +573,12 @@ function parseStepPersons(filePath) {
   let mode = false;
   let current = null;
   const skipTopLevel = (raw, reason, type) => {
-    if (!raw) return;
+    if (!raw) {
+      current = null;
+      return;
+    }
     const unified = unifiedBaseName(raw);
-    people.push({
+    const skipped = {
       unifiedRaw: raw,
       unifiedName: unified || raw,
       unifiedKey: canonicalPersonLabel(unified || raw).toLowerCase(),
@@ -577,7 +586,9 @@ function parseStepPersons(filePath) {
       skip_reason: reason,
       subrecords: [],
       _skipForType: true
-    });
+    };
+    people.push(skipped);
+    current = skipped;
   };
 
   for (const line of lines) {
@@ -585,6 +596,7 @@ function parseStepPersons(filePath) {
     if (!l) continue;
     if (l.startsWith('$========== PERSON')) {
       mode = true;
+      current = null;
       continue;
     }
     if (!mode) continue;
@@ -668,7 +680,7 @@ function buildCorpus() {
   if (!stepPath) throw new Error(`Cannot find TIPNR file in ${SOURCE_DIR}`);
   const sbl = buildSblReferenceSet(SBL_DIR);
   const records = parseStepPersons(stepPath);
-  const sblLexiconScan = buildSblLexiconScan(records, sbl);
+  const sblLexiconScan = buildSblLexiconScan(records.filter((person) => !person._skipForType), sbl);
 
   const ledger = [];
   const people = [];
@@ -685,7 +697,8 @@ function buildCorpus() {
   let excludedNoNt = 0;
   let excludedNonHuman = 0;
   let excludedPlaceholder = 0;
-  const now = new Date().toISOString();
+  const buildTimestamp = snapshot.includes('T') ? snapshot : `${snapshot}T00:00:00Z`;
+  const now = buildTimestamp;
 
   const nameToId = new Map();
   const ntPeople = [];
@@ -823,7 +836,7 @@ function buildCorpus() {
       status: 'independent',
       identity_scope: 'default',
       rationale: 'Default conservative identity, no merges applied.',
-      editor_note: `Auto-import from ${stepPath}`,
+      editor_note: `Auto-import from ${SOURCE_ID_STEP} (${path.basename(stepPath)})`,
       created_at: now,
       updated_at: now
     });
@@ -932,9 +945,9 @@ function buildCorpus() {
   writeJson(path.join(DATA_DIR, 'stepbible.persons.json'), [...new Set(ntPeople.map((p) => p.unifiedName))]);
   writeJson(path.join(DATA_DIR, 'sblgnt.persons.json'), sblLexiconScan.sblPersons);
   writeJson(path.join(DATA_DIR, 'reconciliation.json'), {
-    generatedAt: new Date().toISOString(),
-    stepFile: stepPath,
-    source_dirs: { step: SOURCE_DIR, sblgnt: SBL_DIR },
+    generatedAt: now,
+    stepFile: `${SOURCE_ID_STEP}/${path.basename(stepPath)}`,
+    source_dirs: { step: SOURCE_ID_STEP, sblgnt: SOURCE_ID_SBL },
     sbl_verified_refs: [...new Set(mentions.filter((m) => m.status === 'accepted').map((m) => m.passage))],
     sbl_missing_refs: [...new Set(mentions.filter((m) => m.status === 'pending').map((m) => m.passage))],
     sbl_greek_verification: sblLexiconScan.report,
@@ -954,7 +967,10 @@ function buildCorpus() {
     checksum: crypto.createHash('sha256').update(`${people.length}-${names.length}-${mentions.length}-${assertions.length}`).digest('hex')
   });
   const outManifest = {
-    sourceFiles: { step: stepPath, sblgnt: SBL_DIR },
+    sourceFiles: {
+      step: `${SOURCE_ID_STEP}/${path.basename(stepPath)}`,
+      sblgnt: SOURCE_ID_SBL
+    },
     snapshot,
     total_person_records_seen: records.length,
     excluded_non_human_or_non_person: excludedNonHuman,
@@ -965,7 +981,7 @@ function buildCorpus() {
     mention_count: mentions.length,
     assertion_count: assertions.length,
     ledger_count: ledger.length,
-    generatedAt: new Date().toISOString()
+    generatedAt: now
   };
   writeJson(path.join(DATA_DIR, 'ingest-report.json'), outManifest);
 

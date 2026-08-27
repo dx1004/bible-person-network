@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const RUN_FILE = path.join(ROOT, 'exports', 'run.json');
 const DATA_DIR = path.join(ROOT, 'data');
+const MANIFEST_FILE = path.join(DATA_DIR, 'manifest.json');
 
 function readJsonl(filePath, skipEmpty = false) {
   if (!fs.existsSync(filePath)) return [];
@@ -46,6 +47,15 @@ if (!fs.existsSync(RUN_FILE)) {
   process.exit(0);
 }
 const run = JSON.parse(fs.readFileSync(RUN_FILE, 'utf8'));
+const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf8'));
+const datasetTimestamp = manifest.created_at;
+if (!datasetTimestamp || Number.isNaN(Date.parse(datasetTimestamp))) {
+  throw new Error('data/manifest.json must provide a valid created_at timestamp');
+}
+const versionParts = String(manifest.version || '').split('.').map(Number);
+if (versionParts.length !== 3 || versionParts.some((part) => !Number.isInteger(part) || part < 0)) {
+  throw new Error('data/manifest.json must provide a semantic version');
+}
 const people = readJsonl(path.join(DATA_DIR, 'people.jsonl')).map((line) => JSON.parse(line));
 const assertions = readJsonl(path.join(DATA_DIR, 'assertions.jsonl')).map((line) => JSON.parse(line));
 const { chinesePending, relationPending } = countPendingReview({ people, assertions });
@@ -61,6 +71,12 @@ const needsReview = (
 
 const report = {
   ...run,
+  generatedAt: new Date(datasetTimestamp).toISOString(),
+  version: {
+    major: versionParts[0],
+    minor: versionParts[1],
+    patch: versionParts[2]
+  },
   status: needsReview ? 'editorial_review_required' : 'ready',
   summary: [
     `People: ${run.counts.people}`,

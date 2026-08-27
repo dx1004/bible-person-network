@@ -10,6 +10,12 @@ const STEP_FILE = path.join(DATA_DIR, 'stepbible.persons.json');
 const SBL_FILE = path.join(DATA_DIR, 'sblgnt.persons.json');
 const OUT_FILE = path.join(RECON_DIR, 'step_sbl_diff.json');
 const RECON_REPORT_FILE = path.join(DATA_DIR, 'reconciliation.json');
+const MANIFEST_FILE = path.join(DATA_DIR, 'manifest.json');
+
+const DATASET_TIMESTAMP = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf8')).created_at;
+if (!DATASET_TIMESTAMP || Number.isNaN(Date.parse(DATASET_TIMESTAMP))) {
+  throw new Error('data/manifest.json must provide a valid created_at timestamp');
+}
 
 function readList(file) {
   if (!fs.existsSync(file)) return [];
@@ -108,7 +114,7 @@ function main() {
       };
 
   const out = {
-    generatedAt: new Date().toISOString(),
+    generatedAt: DATASET_TIMESTAMP,
     stepCount: stepNames.length,
     sblCount: sblNames.length,
     sblNameExtraction: stepVsSbl,

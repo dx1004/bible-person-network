@@ -18,6 +18,7 @@ npm run check
 ```bash
 npm run fetch:sources
 npm run ingest:locked
+npm run generate:chinese-name-candidates
 npm run check
 ```
 
@@ -33,6 +34,20 @@ npm run check
 - `neo4j/import/`：导入文件与 cypher
 - `exports/`：构建产物（由 `validate:data` 生成）
 - `docs/`：数据说明与来源说明
+- `editorial/`：中文名候选（`chinese-name-candidates.jsonl`）及审校报告
+- `editorial/chinese-name-review.jsonl`：中文名二轮人工审核清单（默认 `pending`）
+
+常用命令：
+
+- `npm run generate:chinese-name-candidates -- --cuv-usfm-dir <path>`：显式重生成中文名候选
+- `npm run init:chinese-name-review`：生成中文名二轮审核清单（会失败并提示除非加 `--force`）
+- `npm run validate:chinese-name-review`：只校验审核清单
+- `chinese-name-review.jsonl` 记录每人前 3 个 `candidate_rank` 分组的候选，并带 round1/round2/final 的候选引用字段。
+
+中文名候选默认不自动写入 `people.jsonl`。审校采用两轮机制：
+
+1. 首轮只做提取与歧义标注：候选均保留 `status: pending`，不改 `canonical_chinese`。
+2. 二轮人工确认后，将通过审校的候选写入 `people.jsonl` 并更新 `review_status`。
 
 ## Neo4j
 

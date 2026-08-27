@@ -11,6 +11,12 @@ const DATA_DIR = path.join(ROOT, 'data');
 const SCHEMA_DIR = path.join(ROOT, 'schemas');
 const OUT_DIR = path.join(ROOT, 'exports');
 const NEO4J_DIR = path.join(ROOT, 'neo4j', 'import');
+const MANIFEST_PATH = path.join(DATA_DIR, 'manifest.json');
+
+const DATASET_TIMESTAMP = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8')).created_at;
+if (!DATASET_TIMESTAMP || Number.isNaN(Date.parse(DATASET_TIMESTAMP))) {
+  throw new Error('data/manifest.json must provide a valid created_at timestamp');
+}
 
 const collections = [
   { name: 'people', idKey: 'person_id', requiredInRelations: ['person_id', 'subject_person_id', 'object_person_id'] },
@@ -274,7 +280,7 @@ function main() {
   fs.writeFileSync(path.join(NEO4J_DIR, 'import.cypher'), cypher + '\n');
 
   const payload = {
-    generatedAt: formatDate(new Date()),
+    generatedAt: formatDate(DATASET_TIMESTAMP),
     version: {
       major: 0,
       minor: 1,

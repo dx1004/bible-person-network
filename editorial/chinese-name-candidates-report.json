@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-08-26T00:00:00Z",
+  "source_id": "source:0003",
+  "source_locator": "source:0003",
+  "input_reference": {
+    "source": "source:0003",
+    "input_locator": "CUV_USFM_DIR",
+    "input_checksum": "e63a9cb94ae209bb7d16f93599b582b16002380cfcc9451997849a4df5366481"
+  },
+  "candidate_count": 2538,
+  "ambiguity_stats": {
+    "shared_token": 1872,
+    "none": 135,
+    "shared_token_and_multi": 525,
+    "multi_token": 6
+  },
+  "coverage": {
+    "min": 0.0009,
+    "max": 1,
+    "avg": 0.5216
+  },
+  "precision": {
+    "min": 0.0043,
+    "max": 1,
+    "avg": 0.4546
+  },
+  "notes": [
+    {
+      "kind": "summary",
+      "total_people_with_mentions": 370,
+      "total_people_with_candidates": 369,
+      "candidate_count": 2538,
+      "high_confidence_count": 69,
+      "people_with_high_confidence_count": 69
+    }
+  ],
+  "checksum": "7e4dcd349a2bd5af214d754c97e83f68a79b9ed4964e6307180a5f96b8fb238c"
+}

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Chinese name review rows",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_id",
+    "person_id",
+    "latinized",
+    "top_candidate_refs",
+    "round1",
+    "round2",
+    "final_decision",
+    "source_id",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^cnr-\\d{4}$" },
+    "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "latinized": { "type": "string", "minLength": 1 },
+    "top_candidate_refs": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "candidate_chinese",
+          "candidate_rank",
+          "score",
+          "supporting_passages",
+          "support_count",
+          "mention_count",
+          "coverage",
+          "precision",
+          "score_margin_to_next"
+        ],
+        "properties": {
+          "candidate_id": { "type": "string", "pattern": "^cnc-\\d{4}$" },
+          "candidate_chinese": { "type": "string", "minLength": 1 },
+          "candidate_rank": { "type": "integer", "minimum": 1 },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "supporting_passages": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "support_count": { "type": "number", "minimum": 0 },
+          "mention_count": { "type": "number", "minimum": 0 },
+          "coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+          "precision": { "type": "number", "minimum": 0, "maximum": 1 },
+          "score_margin_to_next": { "type": "number", "minimum": -1, "maximum": 1 }
+        }
+      }
+    },
+    "round1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "selected_candidate_id", "proposed_chinese", "reviewer", "decision_note", "reviewed_at"],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "selected_candidate_id": { "type": ["string", "null"], "pattern": "^cnc-\\d{4}$" },
+        "proposed_chinese": { "type": ["string", "null"] },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "round2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "selected_candidate_id", "proposed_chinese", "reviewer", "decision_note", "reviewed_at"],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "selected_candidate_id": { "type": ["string", "null"], "pattern": "^cnc-\\d{4}$" },
+        "proposed_chinese": { "type": ["string", "null"] },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "final_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "selected_candidate_id", "final_chinese", "reviewer", "decision_note", "reviewed_at"],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "selected_candidate_id": { "type": ["string", "null"], "pattern": "^cnc-\\d{4}$" },
+        "final_chinese": { "type": ["string", "null"] },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "source_id": { "type": "string", "enum": ["source:0003"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "notes": { "type": "string" }
+  }
+}
