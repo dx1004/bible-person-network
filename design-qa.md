@@ -52,3 +52,49 @@ The selected option supplied the information architecture: searchable people ind
 ## Final result
 
 **passed**
+
+---
+
+# Design QA — Luminous Pilgrimage Redesign (Option 2)
+
+## QA target
+
+- User-selected reference: `/Users/dx/.codex/generated_images/01a03fe2-e5be-7482-a61f-1b2d679c532d/exec-d23edffb-818b-498d-a00e-91d17ce865c1.png` (1487 × 1058).
+- Desktop capture: `/tmp/nt-people-redesign-qa/desktop-reviewed.png` (1440 × 1024).
+- Corrected desktop capture: `/tmp/nt-people-redesign-qa/desktop-clean.png` (1440 × 1024).
+- Same-viewport comparison: `/tmp/nt-people-redesign-qa/reference-vs-build.png` (2880 × 1024).
+- Mobile breakpoint tested at 390 × 844.
+- Tested state: conservative identity preset, all evidence layers enabled, Paul selected, one-degree network view.
+
+## Readability changes
+
+- Replaced the three persistent columns with a full-screen relationship world, a slim command rail, and two optional high-contrast reading drawers.
+- Kept names, relationship types, review warnings, filters, and passage evidence on dark stable surfaces instead of placing body text directly over the illustrated background.
+- Limited desktop graph density to 22 displayed relationships and mobile density to 6; the complete relationship set remains available in the accessible detail list.
+- Hid edge labels on compact mobile screens and preserved exact relationship text in the evidence ribbon and detail panel.
+- Increased the selected-person hierarchy with a larger original crystal asset, a stable focus heading, and a fixed evidence ribbon.
+- Removed the dark square artifacts around crystal assets by using a transparent image layer without node underlays.
+
+## Visual comparison result
+
+- The build matches the selected direction's indigo pilgrimage world, diagonal light path, large foreground focus crystal, sparse command rail, top search, and bottom evidence band.
+- The build intentionally uses fewer visible nodes than the concept image so Chinese names and relation labels remain readable.
+- All visible crystals and the world background are original generated assets; no Final Fantasy artwork or brand asset is copied.
+- Typography, spacing, borders, drawer surfaces, evidence colors, and selected states are consistent across the desktop and mobile layouts.
+
+## Interaction and accessibility evidence
+
+- Desktop command-rail controls open and close the People and Details drawers.
+- Search, person selection, identity presets, topic presets, evidence toggles, relationship selection, zoom, fit, and focus controls retain their existing data behavior.
+- Selecting a relationship updates the fixed evidence ribbon with people, relationship type, evidence level, certainty, and passage locations.
+- At 390 × 844, People / Graph / Details remain separate readable views with no horizontal page overflow (`scrollWidth = 390`).
+- Native controls, accessible labels, keyboard focus styles, graph text alternatives, and reduced-motion handling remain present.
+- TypeScript, production build, identity-state checks, and full project validation pass after the redesign.
+
+## Remaining note
+
+- `DESIGN.md` still documents the prior canonical layout. Updating that canonical design record requires a separate explicit approval under the repository design-governance rule; the runtime redesign and this superseding QA record are complete.
+
+## Final result
+
+**passed**

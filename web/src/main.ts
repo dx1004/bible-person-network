@@ -94,7 +94,7 @@ type VisibleModel = {
   mergedTo: Map<string, string>;
 };
 
-const GRAPH_EDGE_LIMIT = 48;
+const GRAPH_EDGE_LIMIT = 22;
 const SEARCH_RESULT_LIMIT = 80;
 const ALL_EVIDENCE: EvidenceLevel[] = ['nt_text', 'ancient', 'modern'];
 const evidenceLabel: Record<EvidenceLevel, string> = {
@@ -109,11 +109,12 @@ const appRoot = document.getElementById('app');
 if (!appRoot) throw new Error('app container is missing');
 
 appRoot.innerHTML = `
-  <div class="app-shell" data-mobile-panel="graph" aria-busy="true">
-    <header class="topbar glass-panel">
+  <div class="app-shell" data-mobile-panel="graph" data-drawer="none" aria-busy="true">
+    <div class="world-backdrop" aria-hidden="true"></div>
+    <header class="topbar">
       <div class="brand-block">
-        <div class="brand-mark" aria-hidden="true"><i class="ph ph-git-branch"></i></div>
-        <div><h1>新约人物关系网</h1><p>人物、关系与出处的静态研究图谱</p></div>
+        <div class="brand-mark" aria-hidden="true"><i class="ph ph-sparkle"></i></div>
+        <div><h1>新约人物关系网</h1><p>沿着经文的光路，看见人物之间的联系</p></div>
       </div>
       <div class="global-search">
         <label class="sr-only" for="search">搜索人物中文名、别名、希腊文或拉丁转写</label>
@@ -121,9 +122,9 @@ appRoot.innerHTML = `
         <input id="search" type="search" autocomplete="off" placeholder="搜索中文名、别名、希腊文或拉丁名" />
         <button id="clear-search" class="icon-button search-clear" type="button" data-onclick="direct" aria-label="清空搜索" hidden><i class="ph ph-x" aria-hidden="true"></i></button>
       </div>
-      <div class="top-controls">
-        <label class="compact-field" for="topic-select"><span>专题</span><select id="topic-select"></select></label>
-        <label class="compact-field" for="identity-preset"><span>身份</span><select id="identity-preset">
+      <div class="top-controls reading-surface">
+        <label class="compact-field" for="topic-select"><span>当前专题</span><select id="topic-select"></select></label>
+        <label class="compact-field" for="identity-preset"><span>身份方案</span><select id="identity-preset">
           <option value="conservative">全部保守</option><option value="traditional">常见传统</option><option value="custom" disabled>逐项自定义</option>
         </select></label>
         <div class="dataset-counts" aria-label="数据集计数">
@@ -131,17 +132,22 @@ appRoot.innerHTML = `
         </div>
       </div>
     </header>
-    <div id="review-warning" class="review-warning" role="status" hidden>
+    <div id="review-warning" class="review-warning reading-surface" role="status" hidden>
       <i class="ph ph-warning-circle" aria-hidden="true"></i><span>当前数据仍需要编辑审校，请勿把待审内容视为定稿。</span>
     </div>
-    <nav class="mobile-tabs glass-panel" aria-label="移动端视图">
+    <nav class="command-rail reading-surface" aria-label="关系网工具">
+      <button type="button" data-drawer-target="people" aria-label="查找人物" aria-pressed="false"><i class="ph ph-users" aria-hidden="true"></i><span>人物</span></button>
+      <button type="button" data-drawer-target="filters" aria-label="专题与筛选" aria-pressed="false"><i class="ph ph-sliders-horizontal" aria-hidden="true"></i><span>筛选</span></button>
+      <button type="button" data-drawer-target="details" aria-label="人物与出处" aria-pressed="false"><i class="ph ph-book-open-text" aria-hidden="true"></i><span>出处</span></button>
+    </nav>
+    <nav class="mobile-tabs reading-surface" aria-label="移动端视图">
       <button type="button" data-onclick="direct" data-mobile-target="people"><i class="ph ph-users" aria-hidden="true"></i>人物</button>
       <button type="button" data-onclick="direct" data-mobile-target="graph" aria-pressed="true"><i class="ph ph-git-branch" aria-hidden="true"></i>图谱</button>
       <button type="button" data-onclick="direct" data-mobile-target="details"><i class="ph ph-book-open-text" aria-hidden="true"></i>详情</button>
     </nav>
     <main class="workspace">
-      <aside class="people-pane glass-panel" aria-labelledby="people-heading">
-        <div class="pane-heading"><div><p class="eyebrow">人物索引</p><h2 id="people-heading">查找人物</h2></div><span id="people-result-count" class="count-badge">—</span></div>
+      <aside class="people-pane reading-surface" aria-labelledby="people-heading">
+        <div class="pane-heading"><div><p class="eyebrow">人物索引</p><h2 id="people-heading" tabindex="-1">查找人物</h2></div><div class="pane-actions"><span id="people-result-count" class="count-badge">—</span><button class="icon-button drawer-close" type="button" data-drawer-close aria-label="关闭人物索引"><i class="ph ph-x" aria-hidden="true"></i></button></div></div>
         <div id="topic-shortcuts" class="topic-shortcuts" aria-label="专题快捷选择"></div>
         <details class="advanced-filters">
           <summary><i class="ph ph-sliders-horizontal" aria-hidden="true"></i>精细筛选</summary>
@@ -153,15 +159,15 @@ appRoot.innerHTML = `
         <div id="people-list" class="people-list" aria-label="人物搜索结果"></div>
         <div id="people-empty" class="empty-state compact" hidden><i class="ph ph-magnifying-glass" aria-hidden="true"></i><strong>没有匹配人物</strong><p>可清空搜索或重置专题与筛选。</p></div>
       </aside>
-      <section class="graph-pane glass-panel" aria-labelledby="graph-heading">
+      <section class="graph-pane" aria-labelledby="graph-heading">
         <div class="graph-toolbar">
-          <div><p class="eyebrow">焦点关系图</p><h2 id="graph-heading" tabindex="-1">选择人物查看一度关系</h2></div>
+          <div class="focus-heading reading-surface"><p class="eyebrow">当前焦点 · 一度关系</p><h2 id="graph-heading" tabindex="-1">选择人物查看一度关系</h2><p id="focus-subtitle">点击晶体人物，沿光路查看联系</p></div>
           <div class="graph-toolbar-actions">
             <button id="fit-graph" class="icon-button" type="button" data-onclick="direct" aria-label="适应画布"><i class="ph ph-arrows-out" aria-hidden="true"></i></button>
             <button id="center-focus" class="icon-button" type="button" data-onclick="direct" aria-label="回到焦点人物"><i class="ph ph-crosshair" aria-hidden="true"></i></button>
           </div>
         </div>
-        <div class="evidence-controls" role="group" aria-label="证据层筛选">
+        <div class="evidence-controls reading-surface" role="group" aria-label="证据层筛选">
           <span>证据层</span>
           ${ALL_EVIDENCE.map((level) => `<label class="evidence-toggle evidence-${level}"><input type="checkbox" value="${level}" checked><i class="ph ph-circle evidence-dot" aria-hidden="true"></i>${evidenceLabel[level]}</label>`).join('')}
         </div>
@@ -173,13 +179,15 @@ appRoot.innerHTML = `
             <button id="zoom-out" class="icon-button" type="button" data-onclick="direct" aria-label="缩小"><i class="ph ph-minus" aria-hidden="true"></i></button>
           </div>
         </div>
-        <div class="graph-footer">
-          <p id="graph-status" aria-live="polite">正在载入关系图…</p>
-          <div class="graph-legends"><div class="era-legend" aria-label="人物时代图例"><span><i class="era-swatch era-old" aria-hidden="true"></i>旧约背景</span><span><i class="era-swatch era-jesus" aria-hidden="true"></i>耶稣时期</span><span><i class="era-swatch era-apostolic" aria-hidden="true"></i>使徒时期</span></div><div class="line-legend" aria-label="关系图例"><span><i class="ph ph-minus" aria-hidden="true"></i>高／中确定度</span><span><i class="ph ph-dots-three" aria-hidden="true"></i>低确定度</span><span><i class="ph ph-arrow-right" aria-hidden="true"></i>有方向关系</span></div></div>
+        <div class="graph-footer reading-surface" aria-live="polite">
+          <div class="ribbon-heading"><span>证据带</span><strong id="evidence-ribbon-title">选择一条光路查看关系</strong></div>
+          <p id="evidence-ribbon-meta">人物关系及出处会显示在这里。</p>
+          <p id="graph-status">正在载入关系图…</p>
+          <button type="button" class="ribbon-action" data-drawer-target="details">查看完整出处 <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
         </div>
       </section>
-      <aside class="inspector-pane glass-panel" aria-labelledby="inspector-heading">
-        <div class="pane-heading inspector-heading"><div><p class="eyebrow">研究详情</p><h2 id="inspector-heading" tabindex="-1">人物与出处</h2></div><button class="icon-button mobile-close" type="button" data-onclick="direct" data-mobile-target="graph" aria-label="关闭详情"><i class="ph ph-x" aria-hidden="true"></i></button></div>
+      <aside class="inspector-pane reading-surface" aria-labelledby="inspector-heading">
+        <div class="pane-heading inspector-heading"><div><p class="eyebrow">研究详情</p><h2 id="inspector-heading" tabindex="-1">人物与出处</h2></div><button class="icon-button drawer-close mobile-close" type="button" data-onclick="direct" data-mobile-target="graph" data-drawer-close aria-label="关闭详情"><i class="ph ph-x" aria-hidden="true"></i></button></div>
         <div id="inspector-content" class="inspector-content"><div class="loading-state" role="status"><i class="ph ph-spinner-gap loader" aria-hidden="true"></i>正在载入资料…</div></div>
       </aside>
     </main>
@@ -202,6 +210,9 @@ const graphContainer = document.getElementById('graph')!;
 const graphEmpty = document.getElementById('graph-empty') as HTMLDivElement;
 const graphHeading = document.getElementById('graph-heading')!;
 const graphStatus = document.getElementById('graph-status')!;
+const focusSubtitle = document.getElementById('focus-subtitle')!;
+const evidenceRibbonTitle = document.getElementById('evidence-ribbon-title')!;
+const evidenceRibbonMeta = document.getElementById('evidence-ribbon-meta')!;
 const inspectorContent = document.getElementById('inspector-content')!;
 const reviewWarning = document.getElementById('review-warning') as HTMLDivElement;
 
@@ -385,31 +396,48 @@ function focusRelationships(model: VisibleModel) { return model.relationships.fi
 
 function renderGraph() {
   if (!currentModel) return; const selected = currentModel.personMap.get(selectedPersonId) || originalPersonById.get(selectedPersonId); if (!selected) return;
-  graphHeading.textContent = `${selected.nameZh}的一度关系`; const relationships = focusRelationships(currentModel); const displayedRelationships = relationships.slice(0, GRAPH_EDGE_LIMIT); const nodeIds = new Set<string>([selectedPersonId]);
+  graphHeading.textContent = `${selected.nameZh}的一度关系`; const relationships = focusRelationships(currentModel); const isCompactGraph = window.innerWidth <= 620; const edgeLimit = isCompactGraph ? 6 : GRAPH_EDGE_LIMIT; const displayedRelationships = relationships.slice(0, edgeLimit); const nodeIds = new Set<string>([selectedPersonId]);
   displayedRelationships.forEach((relationship) => { nodeIds.add(relationship.fromPerson); nodeIds.add(relationship.toPerson); });
   const nodes = [...nodeIds].map((personId) => currentModel?.personMap.get(personId) || originalPersonById.get(personId)).filter((person): person is Person => Boolean(person));
   graphEmpty.hidden = relationships.length > 0; const capped = relationships.length > displayedRelationships.length;
+  focusSubtitle.textContent = `${selected.era} · ${relationships.length} 条当前关系 · 点击人物切换焦点`;
+  evidenceRibbonTitle.textContent = `${selected.nameZh} · ${relationships.length} 条一度关系`;
+  evidenceRibbonMeta.textContent = '点击一条发光路径，查看关系类型、经文位置和资料来源。';
   graphStatus.textContent = capped ? `画布显示 ${displayedRelationships.length}/${relationships.length} 条一度关系；右侧列表保留全部 ${relationships.length} 条。` : `当前显示 ${nodes.length} 人 · ${relationships.length} 条一度关系。`;
+  const width = Math.max(graphContainer.clientWidth, 320); const height = Math.max(graphContainer.clientHeight, 520);
+  const neighborIds = nodes.filter((person) => person.id !== selectedPersonId).map((person) => person.id);
+  const laneOffsets = [0, -0.11, 0.12, -0.18, 0.2];
+  const positions = new Map<string, { x: number; y: number }>();
+  positions.set(selectedPersonId, { x: width * 0.37, y: height * 0.69 });
+  neighborIds.forEach((personId, index) => {
+    const progress = (index + 1) / (neighborIds.length + 1);
+    const lane = laneOffsets[index % laneOffsets.length];
+    const step = Math.floor(index / laneOffsets.length);
+    positions.set(personId, {
+      x: width * (0.45 + progress * 0.43) + (step % 2 ? -18 : 18),
+      y: height * (0.72 - progress * 0.49 + lane)
+    });
+  });
   cy?.destroy();
   cy = cytoscape({
     container: graphContainer,
     elements: [
-      ...nodes.map((person) => ({ group: 'nodes' as const, data: { id: person.id, label: person.nameZh, era: person.era, isFocus: person.id === selectedPersonId ? 1 : 0 } })),
+      ...nodes.map((person) => ({ group: 'nodes' as const, data: { id: person.id, label: person.nameZh, era: person.era, isFocus: person.id === selectedPersonId ? 1 : 0 }, position: positions.get(person.id) })),
       ...displayedRelationships.map((relationship) => ({ group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel] } }))
     ],
     style: [
-      { selector: 'node', style: { label: 'data(label)', color: '#f4fbff', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 13, 'font-weight': 600, 'text-valign': 'bottom', 'text-margin-y': 10, 'text-wrap': 'wrap', 'text-max-width': '110px', 'text-outline-color': '#071625', 'text-outline-width': 3, 'background-color': '#69e6ff', 'background-opacity': 0.16, 'border-color': '#69e6ff', 'border-width': 2, width: 44, height: 44, 'underlay-color': '#69e6ff', 'underlay-opacity': 0.12, 'underlay-padding': 8 } },
-      { selector: 'node[era = "旧约背景"]', style: { 'background-color': '#c5a7ff', 'border-color': '#c5a7ff', 'underlay-color': '#c5a7ff' } },
-      { selector: 'node[era = "耶稣时期"]', style: { 'background-color': '#ffe89a', 'border-color': '#ffe89a', 'underlay-color': '#ffe89a' } },
-      { selector: 'node[era = "时代待审"]', style: { 'background-color': '#9aabba', 'border-color': '#9aabba', 'underlay-color': '#9aabba' } },
-      { selector: 'node[isFocus = 1]', style: { 'background-color': '#f4fbff', 'background-opacity': 0.32, 'border-color': '#ffe89a', 'border-width': 3, width: 68, height: 68, 'font-size': 16, 'underlay-color': '#69e6ff', 'underlay-opacity': 0.32, 'underlay-padding': 18 } },
-      { selector: 'node:selected', style: { 'border-color': '#ffe89a', 'border-width': 4, 'underlay-opacity': 0.42, 'underlay-padding': 16 } },
-      { selector: 'edge', style: { width: 2.2, 'curve-style': 'bezier', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.78, 'target-arrow-color': 'data(evidenceColor)', 'target-arrow-shape': 'none', label: 'data(label)', color: '#dff7ff', 'font-family': 'Inter, PingFang SC, sans-serif', 'font-size': 10, 'text-outline-color': '#071625', 'text-outline-width': 3, 'text-rotation': 'autorotate' } },
+      { selector: 'node', style: { label: 'data(label)', color: '#ffffff', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 14, 'font-weight': 700, 'text-valign': 'bottom', 'text-margin-y': 11, 'text-wrap': 'wrap', 'text-max-width': '118px', 'text-outline-color': '#081127', 'text-outline-width': 4, 'background-color': '#000000', 'background-opacity': 0, 'background-image': '/assets/crystal-node.png', 'background-image-opacity': 1, 'background-fit': 'cover', 'background-clip': 'node', 'border-width': 0, width: 54, height: 54, 'underlay-opacity': 0 } },
+      { selector: 'node[era = "旧约背景"]', style: { 'underlay-color': '#c5a7ff' } },
+      { selector: 'node[era = "耶稣时期"]', style: { 'underlay-color': '#ffe89a' } },
+      { selector: 'node[era = "时代待审"]', style: { opacity: 0.72 } },
+      { selector: 'node[isFocus = 1]', style: { 'background-image': '/assets/crystal-focus.png', width: 108, height: 108, 'font-size': 19, 'text-margin-y': 13 } },
+      { selector: 'node:selected', style: { 'border-color': '#fff0bd', 'border-width': 2 } },
+      { selector: 'edge', style: { width: 2.4, 'curve-style': 'unbundled-bezier', 'control-point-distances': '24', 'control-point-weights': '0.5', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.8, 'target-arrow-color': 'data(evidenceColor)', 'target-arrow-shape': 'none', label: isCompactGraph ? '' : 'data(label)', color: '#ffffff', 'font-family': 'Inter, PingFang SC, sans-serif', 'font-size': 11, 'font-weight': 600, 'text-background-color': '#0a1530', 'text-background-opacity': 0.84, 'text-background-padding': '4', 'text-rotation': 'none' } },
       { selector: 'edge[direction = "outgoing"], edge[direction = "incoming"]', style: { 'target-arrow-shape': 'triangle', 'arrow-scale': 0.8 } },
       { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.58 } },
       { selector: 'edge:selected', style: { width: 5, 'line-opacity': 1, 'z-index': 20 } }
     ],
-    layout: { name: 'concentric', concentric: (node) => Number(node.data('isFocus')) ? 10 : 1, levelWidth: () => 1, minNodeSpacing: 42, spacingFactor: 1.35, avoidOverlap: true, animate: false, fit: true, padding: 64 },
+    layout: { name: 'preset', fit: false, animate: false },
     minZoom: 0.25, maxZoom: 2.5, selectionType: 'single'
   });
   cy.on('tap', 'node', (event) => selectPerson(String(event.target.id()), true)); cy.on('tap', 'edge', (event) => selectRelationship(String(event.target.id()), true)); if (selectedRelationId) cy.$id(selectedRelationId).select();
@@ -433,6 +461,12 @@ function renderInspector() {
       : `${from?.nameZh || selectedRelationship.fromPerson} → ${to?.nameZh || selectedRelationship.toPerson}`;
     return `<section class="selected-relation" aria-label="选中关系"><div class="section-kicker"><i class="ph ph-circle evidence-dot evidence-${selectedRelationship.evidenceLevel}" aria-hidden="true"></i>${escapeHtml(evidenceLabel[selectedRelationship.evidenceLevel])}</div><h3>${escapeHtml(headline)}</h3><p>${escapeHtml(selectedRelationship.type)} · ${escapeHtml(relationshipDirection(selectedRelationship, person.id))} · ${certaintyLabel[selectedRelationship.certainty]}确定度</p><div class="passage-list">${selectedRelationship.passages.map((passage) => `<code>${escapeHtml(passage)}</code>`).join('')}</div><div class="source-links">${selectedRelationship.sources.map(sourceLink).join('')}</div>${other ? `<button type="button" data-onclick="delegated" class="secondary-button" data-go-person="${escapeHtml(other.id)}">转到${escapeHtml(other.nameZh)}</button>` : ''}</section>`;
   })() : '';
+  if (selectedRelationship) {
+    const from = currentModel.personMap.get(selectedRelationship.fromPerson) || originalPersonById.get(selectedRelationship.fromPerson);
+    const to = currentModel.personMap.get(selectedRelationship.toPerson) || originalPersonById.get(selectedRelationship.toPerson);
+    evidenceRibbonTitle.textContent = `${from?.nameZh || selectedRelationship.fromPerson} · ${selectedRelationship.type} · ${to?.nameZh || selectedRelationship.toPerson}`;
+    evidenceRibbonMeta.textContent = `${evidenceLabel[selectedRelationship.evidenceLevel]} · ${certaintyLabel[selectedRelationship.certainty]}确定度 · ${selectedRelationship.passages.join('、') || '出处待补'}`;
+  }
   const relationRows = relationships.map((relationship) => {
     const otherId = relationship.fromPerson === person.id ? relationship.toPerson : relationship.fromPerson; const other = currentModel?.personMap.get(otherId) || originalPersonById.get(otherId);
     return `<button type="button" data-onclick="delegated" class="relation-row evidence-border-${relationship.evidenceLevel}" data-relation-id="${escapeHtml(relationship.id)}" aria-pressed="${relationship.id === selectedRelationId}"><span class="relation-row-main"><strong>${escapeHtml(other?.nameZh || otherId)}</strong><small>${escapeHtml(relationship.type)} · ${escapeHtml(relationshipDirection(relationship, person.id))}</small></span><span class="relation-row-meta"><span>${escapeHtml(evidenceLabel[relationship.evidenceLevel])}</span><span>${relationship.passages.length} 处</span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`;
@@ -456,7 +490,7 @@ function renderDataViews() {
 }
 function selectPerson(personId: string, switchPanel = false) {
   if (!currentModel) return; const mapped = currentModel.mergedTo.get(personId) || personId; if (!currentModel.personMap.has(mapped) && !originalPersonById.has(mapped)) return;
-  selectedPersonId = mapped; selectedRelationId = ''; renderPeopleList(); renderGraph(); renderInspector(); syncUrlState(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('graph', true);
+  selectedPersonId = mapped; selectedRelationId = ''; renderPeopleList(); renderGraph(); renderInspector(); syncUrlState(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('graph', true); else if (switchPanel) setDrawer('none');
 }
 function selectRelationship(relationshipId: string, switchPanel = false) { selectedRelationId = relationshipId; cy?.elements().unselect(); cy?.$id(relationshipId).select(); renderInspector(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('details', true); }
 function setMobilePanel(panel: MobilePanel, focusPanel = false) {
@@ -470,6 +504,12 @@ function setMobilePanel(panel: MobilePanel, focusPanel = false) {
         : document.getElementById('graph-heading');
     target?.focus();
   });
+}
+function setDrawer(drawer: 'none' | 'people' | 'filters' | 'details', focusDrawer = false) {
+  shell.dataset.drawer = drawer;
+  document.querySelectorAll<HTMLButtonElement>('[data-drawer-target]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.drawerTarget === drawer)));
+  if (!focusDrawer || drawer === 'none') return;
+  window.requestAnimationFrame(() => (drawer === 'people' ? document.getElementById('people-heading') : document.getElementById('inspector-heading'))?.focus());
 }
 function syncUrlState() {
   const url = new URL(window.location.href); const set = (key: string, value: string, defaultValue = '') => value && value !== defaultValue ? url.searchParams.set(key, value) : url.searchParams.delete(key);
@@ -491,7 +531,7 @@ async function loadGraphData() {
   try { const response = await fetch('./data/graph.json', { cache: 'no-store' }); if (!response.ok) throw new Error(`HTTP ${response.status}`); data = await response.json() as GraphData; rebuildIndexes(); loadUrlState(); renderCountsAndMeta(); renderDataViews(); shell.setAttribute('aria-busy', 'false'); }
   catch (error) { renderLoadError(error instanceof Error ? error.message : '未知错误'); }
 }
-function updateSearch(value: string) { filters.search = value.trim(); clearSearchButton.hidden = !filters.search; renderPeopleList(); syncUrlState(); }
+function updateSearch(value: string) { filters.search = value.trim(); clearSearchButton.hidden = !filters.search; renderPeopleList(); if (filters.search && !window.matchMedia('(max-width: 900px)').matches) setDrawer('people'); syncUrlState(); }
 
 searchInput.addEventListener('compositionstart', () => { isComposing = true; });
 searchInput.addEventListener('compositionend', () => { isComposing = false; window.clearTimeout(searchTimer); updateSearch(searchInput.value); });
@@ -512,6 +552,13 @@ document.getElementById('clear-books')?.addEventListener('click', () => { filter
 document.getElementById('clear-relations')?.addEventListener('click', () => { filters.relations.clear(); markFiltersCustom(); renderDataViews(); });
 document.getElementById('reset-filters')?.addEventListener('click', () => applyTopic('all'));
 document.querySelectorAll<HTMLButtonElement>('[data-mobile-target]').forEach((button) => button.addEventListener('click', () => setMobilePanel(button.dataset.mobileTarget as MobilePanel, button.classList.contains('mobile-close'))));
+document.querySelectorAll<HTMLButtonElement>('[data-drawer-target]').forEach((button) => button.addEventListener('click', () => {
+  if (window.matchMedia('(max-width: 900px)').matches) { setMobilePanel(button.dataset.drawerTarget === 'details' ? 'details' : 'people', true); return; }
+  const target = button.dataset.drawerTarget === 'details' ? 'details' : button.dataset.drawerTarget === 'filters' ? 'filters' : 'people';
+  setDrawer(shell.dataset.drawer === target ? 'none' : target, true);
+  if (button.dataset.drawerTarget === 'filters') document.querySelector<HTMLDetailsElement>('.advanced-filters')?.setAttribute('open', '');
+}));
+document.querySelectorAll<HTMLButtonElement>('[data-drawer-close]').forEach((button) => button.addEventListener('click', () => setDrawer('none')));
 document.getElementById('zoom-in')?.addEventListener('click', () => cy?.zoom({ level: Math.min(2.5, cy.zoom() * 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } }));
 document.getElementById('zoom-out')?.addEventListener('click', () => cy?.zoom({ level: Math.max(0.25, cy.zoom() / 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } }));
 document.getElementById('fit-graph')?.addEventListener('click', () => cy?.fit(undefined, 56));
@@ -519,6 +566,6 @@ document.getElementById('center-focus')?.addEventListener('click', () => { const
 let resizeTimer = 0;
 window.addEventListener('resize', () => {
   window.clearTimeout(resizeTimer);
-  resizeTimer = window.setTimeout(() => { cy?.resize(); cy?.fit(undefined, 56); }, 120);
+  resizeTimer = window.setTimeout(() => { if (currentModel) renderGraph(); }, 160);
 });
 void loadGraphData();
