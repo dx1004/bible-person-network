@@ -28,7 +28,10 @@ $ExpectedNames = (Import-Csv (Join-Path $ImportDir "name_nodes.csv")).Count
 $ExpectedSources = (Import-Csv (Join-Path $ImportDir "evidence_nodes.csv")).Count
 $ExpectedIdentityOptions = (Import-Csv (Join-Path $ImportDir "identity_option_nodes.csv")).Count
 $ExpectedPassages = (Import-Csv (Join-Path $ImportDir "passage_nodes.csv")).Count
-$ExpectedSupportedBy = (Import-Csv (Join-Path $ImportDir "assertion_evidence.csv")).Count * 2
+$EvidenceRows = Import-Csv (Join-Path $ImportDir "assertion_evidence.csv")
+$ExpectedSourceEvidence = ($EvidenceRows | ForEach-Object { "$($_.assertion_id)|$($_.source_id)" } | Sort-Object -Unique).Count
+$ExpectedPassageEvidence = ($EvidenceRows | ForEach-Object { "$($_.assertion_id)|$($_.passage)" } | Sort-Object -Unique).Count
+$ExpectedSupportedBy = $ExpectedSourceEvidence + $ExpectedPassageEvidence
 $ImportCypher = Get-Content -Raw $ImportFile
 
 function Invoke-Cypher([string]$Query) {
@@ -74,7 +77,7 @@ function Test-Integrity {
     $orphanName = Run-Count "MATCH (n:NameVariant) WHERE NOT EXISTS { (p:Person)-[:HAS_NAME]->(n) } RETURN count(n) AS c;"
     $orphanAssertion = Run-Count "MATCH (a:Assertion) WHERE NOT EXISTS { (a)-[:SUBJECT]->(:Person) } OR NOT EXISTS { (a)-[:OBJECT]->(:Person) } RETURN count(a) AS c;"
     $orphanIdentity = Run-Count "MATCH (i:IdentityOption) WHERE NOT EXISTS { (p:Person)-[:HAS_IDENTITY_OPTION]->(i) } RETURN count(i) AS c;"
-    $invalidEndpoints = Run-Count "MATCH (a:Assertion) OPTIONAL MATCH (a)-[:SUBJECT]->(sp:Person) OPTIONAL MATCH (a)-[:OBJECT]->(op:Person) WHERE sp IS NULL OR op IS NULL RETURN count(a) AS c;"
+    $invalidEndpoints = Run-Count "MATCH (a:Assertion) WHERE NOT EXISTS { (a)-[:SUBJECT]->(:Person) } OR NOT EXISTS { (a)-[:OBJECT]->(:Person) } RETURN count(a) AS c;"
 
     Write-Host "Integrity counts: Person=$people/$ExpectedPersons Assertion=$assertions/$ExpectedAssertions Name=$names/$ExpectedNames Source=$sources/$ExpectedSources IdentityOption=$identityOptions/$ExpectedIdentityOptions Passage=$passages/$ExpectedPassages"
     Write-Host "Relationship counts: MentionedIn=$mentions/$ExpectedMentions SupportedBy=$supportedBy/$ExpectedSupportedBy HasName=$hasName/$ExpectedNames HasIdentityOption=$hasIdentity/$ExpectedIdentityOptions Subject=$subject/$ExpectedAssertions Object=$object/$ExpectedAssertions"

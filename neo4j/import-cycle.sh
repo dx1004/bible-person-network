@@ -26,8 +26,7 @@ EXPECTED_NAMES="$(awk 'NR>1 && NF' "$IMPORT_DIR/name_nodes.csv" | wc -l | tr -d 
 EXPECTED_SOURCES="$(awk 'NR>1 && NF' "$IMPORT_DIR/evidence_nodes.csv" | wc -l | tr -d ' ')"
 EXPECTED_IDENTITY_OPTIONS="$(awk 'NR>1 && NF' "$IMPORT_DIR/identity_option_nodes.csv" | wc -l | tr -d ' ')"
 EXPECTED_PASSAGES="$(awk 'NR>1 && NF' "$IMPORT_DIR/passage_nodes.csv" | wc -l | tr -d ' ')"
-EXPECTED_EVIDENCE_ROWS="$(awk 'NR>1 && NF' "$IMPORT_DIR/assertion_evidence.csv" | wc -l | tr -d ' ')"
-EXPECTED_SUPPORTED_BY="$((EXPECTED_EVIDENCE_ROWS * 2))"
+EXPECTED_SUPPORTED_BY="$(awk -F, 'NR>1 && NF {source_pair[$1 SUBSEP $2]=1; passage_pair[$1 SUBSEP $3]=1} END {print length(source_pair)+length(passage_pair)}' "$IMPORT_DIR/assertion_evidence.csv")"
 IMPORT_CYPHER="$(cat "$IMPORT_DIR/import.cypher")"
 
 cleanup() {
@@ -74,7 +73,7 @@ check_counts() {
   c_name_orphan="$(query_scalar 'MATCH (n:NameVariant) WHERE NOT EXISTS { (p:Person)-[:HAS_NAME]->(n) } RETURN count(n) AS c;')"
   c_assertion_orphan="$(query_scalar 'MATCH (a:Assertion) WHERE NOT EXISTS { (a)-[:SUBJECT]->(:Person) } OR NOT EXISTS { (a)-[:OBJECT]->(:Person) } RETURN count(a) AS c;')"
   c_identity_orphan="$(query_scalar 'MATCH (i:IdentityOption) WHERE NOT EXISTS { (p:Person)-[:HAS_IDENTITY_OPTION]->(i) } RETURN count(i) AS c;')"
-  c_invalid_endpoints="$(query_scalar 'MATCH (a:Assertion) OPTIONAL MATCH (a)-[:SUBJECT]->(sp:Person) OPTIONAL MATCH (a)-[:OBJECT]->(op:Person) WHERE sp IS NULL OR op IS NULL RETURN count(a) AS c;')"
+  c_invalid_endpoints="$(query_scalar 'MATCH (a:Assertion) WHERE NOT EXISTS { (a)-[:SUBJECT]->(:Person) } OR NOT EXISTS { (a)-[:OBJECT]->(:Person) } RETURN count(a) AS c;')"
 
   echo "After $pass import:"
   echo "  Person=$c_people/$EXPECTED_PERSONS"
