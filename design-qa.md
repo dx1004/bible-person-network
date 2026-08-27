@@ -98,3 +98,40 @@ The selected option supplied the information architecture: searchable people ind
 ## Final result
 
 **passed**
+
+---
+
+# Design QA — Relationship Route Readability Refinement
+
+## QA target
+
+- Baseline capture: `/tmp/nt-people-line-audit/01-before.png` (1280 × 720).
+- Final desktop capture: `/tmp/nt-people-line-audit/09-desktop-final.png` (1280 × 720).
+- Selected-route capture: `/tmp/nt-people-line-audit/11-selected-final.png` (1280 × 720).
+- Final mobile capture: `/tmp/nt-people-line-audit/12-mobile-final.png` (390 × 844).
+- Reference comparison: `/tmp/nt-people-line-audit/10-reference-vs-final.png` (2560 × 720).
+- Tested state: conservative identity preset, all evidence layers enabled, Paul selected, one-degree network view.
+
+## Superseding route changes
+
+- Removed persistent relationship labels from graph edges; exact relationship text remains in the fixed evidence ribbon and accessible detail list.
+- Replaced the dense diagonal spoke layout with paired upper/lower route branches that follow the illustrated pilgrimage direction.
+- Reduced default line weight and saturation, retained subtle evidence-level color, and reserved the strong pearl-gold treatment for hover and selection.
+- Highlighting one route also highlights its destination node; directional arrows now point correctly even though every visual route is drawn outward from the focus node.
+- Reduced the desktop display cap from 22 to 14 relationships while retaining the complete relationship list in the inspector.
+
+## Validation evidence
+
+- Clicking the tested route produced `亚居拉 · 接待 · 保罗` and `新约经文 · 高确定度 · ACT 18:2-3` in the evidence ribbon.
+- Desktop and 390 × 844 mobile captures show readable names without persistent edge-label collisions.
+- Browser console inspection returned no errors or warnings.
+- Frontend Design Premium strict audit passed with zero findings.
+- Full repository validation, TypeScript checking, production build, person-era checks, and identity checks passed.
+
+## Governance note
+
+- This is a readability refinement within the already selected luminous-pilgrimage runtime direction. `DESIGN.md` remains unchanged pending explicit approval to update the canonical design record.
+
+## Final result
+
+**passed**

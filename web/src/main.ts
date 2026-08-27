@@ -94,14 +94,14 @@ type VisibleModel = {
   mergedTo: Map<string, string>;
 };
 
-const GRAPH_EDGE_LIMIT = 22;
+const GRAPH_EDGE_LIMIT = 14;
 const SEARCH_RESULT_LIMIT = 80;
 const ALL_EVIDENCE: EvidenceLevel[] = ['nt_text', 'ancient', 'modern'];
 const evidenceLabel: Record<EvidenceLevel, string> = {
   nt_text: '新约经文', ancient: '古代原始史料', modern: '现代权威工具书'
 };
 const evidenceColor: Record<EvidenceLevel, string> = {
-  nt_text: '#65d9ff', ancient: '#7de3b2', modern: '#c5a7ff'
+  nt_text: '#d5f3ff', ancient: '#d9f8e5', modern: '#e4dcff'
 };
 const certaintyLabel = { high: '高', medium: '中', low: '低' } as const;
 
@@ -136,9 +136,9 @@ appRoot.innerHTML = `
       <i class="ph ph-warning-circle" aria-hidden="true"></i><span>当前数据仍需要编辑审校，请勿把待审内容视为定稿。</span>
     </div>
     <nav class="command-rail reading-surface" aria-label="关系网工具">
-      <button type="button" data-drawer-target="people" aria-label="查找人物" aria-pressed="false"><i class="ph ph-users" aria-hidden="true"></i><span>人物</span></button>
-      <button type="button" data-drawer-target="filters" aria-label="专题与筛选" aria-pressed="false"><i class="ph ph-sliders-horizontal" aria-hidden="true"></i><span>筛选</span></button>
-      <button type="button" data-drawer-target="details" aria-label="人物与出处" aria-pressed="false"><i class="ph ph-book-open-text" aria-hidden="true"></i><span>出处</span></button>
+      <button type="button" data-onclick="delegated" data-drawer-target="people" aria-label="查找人物" aria-pressed="false"><i class="ph ph-users" aria-hidden="true"></i><span>人物</span></button>
+      <button type="button" data-onclick="delegated" data-drawer-target="filters" aria-label="专题与筛选" aria-pressed="false"><i class="ph ph-sliders-horizontal" aria-hidden="true"></i><span>筛选</span></button>
+      <button type="button" data-onclick="delegated" data-drawer-target="details" aria-label="人物与出处" aria-pressed="false"><i class="ph ph-book-open-text" aria-hidden="true"></i><span>出处</span></button>
     </nav>
     <nav class="mobile-tabs reading-surface" aria-label="移动端视图">
       <button type="button" data-onclick="direct" data-mobile-target="people"><i class="ph ph-users" aria-hidden="true"></i>人物</button>
@@ -147,7 +147,7 @@ appRoot.innerHTML = `
     </nav>
     <main class="workspace">
       <aside class="people-pane reading-surface" aria-labelledby="people-heading">
-        <div class="pane-heading"><div><p class="eyebrow">人物索引</p><h2 id="people-heading" tabindex="-1">查找人物</h2></div><div class="pane-actions"><span id="people-result-count" class="count-badge">—</span><button class="icon-button drawer-close" type="button" data-drawer-close aria-label="关闭人物索引"><i class="ph ph-x" aria-hidden="true"></i></button></div></div>
+        <div class="pane-heading"><div><p class="eyebrow">人物索引</p><h2 id="people-heading" tabindex="-1">查找人物</h2></div><div class="pane-actions"><span id="people-result-count" class="count-badge">—</span><button class="icon-button drawer-close" type="button" data-onclick="delegated" data-drawer-close aria-label="关闭人物索引"><i class="ph ph-x" aria-hidden="true"></i></button></div></div>
         <div id="topic-shortcuts" class="topic-shortcuts" aria-label="专题快捷选择"></div>
         <details class="advanced-filters">
           <summary><i class="ph ph-sliders-horizontal" aria-hidden="true"></i>精细筛选</summary>
@@ -183,7 +183,7 @@ appRoot.innerHTML = `
           <div class="ribbon-heading"><span>证据带</span><strong id="evidence-ribbon-title">选择一条光路查看关系</strong></div>
           <p id="evidence-ribbon-meta">人物关系及出处会显示在这里。</p>
           <p id="graph-status">正在载入关系图…</p>
-          <button type="button" class="ribbon-action" data-drawer-target="details">查看完整出处 <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+          <button type="button" class="ribbon-action" data-onclick="delegated" data-drawer-target="details">查看完整出处 <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
         </div>
       </section>
       <aside class="inspector-pane reading-surface" aria-labelledby="inspector-heading">
@@ -406,41 +406,58 @@ function renderGraph() {
   graphStatus.textContent = capped ? `画布显示 ${displayedRelationships.length}/${relationships.length} 条一度关系；右侧列表保留全部 ${relationships.length} 条。` : `当前显示 ${nodes.length} 人 · ${relationships.length} 条一度关系。`;
   const width = Math.max(graphContainer.clientWidth, 320); const height = Math.max(graphContainer.clientHeight, 520);
   const neighborIds = nodes.filter((person) => person.id !== selectedPersonId).map((person) => person.id);
-  const laneOffsets = [0, -0.11, 0.12, -0.18, 0.2];
   const positions = new Map<string, { x: number; y: number }>();
-  positions.set(selectedPersonId, { x: width * 0.37, y: height * 0.69 });
+  positions.set(selectedPersonId, { x: width * 0.36, y: height * 0.7 });
+  const columnCount = Math.ceil(neighborIds.length / 2);
   neighborIds.forEach((personId, index) => {
-    const progress = (index + 1) / (neighborIds.length + 1);
-    const lane = laneOffsets[index % laneOffsets.length];
-    const step = Math.floor(index / laneOffsets.length);
+    const column = Math.floor(index / 2);
+    const progress = (column + 1) / (columnCount + 1);
+    const upperLane = index % 2 === 0;
+    const pathY = height * (0.68 - progress * 0.46);
+    const branchOffset = height * (0.08 + (column % 2) * 0.012);
     positions.set(personId, {
-      x: width * (0.45 + progress * 0.43) + (step % 2 ? -18 : 18),
-      y: height * (0.72 - progress * 0.49 + lane)
+      x: width * (0.45 + progress * 0.43) + (upperLane ? -8 : 14),
+      y: pathY + (upperLane ? -branchOffset : branchOffset)
     });
   });
+  const relationshipIndex = new Map(displayedRelationships.map((relationship, index) => [relationship.id, index]));
   cy?.destroy();
   cy = cytoscape({
     container: graphContainer,
     elements: [
       ...nodes.map((person) => ({ group: 'nodes' as const, data: { id: person.id, label: person.nameZh, era: person.era, isFocus: person.id === selectedPersonId ? 1 : 0 }, position: positions.get(person.id) })),
-      ...displayedRelationships.map((relationship) => ({ group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel] } }))
+      ...displayedRelationships.map((relationship) => {
+        const otherId = relationship.fromPerson === selectedPersonId ? relationship.toPerson : relationship.fromPerson;
+        const index = relationshipIndex.get(relationship.id) || 0;
+        const column = Math.floor(index / 2);
+        const upperLane = index % 2 === 0;
+        const bend = (upperLane ? -1 : 1) * (30 + column * 7);
+        const pointsAwayFromFocus = relationship.fromPerson === selectedPersonId;
+        const targetArrow = relationship.direction === 'undirected' ? 'none' : relationship.direction === 'bidirectional' || pointsAwayFromFocus ? 'triangle' : 'none';
+        const sourceArrow = relationship.direction === 'bidirectional' || (!pointsAwayFromFocus && relationship.direction !== 'undirected') ? 'triangle' : 'none';
+        return { group: 'edges' as const, data: { id: relationship.id, source: selectedPersonId, target: otherId, label: relationship.type, direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], routeDistances: `${bend} ${Math.round(bend * 0.42)}`, routeWeights: '0.16 0.72', sourceArrow, targetArrow } };
+      })
     ],
     style: [
-      { selector: 'node', style: { label: 'data(label)', color: '#ffffff', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 14, 'font-weight': 700, 'text-valign': 'bottom', 'text-margin-y': 11, 'text-wrap': 'wrap', 'text-max-width': '118px', 'text-outline-color': '#081127', 'text-outline-width': 4, 'background-color': '#000000', 'background-opacity': 0, 'background-image': '/assets/crystal-node.png', 'background-image-opacity': 1, 'background-fit': 'cover', 'background-clip': 'node', 'border-width': 0, width: 54, height: 54, 'underlay-opacity': 0 } },
+      { selector: 'node', style: { label: 'data(label)', color: '#ffffff', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 14, 'font-weight': 700, 'text-valign': 'bottom', 'text-margin-y': 11, 'text-wrap': 'wrap', 'text-max-width': '118px', 'text-outline-color': '#081127', 'text-outline-width': 4, 'background-color': '#000000', 'background-opacity': 0, 'background-image': '/assets/crystal-node.png', 'background-image-opacity': 1, 'background-fit': 'cover', 'background-clip': 'node', 'border-width': 0, width: 54, height: 54, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
       { selector: 'node[era = "旧约背景"]', style: { 'underlay-color': '#c5a7ff' } },
       { selector: 'node[era = "耶稣时期"]', style: { 'underlay-color': '#ffe89a' } },
       { selector: 'node[era = "时代待审"]', style: { opacity: 0.72 } },
       { selector: 'node[isFocus = 1]', style: { 'background-image': '/assets/crystal-focus.png', width: 108, height: 108, 'font-size': 19, 'text-margin-y': 13 } },
       { selector: 'node:selected', style: { 'border-color': '#fff0bd', 'border-width': 2 } },
-      { selector: 'edge', style: { width: 2.4, 'curve-style': 'unbundled-bezier', 'control-point-distances': '24', 'control-point-weights': '0.5', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.8, 'target-arrow-color': 'data(evidenceColor)', 'target-arrow-shape': 'none', label: isCompactGraph ? '' : 'data(label)', color: '#ffffff', 'font-family': 'Inter, PingFang SC, sans-serif', 'font-size': 11, 'font-weight': 600, 'text-background-color': '#0a1530', 'text-background-opacity': 0.84, 'text-background-padding': '4', 'text-rotation': 'none' } },
-      { selector: 'edge[direction = "outgoing"], edge[direction = "incoming"]', style: { 'target-arrow-shape': 'triangle', 'arrow-scale': 0.8 } },
-      { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.58 } },
-      { selector: 'edge:selected', style: { width: 5, 'line-opacity': 1, 'z-index': 20 } }
+      { selector: 'node.route-neighbor', style: { 'underlay-color': '#ffe7a8', 'underlay-opacity': 0.2, 'underlay-padding': 11 } },
+      { selector: 'edge', style: { width: 1.35, 'curve-style': 'unbundled-bezier', 'control-point-distances': 'data(routeDistances)', 'control-point-weights': 'data(routeWeights)', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.47, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.52, label: '', 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.28 } },
+      { selector: 'edge.is-hovered, edge:selected', style: { width: 3.1, 'line-color': '#ffe7a8', 'line-opacity': 0.94, 'source-arrow-color': '#ffe7a8', 'target-arrow-color': '#ffe7a8', 'arrow-scale': 0.72, 'underlay-color': '#8bdcff', 'underlay-opacity': 0.14, 'underlay-padding': 5, 'z-index': 20 } }
     ],
     layout: { name: 'preset', fit: false, animate: false },
     minZoom: 0.25, maxZoom: 2.5, selectionType: 'single'
   });
-  cy.on('tap', 'node', (event) => selectPerson(String(event.target.id()), true)); cy.on('tap', 'edge', (event) => selectRelationship(String(event.target.id()), true)); if (selectedRelationId) cy.$id(selectedRelationId).select();
+  cy.on('tap', 'node', (event) => selectPerson(String(event.target.id()), true));
+  cy.on('tap', 'edge', (event) => selectRelationship(String(event.target.id()), true));
+  cy.on('mouseover', 'edge', (event) => { const edge = event.target; edge.addClass('is-hovered'); edge.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor'); });
+  cy.on('mouseout', 'edge', (event) => { const edge = event.target; edge.removeClass('is-hovered'); if (!edge.selected()) edge.connectedNodes().not('[isFocus = 1]').removeClass('route-neighbor'); });
+  if (selectedRelationId) { const selectedEdge = cy.$id(selectedRelationId); selectedEdge.select(); selectedEdge.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor'); }
 }
 
 function sourceLink(sourceId: string) {
@@ -492,7 +509,7 @@ function selectPerson(personId: string, switchPanel = false) {
   if (!currentModel) return; const mapped = currentModel.mergedTo.get(personId) || personId; if (!currentModel.personMap.has(mapped) && !originalPersonById.has(mapped)) return;
   selectedPersonId = mapped; selectedRelationId = ''; renderPeopleList(); renderGraph(); renderInspector(); syncUrlState(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('graph', true); else if (switchPanel) setDrawer('none');
 }
-function selectRelationship(relationshipId: string, switchPanel = false) { selectedRelationId = relationshipId; cy?.elements().unselect(); cy?.$id(relationshipId).select(); renderInspector(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('details', true); }
+function selectRelationship(relationshipId: string, switchPanel = false) { selectedRelationId = relationshipId; cy?.elements().unselect(); cy?.nodes().removeClass('route-neighbor'); const edge = cy?.$id(relationshipId); edge?.select(); edge?.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor'); renderInspector(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('details', true); }
 function setMobilePanel(panel: MobilePanel, focusPanel = false) {
   mobilePanel = panel; shell.dataset.mobilePanel = panel; document.querySelectorAll<HTMLButtonElement>('[data-mobile-target]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.mobileTarget === panel)));
   if (!focusPanel || !window.matchMedia('(max-width: 900px)').matches) return;
