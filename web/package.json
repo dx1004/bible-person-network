@@ -9,6 +9,7 @@
     "dev": "vite",
     "build:data": "node ./scripts/build-graph-data.mjs",
     "build": "npm run build:data && vite build",
+    "check-identity": "node ./scripts/check-graph-identity.mjs",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview"
   },

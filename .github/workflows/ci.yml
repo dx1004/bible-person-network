@@ -10,7 +10,11 @@ permissions:
 
 jobs:
   data-and-web:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -32,8 +36,22 @@ jobs:
           npm audit --audit-level=high
           npm --prefix web audit --audit-level=high
       - name: Upload static build
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: cloudflare-pages-dist
           path: web/dist
           if-no-files-found: error
+
+  neo4j-import-idempotence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Neo4j double import verification
+        env:
+          NEO4J_USER: neo4j
+          NEO4J_PASSWORD: Neo4jTest-${{ github.run_id }}-${{ github.run_number }}!P
+        run: |
+          cd neo4j
+          bash import-cycle.sh

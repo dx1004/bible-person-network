@@ -11,6 +11,9 @@
     "status": { "type": "string", "enum": ["independent", "merged", "linked", "disputed"] },
     "identity_scope": { "type": "string", "enum": ["default", "conservative", "common_tradition"] },
     "rationale": { "type": "string" },
+    "merge_group_id": { "type": "string", "minLength": 1 },
+    "merge_target_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "display_label": { "type": "string", "minLength": 1 },
     "editor_note": { "type": "string" },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }

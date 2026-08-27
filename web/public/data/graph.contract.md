@@ -27,6 +27,9 @@
   - `id`: 全局唯一身份 ID
   - `label`: 人类可读身份
   - `status`: `独立` / `传统同一` / `待判`
+  - `mergeGroupId`: 传统身份分组 ID（如有）
+  - `mergeTargetPersonId`: 合并目标 `person_id`（如有）
+  - `displayLabel`: 传统合并展示名（如有）
 - `selectedPresetDefault`: `conservative` / `traditional`
 - `notes`: 可选说明
 
@@ -64,5 +67,7 @@
 - `relationTypes`: 筛选类型列表（可为空）
 - `bookIncludes`: 书卷包含条件（可为空）
 - `eraIncludes`: 时代包含条件（可为空）
+- `personIncludes`: 人物 ID 包含条件（可为空）；若提供则仅显示这些人物及其关系
+- `evidenceIncludes`: 证据层级筛选（可为空）
 
 字段缺失时均有降级策略，保证前端可正常渲染。

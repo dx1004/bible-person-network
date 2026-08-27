@@ -51,6 +51,7 @@ function mapEvidenceLevel(level = '') {
 
 function mapDirection(direction = '') {
   if (direction === 'undirected') return 'undirected';
+  if (direction === 'incoming') return 'outgoing';
   return 'outgoing';
 }
 
@@ -64,13 +65,19 @@ function mapRelationTypeLabel(rawType, rawSubType, editorStatus) {
     if (subType === 'partner') return '亲属关系-婚姻/伴侣';
     return '亲属关系-其他';
   }
+  if (type === 'teacher_student') return '师徒';
   if (type === 'mentor') return '师徒';
   if (type === 'discipleship') return '师徒';
+  if (type === 'collegial') return '长期同工';
   if (type === 'collaboration') return '长期同工';
   if (type === 'commission') return '差派';
+  if (type === 'host') return '接待';
   if (type === 'hospitality') return '接待';
+  if (type === 'political') return '政治权属';
   if (type === 'authority') return '政治权属';
+  if (type === 'legal') return '司法行为';
   if (type === 'judicial') return '司法行为';
+  if (type === 'hostile') return '明确敌对';
   if (type === 'hostility') return '明确敌对';
   if (type === 'adversarial') return '明确敌对';
   if (editorStatus === 'pending' || editorStatus === 'review') return '候选关系';
@@ -94,6 +101,10 @@ function confidenceToLevel(value) {
   if (v >= 0.85) return 'high';
   if (v >= 0.65) return 'medium';
   return 'low';
+}
+
+function withCandidateVariants(types) {
+  return unique(types.flatMap((type) => [type, type.startsWith('候选') ? type : `候选${type}`]));
 }
 
 function coerceEditorialReviewRequired(report) {
@@ -296,7 +307,10 @@ async function loadJSON(fileName, fallback = []) {
               status: statusToChineseIdentity(identityStatus),
               statusRaw: identityStatus,
               scope: identityScope,
-              preset: identityPreset
+              preset: identityPreset,
+              mergeGroupId: raw?.merge_group_id || null,
+              mergeTargetPersonId: raw?.merge_target_person_id || null,
+              displayLabel: raw?.display_label || null
             };
           })
         : [
@@ -379,6 +393,26 @@ async function loadJSON(fileName, fallback = []) {
     const topicPresets = [
       { id: 'all', name: '全部', relationTypes: [], bookIncludes: [], eraIncludes: [], evidenceIncludes: [] },
       {
+        id: 'herodFamily',
+        name: '希律家族',
+        relationTypes: [],
+        bookIncludes: ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'GAL', 'COL'],
+        eraIncludes: ['使徒时代', '旧约背景', '待审校'],
+        evidenceIncludes: ['nt_text', 'ancient', 'modern'],
+        personIncludes: [
+          'nt-people-0014',
+          'nt-people-0037',
+          'nt-people-0059',
+          'nt-people-0082',
+          'nt-people-0124',
+          'nt-people-0125',
+          'nt-people-0126',
+          'nt-people-0127',
+          'nt-people-0275',
+          'nt-people-0277'
+        ]
+      },
+      {
         id: 'family',
         name: '家谱/亲属',
         relationTypes: [
@@ -400,7 +434,7 @@ async function loadJSON(fileName, fallback = []) {
       {
         id: 'discipleship',
         name: '门徒关系',
-        relationTypes: ['师徒', '长期同工'],
+        relationTypes: withCandidateVariants(['师徒', '长期同工']),
         bookIncludes: ['MAT', 'MRK', 'LUK', 'ACT', 'JHN'],
         eraIncludes: ['使徒时代'],
         evidenceIncludes: ['nt_text', 'ancient', 'modern']
@@ -408,7 +442,7 @@ async function loadJSON(fileName, fallback = []) {
       {
         id: 'paulTeam',
         name: '保罗同工',
-        relationTypes: ['长期同工'],
+        relationTypes: withCandidateVariants(['长期同工']),
         bookIncludes: ['ROM', '1CO', '2CO', 'GAL', 'EPH', 'COL', 'PHP', 'THA', '1TI', '2TI'],
         eraIncludes: ['使徒时代'],
         evidenceIncludes: ['nt_text', 'ancient', 'modern']
@@ -416,7 +450,7 @@ async function loadJSON(fileName, fallback = []) {
       {
         id: 'acts',
         name: '使徒行传专题',
-        relationTypes: [
+        relationTypes: withCandidateVariants([
           '长期同工',
           '师徒',
           '差派',
@@ -427,7 +461,7 @@ async function loadJSON(fileName, fallback = []) {
           '候选亲属关系-手足',
           '候选亲属关系-婚姻/伴侣',
           '候选亲属关系-其他'
-        ],
+        ]),
         bookIncludes: ['ACT'],
         eraIncludes: ['使徒时代'],
         evidenceIncludes: ['nt_text', 'ancient', 'modern']

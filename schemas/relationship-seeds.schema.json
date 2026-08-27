@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Explicit relationship seeds",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "seed_id",
+    "subject_person_id",
+    "object_person_id",
+    "relation_type",
+    "direction",
+    "source_id",
+    "evidence"
+  ],
+  "properties": {
+    "seed_id": { "type": "string", "pattern": "^seed-rs-\\d{4}$" },
+    "subject_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "object_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "relation_type": {
+      "type": "string",
+      "enum": ["teacher_student", "collegial", "commission", "host", "political", "legal", "hostile"]
+    },
+    "direction": { "type": "string", "enum": ["directed", "undirected"] },
+    "relation_subtype": {
+      "type": ["null", "string"],
+      "enum": ["parent", "child", "sibling", "partner", null]
+    },
+    "source_id": { "type": "string", "const": "source:0001" },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "passage", "evidence_level", "note", "certainty"],
+        "properties": {
+          "source_id": { "type": "string", "const": "source:0001" },
+          "passage": {
+            "type": "string",
+            "pattern": "^(?:MAT|MRK|LUK|JHN|ACT|ROM|1CO|2CO|GAL|EPH|PHP|COL|1TH|2TH|1TI|2TI|TIT|PHM|HEB|JAS|1PE|2PE|1JN|2JN|3JN|JUD|REV) \\d+:\\d+(?:-\\d+)?$"
+          },
+          "evidence_level": { "type": "string", "const": "nt_text" },
+          "note": { "type": "string" },
+          "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

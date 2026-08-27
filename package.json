@@ -12,6 +12,10 @@
     "validate:data": "node scripts/validate-and-build.js",
     "init:chinese-name-review": "node scripts/init-chinese-name-review.js",
     "validate:chinese-name-review": "node scripts/init-chinese-name-review.js --validate-only",
+    "apply:chinese-name-review": "node scripts/apply-chinese-name-review.js",
+    "init:relationship-review": "node scripts/init-relationship-review.js",
+    "apply:relationship-review": "node scripts/apply-relationship-review.js",
+    "validate:relationship-review": "node scripts/init-relationship-review.js --validate-only",
     "generate:chinese-name-candidates": "node scripts/generate-chinese-name-candidates.js",
     "validate:chinese-name-candidates": "node scripts/generate-chinese-name-candidates.js --validate-only",
     "reconcile": "node scripts/reconcile-sources.js",
@@ -19,7 +23,7 @@
     "test:step-boundary": "node scripts/test-step-boundary-regression.mjs",
     "build:web": "npm --prefix web run build",
     "typecheck:web": "npm --prefix web run typecheck",
-    "check": "npm run validate:data && npm run validate:chinese-name-candidates && npm run validate:chinese-name-review && npm run reconcile && npm run report && npm run test:step-boundary && npm run typecheck:web && npm run build:web"
+    "check": "npm run validate:data && npm run validate:chinese-name-candidates && npm run validate:chinese-name-review && npm run apply:chinese-name-review -- --check && npm run validate:relationship-review && npm run apply:relationship-review -- --check && npm run reconcile && npm run report && npm run test:step-boundary && npm run typecheck:web && npm run build:web && npm --prefix web run check-identity"
   },
   "engines": {
     "node": ">=18"

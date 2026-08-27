@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 
 const argv = process.argv.slice(2);
 const args = Object.create(null);
@@ -23,6 +25,10 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_STEP_DIR = path.join(ROOT, '.sources', 'stepbible-data');
 const DEFAULT_SBL_DIR = path.join(ROOT, '.sources', 'sblgnt');
 const DEFAULT_OUT_DIR = path.join(ROOT, 'data');
+const SEED_PATH = path.join(ROOT, 'editorial', 'relationship-seeds.jsonl');
+const SEED_SCHEMA_PATH = path.join(ROOT, 'schemas', 'relationship-seeds.schema.json');
+const SCOPE_OVERRIDE_PATH = path.join(ROOT, 'editorial', 'person-scope-overrides.jsonl');
+const SCOPE_OVERRIDE_SCHEMA_PATH = path.join(ROOT, 'schemas', 'person-scope-overrides.schema.json');
 
 const SOURCE_ID_STEP = 'source:0002';
 const SOURCE_ID_SBL = 'source:0001';
@@ -37,6 +43,11 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(manifestSnapshot)) {
 const snapshot = args.snapshot || manifestSnapshot;
 const includeNonNt = args['include-non-nt'] === 'true';
 const includeNonHuman = args['include-non-human'] === 'true';
+const seedSchema = JSON.parse(fs.readFileSync(SEED_SCHEMA_PATH, 'utf8'));
+const ajv = new Ajv({ allErrors: true, strict: false, validateSchema: false });
+addFormats(ajv);
+const seedValidator = ajv.compile(seedSchema);
+const scopeOverrideValidator = ajv.compile(JSON.parse(fs.readFileSync(SCOPE_OVERRIDE_SCHEMA_PATH, 'utf8')));
 
 const NT_BOOK_MAP = new Map([
   ['Mat', 'MAT'], ['Matt', 'MAT'], ['Mt', 'MAT'], ['Matthew', 'MAT'],
@@ -132,6 +143,109 @@ function writeJsonl(filePath, rows) {
   fs.writeFileSync(filePath, `${data}${rows.length > 0 ? '\n' : ''}`);
 }
 
+function readJsonl(filePath) {
+  if (!fs.existsSync(filePath)) return [];
+  const raw = fs.readFileSync(filePath, 'utf8').trim();
+  if (!raw) return [];
+  return raw.split('\n').filter(Boolean).map((line, idx) => {
+    try {
+      return JSON.parse(line);
+    } catch (err) {
+      throw new Error(`Failed to parse existing JSONL ${path.basename(filePath)}:${idx + 1}`);
+    }
+  });
+}
+
+function parseSeedPassage(passage) {
+  if (typeof passage !== 'string') return null;
+  const p = passage.trim();
+  if (!/^[A-Z0-9]{3} \d+:\d+(?:-\d+)?$/.test(p)) return null;
+  const [book] = p.split(' ');
+  if (!NT_BOOK_SET.has(book)) return null;
+  const [, bookNorm, chapter, verseRange] = p.match(/^([A-Z0-9]{3}) (\d+):(\d+(?:-\d+)?)$/);
+  if (!bookNorm || !NT_BOOK_SET.has(bookNorm)) return null;
+  if (!chapter || Number.isNaN(Number(chapter))) return null;
+  const endChapter = Number(verseRange.split('-')[0]);
+  if (!Number.isFinite(endChapter) || endChapter <= 0) return null;
+  return p;
+}
+
+function parseSeedEvidence(evidenceRow) {
+  if (!Array.isArray(evidenceRow) || evidenceRow.length !== 1) {
+    throw new Error('seed evidence must be an array with one nt_text item');
+  }
+  const [evidence] = evidenceRow;
+  if (!evidence || typeof evidence !== 'object') {
+    throw new Error('seed evidence item must be an object');
+  }
+  const normalizedPassage = parseSeedPassage(evidence.passage);
+  if (!normalizedPassage) {
+    throw new Error(`seed passage invalid: ${evidence.passage}`);
+  }
+  evidence.passage = normalizedPassage;
+  return evidence;
+}
+
+function parseSeedRows(seedPath) {
+  const raw = fs.readFileSync(seedPath, 'utf8');
+  if (!raw.trim()) return [];
+  const lines = raw.split('\n');
+  const seen = new Set();
+  const out = [];
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    let seed;
+    try {
+      seed = JSON.parse(line);
+    } catch (err) {
+      throw new Error(`Invalid relationship seed JSON at line ${i + 1}: ${err.message}`);
+    }
+    if (!seedValidator(seed)) {
+      const detail = (seedValidator.errors || [])
+        .map((e) => `${e.instancePath || '/'} ${e.message || e.keyword}`)
+        .join('; ');
+      throw new Error(`Invalid relationship seed at line ${i + 1}: ${detail || 'schema validation failed'}`);
+    }
+    const sid = String(seed.seed_id || '').trim();
+    if (!/^seed-rs-\d{4}$/.test(sid)) {
+      throw new Error(`Invalid seed_id ${sid || '(missing)'}`);
+    }
+    if (seen.has(sid)) {
+      throw new Error(`Duplicate seed_id ${sid}`);
+    }
+    seen.add(sid);
+    const subjectPerson = String(seed.subject_person_id || '');
+    const objectPerson = String(seed.object_person_id || '');
+    if (!/^nt-people-\d{4}$/.test(subjectPerson) || !/^nt-people-\d{4}$/.test(objectPerson)) {
+      throw new Error(`Invalid person ids in seed ${sid}`);
+    }
+    if (subjectPerson === objectPerson) {
+      throw new Error(`Seed self-loop detected in ${sid}`);
+    }
+    const evidence = parseSeedEvidence(seed.evidence);
+    out.push({
+      ...seed,
+      evidence: [evidence]
+    });
+  }
+  return out;
+}
+
+function parseScopeOverrides() {
+  const rows = readJsonl(SCOPE_OVERRIDE_PATH);
+  const byKey = new Map();
+  for (const [index, row] of rows.entries()) {
+    if (!scopeOverrideValidator(row)) {
+      const detail = (scopeOverrideValidator.errors || []).map((e) => `${e.instancePath || '/'} ${e.message}`).join('; ');
+      throw new Error(`Invalid person scope override at row ${index + 1}: ${detail}`);
+    }
+    if (byKey.has(row.person_key)) throw new Error(`Duplicate person scope override: ${row.person_key}`);
+    byKey.set(row.person_key, row);
+  }
+  return byKey;
+}
+
 function writeJson(filePath, obj) {
   fs.writeFileSync(filePath, JSON.stringify(obj, null, 2));
 }
@@ -224,7 +338,7 @@ function parseSblVerseRefFromLine(raw, defaultBook) {
   if (!line) return null;
   const mWithBook = line.match(/^(.+?)\s+(\d+):(\d+[a-z]?)$/);
   if (mWithBook) {
-    const bookNorm = normalizeBook(mWithBook[1]);
+    const bookNorm = normalizeBook(mWithBook[1]) || defaultBook;
     if (bookNorm) {
       return {
         book: bookNorm,
@@ -317,6 +431,7 @@ function parseSubrecord(line) {
   let scope = 'alias';
   let status = 'accepted';
   const sig = significance.toLowerCase();
+  if (isGreekLike(formName)) language = 'grc';
   if (sig === 'named') {
     scope = 'canonical';
   } else if (sig === 'greek') {
@@ -332,6 +447,7 @@ function parseSubrecord(line) {
   return {
     significance: sig,
     rawName,
+    aliasKey: canonicalPersonLabel(rawName).toLowerCase(),
     text: nameText,
     language,
     sourceScope: scope,
@@ -387,6 +503,33 @@ function extractGreekNameForms(raw) {
     .filter((x) => x.length > 1);
 }
 
+function greekNameStem(raw) {
+  const token = normalizeUnicodeText(raw).replace(/\s+/g, '');
+  if (!token || !/^\p{Script=Greek}+$/u.test(token)) return token;
+  const endings = ['ους', 'εως', 'ιος', 'αιος', 'ου', 'ος', 'ον', 'ω', 'ης', 'ην', 'ας', 'αν', 'ια', 'ις', 'ιν', 'α', 'η', 'ι', 'ε'];
+  for (const ending of endings) {
+    if (token.endsWith(ending) && token.length - ending.length >= 3) {
+      return token.slice(0, -ending.length);
+    }
+  }
+  return token;
+}
+
+function greekNameMatchesVerse(token, verseText) {
+  if (!token || !verseText) return false;
+  const words = String(verseText).split(/\s+/).filter(Boolean);
+  const tokenStem = greekNameStem(token);
+  return words.some((word) => {
+    if (word === token) return true;
+    const wordStem = greekNameStem(word);
+    if (!tokenStem || !wordStem || tokenStem.length < 3 || wordStem.length < 3) return false;
+    if (tokenStem === wordStem) return true;
+    const shorter = tokenStem.length <= wordStem.length ? tokenStem : wordStem;
+    const longer = tokenStem.length > wordStem.length ? tokenStem : wordStem;
+    return shorter.length >= 4 && longer.startsWith(shorter) && longer.length - shorter.length <= 2;
+  });
+}
+
 function inferSex(typeField) {
   if (!typeField) return 'unknown';
   const t = String(typeField).toLowerCase();
@@ -409,6 +552,7 @@ function findStepFile(dir) {
 }
 
 function buildSblReferenceSet(sblDir) {
+  const textDirs = [path.join(sblDir, 'data', 'sblgnt', 'text')];
   const xmlDirs = [
     path.join(sblDir, 'data', 'sblgntapp', 'xml'),
     path.join(sblDir, 'data', 'sblgnt', 'xml')
@@ -417,6 +561,30 @@ function buildSblReferenceSet(sblDir) {
   const bookOrder = new Set();
   const verseTextByRef = new Map();
   const files = [];
+  const textFiles = [];
+  for (const textDir of textDirs) {
+    if (!fs.existsSync(textDir)) continue;
+    for (const file of fs.readdirSync(textDir).filter((f) => f.toLowerCase().endsWith('.txt') && !f.startsWith('.'))) {
+      textFiles.push(path.join(textDir, file));
+    }
+  }
+  for (const file of textFiles) {
+    const stem = path.parse(file).name;
+    const defaultBook = SBL_FILE_STEM_MAP.get(stem);
+    if (!defaultBook || !NT_BOOK_SET.has(defaultBook)) continue;
+    bookOrder.add(defaultBook);
+    for (const rawLine of readFileText(file).split(/\r?\n/)) {
+      const line = rawLine.replace(/^\uFEFF/, '').trim();
+      if (!line.includes('\t')) continue;
+      const tab = line.indexOf('\t');
+      const verseRef = parseSblVerseRefFromLine(line.slice(0, tab), defaultBook);
+      if (!verseRef) continue;
+      refs.add(verseRef.key);
+      verseTextByRef.set(verseRef.key, normalizeUnicodeText(line.slice(tab + 1)));
+    }
+  }
+  if (textFiles.length) return { refs, bookOrder, verseTextByRef };
+
   for (const xmlDir of xmlDirs) {
     if (!fs.existsSync(xmlDir)) continue;
     for (const file of fs.readdirSync(xmlDir).filter((f) => f.toLowerCase().endsWith('.xml') && !f.startsWith('.'))) {
@@ -479,15 +647,19 @@ function buildSblLexiconScan(records, sbl) {
   };
 
   const tokenToPersons = new Map();
+  const stemToPersons = new Map();
   const personToTokens = new Map();
   for (const person of records) {
     const tokens = [];
     for (const sr of person.subrecords) {
-      if (sr.language !== 'grc' || !sr.text) continue;
+      if (sr.entityKind !== 'person' || sr.language !== 'grc' || !sr.text) continue;
       for (const token of extractGreekNameForms(sr.text)) {
         tokens.push(token);
         if (!tokenToPersons.has(token)) tokenToPersons.set(token, []);
         if (!tokenToPersons.get(token).includes(person.unifiedName)) tokenToPersons.get(token).push(person.unifiedName);
+        const stem = greekNameStem(token);
+        if (!stemToPersons.has(stem)) stemToPersons.set(stem, []);
+        if (!stemToPersons.get(stem).includes(person.unifiedName)) stemToPersons.get(stem).push(person.unifiedName);
       }
     }
     if (tokens.length) {
@@ -518,7 +690,7 @@ function buildSblLexiconScan(records, sbl) {
       }
 
       report.checked_refs += 1;
-      const hitTokens = tokens.filter((token) => token && verseText.includes(token));
+      const hitTokens = tokens.filter((token) => greekNameMatchesVerse(token, verseText));
       if (!hitTokens.length) {
         report.unmatched_refs += 1;
         continue;
@@ -528,7 +700,10 @@ function buildSblLexiconScan(records, sbl) {
       report.matched_refs += 1;
       const hitPersonSet = new Set();
       for (const token of hitTokens) {
-        const names = tokenToPersons.get(token) || [];
+        const names = [
+          ...(tokenToPersons.get(token) || []),
+          ...(stemToPersons.get(greekNameStem(token)) || [])
+        ];
         for (const n of names) hitPersonSet.add(n);
       }
       if (hitPersonSet.size > 1) {
@@ -550,7 +725,7 @@ function buildSblLexiconScan(records, sbl) {
       report.person_status.pending += 1;
     }
 
-    if (!seenPerson.has(person.unifiedName)) {
+    if (matchedAny && !seenPerson.has(person.unifiedName)) {
       sblPersons.push(person.unifiedName);
       seenPerson.add(person.unifiedName);
     }
@@ -606,7 +781,28 @@ function parseStepPersons(filePath) {
     if (l.startsWith('–')) {
       if (!current) continue;
       const parsed = parseSubrecord(line);
-      if (parsed) current.subrecords.push(parsed);
+      if (parsed) {
+        const previous = current.subrecords[current.subrecords.length - 1];
+        if (parsed.significance === 'group') {
+          parsed.entityKind = 'group';
+        } else if (parsed.significance === 'mentioned') {
+          parsed.entityKind = 'non_name_mention';
+        } else if (parsed.significance.includes('form (')) {
+          parsed.entityKind = 'non_person_form';
+        } else if (parsed.significance.includes('same form as previous')) {
+          parsed.entityKind = previous?.entityKind || 'person';
+        } else if (
+          previous
+          && previous.entityKind !== 'person'
+          && previous.aliasKey
+          && previous.aliasKey === parsed.aliasKey
+        ) {
+          parsed.entityKind = previous.entityKind;
+        } else {
+          parsed.entityKind = 'person';
+        }
+        current.subrecords.push(parsed);
+      }
       continue;
     }
     if (!line.includes('\t')) continue;
@@ -670,17 +866,29 @@ function parseStepPersons(filePath) {
 function collectRefs(person) {
   const out = [];
   for (const sr of person.subrecords) {
-    if (sr && Array.isArray(sr.refs)) out.push(...sr.refs);
+    if (sr?.entityKind === 'person' && Array.isArray(sr.refs)) out.push(...sr.refs);
   }
   return out.filter((x) => x && x.book);
 }
 
 function buildCorpus() {
+  const scopeOverrides = parseScopeOverrides();
+  const identitySeedPath = path.join(DATA_DIR, 'identity-options.jsonl');
+  const existingIdentityOptions = readJsonl(identitySeedPath);
+  const identitySeed = existingIdentityOptions.filter((opt) => {
+    const status = String(opt?.status || '').toLowerCase();
+    const scope = String(opt?.identity_scope || '').toLowerCase();
+    return status !== 'independent' || scope !== 'default';
+  });
+
   const stepPath = findStepFile(SOURCE_DIR);
   if (!stepPath) throw new Error(`Cannot find TIPNR file in ${SOURCE_DIR}`);
   const sbl = buildSblReferenceSet(SBL_DIR);
   const records = parseStepPersons(stepPath);
-  const sblLexiconScan = buildSblLexiconScan(records.filter((person) => !person._skipForType), sbl);
+  const sblLexiconScan = buildSblLexiconScan(
+    records.filter((person) => !person._skipForType && scopeOverrides.get(person.unifiedRaw)?.decision !== 'exclude'),
+    sbl
+  );
 
   const ledger = [];
   const people = [];
@@ -689,7 +897,6 @@ function buildCorpus() {
   const assertions = [];
   const identityOptions = [];
 
-  let pNo = 1;
   let nNo = 1;
   let mNo = 1;
   let aNo = 1;
@@ -702,12 +909,51 @@ function buildCorpus() {
 
   const nameToId = new Map();
   const ntPeople = [];
+  const existingPeople = readJsonl(path.join(DATA_DIR, 'people.jsonl'));
+  const existingNames = readJsonl(path.join(DATA_DIR, 'names.jsonl'));
+  const existingPersonIds = new Set(existingPeople.map((person) => person.person_id));
+  const usedPersonIds = new Set();
+  const personIdByStepKey = new Map();
+  for (const name of existingNames) {
+    const match = String(name.notes || '').match(/^Unified name from STEP: (.+)$/);
+    if (match && existingPersonIds.has(name.person_id)) personIdByStepKey.set(match[1], name.person_id);
+  }
+  let nextPersonNo = Math.max(0, ...Array.from(existingPersonIds, (id) => Number(String(id).match(/(\d+)$/)?.[1] || 0))) + 1;
+  const existingDefaultOptionByPerson = new Map(
+    existingIdentityOptions
+      .filter((opt) => opt?.status === 'independent' && opt?.identity_scope === 'default')
+      .map((opt) => [opt.person_id, opt.option_id])
+  );
+  const existingOptionIds = new Set(existingIdentityOptions.map((opt) => opt.option_id));
+  let nextOptionNo = Math.max(0, ...Array.from(existingOptionIds, (id) => Number(String(id).match(/(\d+)$/)?.[1] || 0))) + 1;
 
-  const allocatePersonId = () => `nt-people-${padNum(pNo++)}`;
+  const allocatePersonId = (stepKey) => {
+    const existing = personIdByStepKey.get(stepKey);
+    if (existing && !usedPersonIds.has(existing)) {
+      usedPersonIds.add(existing);
+      return existing;
+    }
+    let candidate;
+    do {
+      candidate = `nt-people-${padNum(nextPersonNo++)}`;
+    } while (existingPersonIds.has(candidate) || usedPersonIds.has(candidate));
+    usedPersonIds.add(candidate);
+    return candidate;
+  };
   const allocateNameId = () => `name-${padNum(nNo++)}`;
   const allocateMentionId = () => `mnt-${padNum(mNo++)}`;
   const allocateAssertionId = () => `asrt-${padNum(aNo++)}`;
   const allocateOptionId = () => `idopt-${padNum(idNo++)}`;
+  const allocateDefaultOptionId = (personId) => {
+    const existing = existingDefaultOptionByPerson.get(personId);
+    if (existing) return existing;
+    let candidate;
+    do {
+      candidate = `idopt-${padNum(nextOptionNo++)}`;
+    } while (existingOptionIds.has(candidate));
+    existingOptionIds.add(candidate);
+    return candidate;
+  };
 
   for (const person of records) {
     if (person._skipForType) {
@@ -719,6 +965,20 @@ function buildCorpus() {
         person: person.unifiedRaw,
         source: SOURCE_ID_STEP,
         note: `Type=${person.type}`
+      });
+      continue;
+    }
+
+    const scopeOverride = scopeOverrides.get(person.unifiedRaw);
+    if (scopeOverride?.decision === 'exclude') {
+      excludedNoNt += 1;
+      ledger.push({
+        kind: 'exclusion',
+        reason: scopeOverride.reason,
+        person: person.unifiedRaw,
+        source: SOURCE_ID_SBL,
+        passages: scopeOverride.evidence_passages,
+        note: scopeOverride.editor_note
       });
       continue;
     }
@@ -737,9 +997,9 @@ function buildCorpus() {
       continue;
     }
 
-    const personId = allocatePersonId();
+    const personId = allocatePersonId(person.unifiedRaw);
     const canonicalName = person.unifiedName;
-    const greekName = person.subrecords.find((sr) => sr.significance === 'greek')?.text || null;
+    const greekName = person.subrecords.find((sr) => sr.entityKind === 'person' && sr.language === 'grc')?.text || null;
     const latinized = canonicalPersonLabel(canonicalName);
 
     const personRow = {
@@ -749,7 +1009,7 @@ function buildCorpus() {
       latinized,
       sex: person.sex,
       status: 'pending',
-      identity_group: `nt-idgrp-${padNum(pNo - 1)}`,
+      identity_group: `nt-idgrp-${String(personId).match(/(\d+)$/)?.[1]}`,
       editor_note: person.summary || person.description || '',
       source_decisions: [SOURCE_ID_STEP, SOURCE_ID_SBL],
       nt_ref_count: uniqueNtRefs.length,
@@ -778,6 +1038,20 @@ function buildCorpus() {
     });
 
     for (const sr of person.subrecords) {
+      if (sr.entityKind !== 'person') {
+        ledger.push({
+          kind: 'exclusion',
+          reason: sr.entityKind === 'group'
+            ? 'group_name_variant'
+            : sr.entityKind === 'non_name_mention'
+              ? 'unnamed_mention_variant'
+              : 'non_person_name_form',
+          person_id: personId,
+          name: sr.text,
+          source: SOURCE_ID_STEP
+        });
+        continue;
+      }
       if (isPlaceholderTopLevel(sr.text)) {
         ledger.push({
           kind: 'exclusion',
@@ -829,8 +1103,8 @@ function buildCorpus() {
       }
     }
 
-    identityOptions.push({
-      option_id: allocateOptionId(),
+    const defaultIdentityOption = {
+      option_id: allocateDefaultOptionId(personId),
       person_id: personId,
       identity_key: person.unifiedRaw,
       status: 'independent',
@@ -839,8 +1113,45 @@ function buildCorpus() {
       editor_note: `Auto-import from ${SOURCE_ID_STEP} (${path.basename(stepPath)})`,
       created_at: now,
       updated_at: now
-    });
+    };
+    identityOptions.push(defaultIdentityOption);
   }
+
+  const personIds = new Set(identityOptions.map((item) => item.person_id));
+  const usedOptionIds = new Set(identityOptions.map((item) => item.option_id));
+  for (const seed of identitySeed) {
+    if (!seed.person_id) {
+      throw new Error('seed identity option missing person_id');
+    }
+    if (!personIds.has(seed.person_id)) {
+      throw new Error(`seed identity option references missing person ${seed.person_id}`);
+    }
+    const sid = String(seed?.option_id || '').trim();
+    const optionId = sid || allocateOptionId();
+    if (usedOptionIds.has(optionId)) {
+      throw new Error(`duplicate option_id in merged identity options: ${optionId}`);
+    }
+    if (seed.merge_target_person_id && !personIds.has(seed.merge_target_person_id)) {
+      throw new Error(`seed identity option ${optionId} targets missing person ${seed.merge_target_person_id}`);
+    }
+    identityOptions.push({
+      ...seed,
+      option_id: optionId,
+      created_at: now,
+      updated_at: now
+    });
+    usedOptionIds.add(optionId);
+  }
+
+  identityOptions.sort((a, b) => {
+    const aIsDefault = a.identity_scope === 'default' && a.status === 'independent';
+    const bIsDefault = b.identity_scope === 'default' && b.status === 'independent';
+    if (aIsDefault !== bIsDefault) return aIsDefault ? -1 : 1;
+    const aId = Number(String(a.option_id || '').match(/idopt-(\d+)/)?.[1] || 0);
+    const bId = Number(String(b.option_id || '').match(/idopt-(\d+)/)?.[1] || 0);
+    if (aId !== bId) return aId - bId;
+    return String(a.option_id || '').localeCompare(String(b.option_id || ''));
+  });
 
   const keyToPersonId = new Map();
   for (const p of ntPeople) {
@@ -852,7 +1163,30 @@ function buildCorpus() {
     }
   }
 
-  const seenRelations = new Set();
+  const seenRelations = new Map();
+  const addAssertion = (entry) => {
+    const relationKey = `${entry.subject_person_id}|${entry.object_person_id}|${entry.relation_type}|${entry.relation_subtype}|${entry.direction}`;
+    const existing = seenRelations.get(relationKey);
+    if (!existing) {
+      seenRelations.set(relationKey, entry);
+      entry.assertion_id = allocateAssertionId();
+      assertions.push(entry);
+      return false;
+    }
+    const confidence = Math.min(existing.confidence, entry.confidence);
+    existing.confidence = confidence;
+    existing.editor_note = `${existing.editor_note}; ${entry.editor_note}`;
+    const seen = new Set(existing.evidence.map((e) => `${e.source_id}|${e.passage}|${e.evidence_level}|${e.certainty}`));
+    for (const e of entry.evidence) {
+      const key = `${e.source_id}|${e.passage}|${e.evidence_level}|${e.certainty}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        existing.evidence.push(e);
+      }
+    }
+    return true;
+  };
+
   for (const subject of ntPeople) {
     const subjectId = nameToId.get(subject.unifiedKey.toLowerCase());
     if (!subjectId) continue;
@@ -897,14 +1231,48 @@ function buildCorpus() {
           });
           continue;
         }
-        const objId = rel.direction === 'directed-reverse' ? subjectId : targetId;
-        const subId = rel.direction === 'directed-reverse' ? targetId : subjectId;
-        const relationSubtype = rel.type === 'offspring' ? 'child' : rel.type;
-        const isLineage = rel.type === 'parent' || rel.type === 'offspring';
-        const dedupeKey = isLineage
-          ? `lineage|${relationSubtype}|${[subId, objId].sort().join(':')}`
-          : `edge|${subId}|${objId}|${rel.type}|${item.uncertain ? 1 : 0}`;
-        if (seenRelations.has(dedupeKey)) {
+        const uncertain = item.uncertain;
+        let subId = subjectId;
+        let objId = targetId;
+        let relationSubtype = rel.type;
+        let direction = rel.direction === 'undirected' ? 'undirected' : 'directed';
+
+        if (rel.type === 'parent') {
+          relationSubtype = 'parent';
+          subId = targetId;
+          objId = subjectId;
+          direction = 'directed';
+        } else if (rel.type === 'offspring') {
+          relationSubtype = 'parent';
+          subId = subjectId;
+          objId = targetId;
+          direction = 'directed';
+        } else if (rel.type === 'sibling' || rel.type === 'partner') {
+          relationSubtype = rel.type;
+          direction = 'undirected';
+          if (subId > objId) {
+            const tmp = subId;
+            subId = objId;
+            objId = tmp;
+          }
+        }
+
+        const relation = {
+          subject_person_id: subId,
+          object_person_id: objId,
+          relation_type: 'kinship',
+          relation_subtype: relationSubtype,
+          direction,
+          evidence,
+          status: 'inactive',
+          confidence: uncertain ? 0.35 : 0.8,
+          editorial_status: 'pending',
+          editor_note: `From TIPNR relation field "${rel.type}"`,
+          created_at: now,
+          updated_at: now
+        };
+        const merged = addAssertion(relation);
+        if (merged) {
           ledger.push({
             kind: 'relation',
             reason: 'relation_duplicate',
@@ -913,26 +1281,40 @@ function buildCorpus() {
             target: item.raw,
             relation: rel.type
           });
-          continue;
         }
-        seenRelations.add(dedupeKey);
-        assertions.push({
-          assertion_id: allocateAssertionId(),
-          subject_person_id: subId,
-          object_person_id: objId,
-          relation_type: 'kinship',
-          relation_subtype: relationSubtype,
-          direction: rel.direction === 'undirected' ? 'undirected' : 'directed',
-          evidence,
-          status: 'inactive',
-          confidence: item.uncertain ? 0.35 : 0.8,
-          editorial_status: 'pending',
-          editor_note: `From TIPNR relation field "${rel.type}"`,
-          created_at: now,
-          updated_at: now
-        });
       }
     }
+  }
+
+  const seedRows = fs.existsSync(SEED_PATH) ? parseSeedRows(SEED_PATH) : [];
+  const seedSeen = new Set();
+  for (const seed of seedRows.sort((a, b) => String(a.seed_id).localeCompare(String(b.seed_id)))) {
+    if (seedSeen.has(seed.seed_id)) {
+      throw new Error(`Duplicate seed_id ${seed.seed_id}`);
+    }
+    seedSeen.add(seed.seed_id);
+    if (!personIds.has(seed.subject_person_id) || !personIds.has(seed.object_person_id)) {
+      throw new Error(`Seed uses missing person id: ${seed.seed_id}`);
+    }
+    if (seed.subject_person_id === seed.object_person_id) {
+      throw new Error(`Seed self-loop detected: ${seed.seed_id}`);
+    }
+    const certainty = seed.evidence[0]?.certainty ?? 0.9;
+    const relation = {
+      subject_person_id: seed.subject_person_id,
+      object_person_id: seed.object_person_id,
+      relation_type: seed.relation_type,
+      direction: seed.direction,
+      evidence: seed.evidence.map((e) => ({ ...e })),
+      status: 'inactive',
+      confidence: certainty,
+      editorial_status: 'pending',
+      editor_note: `Explicit seed ${seed.seed_id}`,
+      created_at: now,
+      updated_at: now
+    };
+    if (seed.relation_subtype) relation.relation_subtype = seed.relation_subtype;
+    addAssertion(relation);
   }
 
   fs.mkdirSync(DATA_DIR, { recursive: true });

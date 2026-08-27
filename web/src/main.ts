@@ -8,6 +8,9 @@ type IdentityOption = {
   statusRaw?: string;
   scope?: string;
   preset?: string;
+  mergeGroupId?: string | null;
+  mergeTargetPersonId?: string | null;
+  displayLabel?: string | null;
 };
 
 type Person = {
@@ -55,6 +58,7 @@ type TopicPreset = {
   bookIncludes: string[];
   eraIncludes: string[];
   evidenceIncludes: string[];
+  personIncludes?: string[];
 };
 
 type GraphData = {
@@ -79,6 +83,7 @@ type FilterState = {
   eras: Set<string>;
   relations: Set<string>;
   evidences: Set<string>;
+  personIncludes: Set<string>;
   preset: string;
 };
 
@@ -134,31 +139,33 @@ app.innerHTML = `
         </div>
       </div>
 
-      <div class="filter-row">
-        <div>
-          <div class="chips" id="book-chips"></div>
-        </div>
-        <div class="pill-group">
-          <strong>关系类型</strong>
-          <div class="chips" id="relation-chips"></div>
-        </div>
-        <div class="pill-group">
-          <strong>证据层级</strong>
-          <div class="chips" id="evidence-chips"></div>
-        </div>
-        <div class="pill-group">
-          <strong>时代</strong>
-          <div class="chips" id="era-chips"></div>
-        </div>
-      </div>
-
-      <div class="toolbar">
-        <button class="btn" id="btn-reset">重置筛选</button>
-      </div>
-
       <div class="graph-wrap">
         <div id="graph"></div>
       </div>
+      <p class="graph-status" id="graph-status" aria-live="polite"></p>
+
+      <details class="filter-panel">
+        <summary>高级筛选：书卷、关系类型与证据层级</summary>
+        <div class="filter-row">
+          <div class="pill-group">
+            <strong>书卷</strong>
+            <div class="chips" id="book-chips"></div>
+          </div>
+          <div class="pill-group">
+            <strong>关系类型</strong>
+            <div class="chips" id="relation-chips"></div>
+          </div>
+          <div class="pill-group">
+            <strong>证据层级</strong>
+            <div class="chips" id="evidence-chips"></div>
+          </div>
+          <div class="pill-group">
+            <strong>时代</strong>
+            <div class="chips" id="era-chips"></div>
+          </div>
+        </div>
+        <button class="btn filter-reset" id="btn-reset">重置筛选</button>
+      </details>
     </main>
 
     <aside class="card details">
@@ -172,6 +179,7 @@ app.innerHTML = `
 `;
 
 const graphContainer = document.getElementById('graph');
+const graphStatus = document.getElementById('graph-status');
 const searchInput = document.getElementById('search') as HTMLInputElement;
 const presetSelect = document.getElementById('preset') as HTMLSelectElement;
 const identityPresetSelect = document.getElementById('identity-preset') as HTMLSelectElement;
@@ -193,10 +201,13 @@ const filters: FilterState = {
   eras: new Set(),
   relations: new Set(),
   evidences: new Set(),
+  personIncludes: new Set(),
   preset: 'all'
 };
 
 const identitySelection: Record<string, string> = {};
+const personById = new Map<string, Person>();
+const mergeGroupMembers = new Map<string, { members: Set<string>; targetPersonId: string | null; displayLabel: string | null }>();
 
 function labelizeEvidence(level: Relationship['evidenceLevel']) {
   return evidenceLabel[level] ?? level;
@@ -229,7 +240,7 @@ function isTraditionalOption(option: IdentityOption) {
   const status = String(option.statusRaw || '').toLowerCase();
   const scope = String(option.scope || '').toLowerCase();
   const preset = String(option.preset || '').toLowerCase();
-  return preset === 'traditional' || status === 'traditional' || scope === 'traditional';
+  return preset === 'traditional' || status === 'traditional' || scope === 'traditional' || scope === 'common_tradition' || scope === 'common-tradition';
 }
 
 function isConservativeOption(option: IdentityOption) {
@@ -260,6 +271,59 @@ function pickIdentityForPreset(person: Person, preset: 'conservative' | 'traditi
   return person.identityOptions[0].id;
 }
 
+function isMergeTraditionalOption(option: IdentityOption) {
+  const scope = String(option.scope || '').toLowerCase();
+  const status = String(option.statusRaw || '').toLowerCase();
+  return option.mergeGroupId && option.mergeTargetPersonId && (scope === 'common_tradition' || scope === 'common-tradition' || status === 'disputed');
+}
+
+function getSelectedIdentityOption(person: Person) {
+  const selected = identitySelection[person.id];
+  return person.identityOptions.find((option) => option.id === selected) ?? person.identityOptions[0];
+}
+
+function resetMergeGroupToConservative(groupId: string) {
+  const group = mergeGroupMembers.get(groupId);
+  if (!group) return;
+  for (const memberId of group.members) {
+    const member = personById.get(memberId);
+    if (!member) continue;
+    const conservativeId = pickIdentityForPreset(member, 'conservative') ?? member.identityOptions[0]?.id;
+    if (conservativeId) identitySelection[member.id] = conservativeId;
+  }
+}
+
+function applyIdentitySelection(person: Person, optionId: string) {
+  const previous = getSelectedIdentityOption(person);
+  const chosen = person.identityOptions.find((option) => option.id === optionId);
+  if (!chosen) return;
+
+  const prevGroupId = previous?.mergeGroupId ?? null;
+  identitySelection[person.id] = optionId;
+  if (chosen.mergeGroupId) {
+    syncTraditionalGroupForPerson(person, chosen.id);
+    return;
+  }
+  if (prevGroupId && prevGroupId !== chosen.mergeGroupId) {
+    resetMergeGroupToConservative(prevGroupId);
+  }
+}
+
+function syncTraditionalGroupForPerson(person: Person, optionId: string) {
+  identitySelection[person.id] = optionId;
+  const chosen = person.identityOptions.find((option) => option.id === optionId);
+  if (!chosen?.mergeGroupId) return;
+  const group = mergeGroupMembers.get(chosen.mergeGroupId);
+  if (!group) return;
+  for (const memberId of group.members) {
+    if (memberId === person.id) continue;
+    const other = personById.get(memberId);
+    if (!other) continue;
+    const target = other.identityOptions.find((option) => isMergeTraditionalOption(option) && option.mergeGroupId === chosen.mergeGroupId);
+    if (target) identitySelection[other.id] = target.id;
+  }
+}
+
 function isRelationActiveByIdentity(rel: Relationship) {
   if (!rel.identityGuards || rel.identityGuards.length === 0) return true;
   return rel.identityGuards.every((g) => {
@@ -277,6 +341,143 @@ function relationMatchesFilters(rel: Relationship) {
   return true;
 }
 
+function computeActiveMergeMapping() {
+  const mergedTo = new Map<string, string>();
+  for (const [groupId, data] of mergeGroupMembers.entries()) {
+    if (data.members.size < 2) continue;
+    const groupIds: string[] = [];
+    let targetPersonId: string | null = data.targetPersonId || null;
+    for (const memberId of data.members) {
+      const member = personById.get(memberId);
+      const selected = member ? getSelectedIdentityOption(member) : undefined;
+      if (!selected || selected.mergeGroupId !== groupId || !selected.mergeTargetPersonId) {
+        break;
+      }
+      if (!targetPersonId) targetPersonId = selected.mergeTargetPersonId;
+      if (selected.mergeTargetPersonId !== targetPersonId) {
+        targetPersonId = null;
+        break;
+      }
+      groupIds.push(memberId);
+    }
+    if (groupIds.length === data.members.size && targetPersonId) {
+      for (const memberId of data.members) {
+        if (memberId !== targetPersonId) mergedTo.set(memberId, targetPersonId);
+      }
+    }
+  }
+  return mergedTo;
+}
+
+function getVisiblePersonsAndRelations() {
+  if (!data) return { people: [] as Person[], relationships: [] as Relationship[], visibleIds: new Set<string>() };
+
+  const mergedTo = computeActiveMergeMapping();
+  const visibleIds = new Set<string>();
+  const bucket = new Map<string, Set<string>>();
+
+  for (const person of data.people) {
+    if (filters.personIncludes.size > 0 && !filters.personIncludes.has(person.id)) continue;
+    const mapped = mergedTo.get(person.id) ?? person.id;
+    const set = bucket.get(mapped) ?? new Set<string>();
+    set.add(person.id);
+    bucket.set(mapped, set);
+  }
+
+  let visiblePeople: Person[] = [];
+  for (const [visibleId, members] of bucket.entries()) {
+    const base = personById.get(visibleId);
+    if (!base) continue;
+    if (members.size === 1) {
+      const only = [...members][0];
+      if (filters.personIncludes.size > 0 && !filters.personIncludes.has(only)) continue;
+      visiblePeople.push(base);
+      visibleIds.add(visibleId);
+      continue;
+    }
+
+    const mergedAliases = new Set<string>([...base.aliases]);
+    const mergedBooks = new Set<string>([...base.books]);
+    const activeTargetLabel = [...members]
+      .map((memberId) => {
+        const person = personById.get(memberId);
+        const option = person ? getSelectedIdentityOption(person) : undefined;
+        if (!option || option.mergeGroupId == null) return '';
+        return option.mergeTargetPersonId === visibleId ? option.displayLabel || '' : '';
+      })
+      .find(Boolean);
+    const visibleName = activeTargetLabel || base.nameZh;
+
+    for (const memberId of members) {
+      const member = personById.get(memberId);
+      if (!member) continue;
+      mergedAliases.add(member.nameZh);
+      member.aliases.forEach((alias) => mergedAliases.add(alias));
+      member.books.forEach((book) => mergedBooks.add(book));
+    }
+    visiblePeople.push({
+      ...base,
+      id: visibleId,
+      nameZh: visibleName,
+      aliases: [...mergedAliases].filter(Boolean).sort().slice(0, 60),
+      books: [...mergedBooks],
+      notes: base.notes
+    });
+    visibleIds.add(visibleId);
+  }
+
+  const visibleRels = data.relationships
+    .map((rel) => {
+      const mappedFrom = mergedTo.get(rel.fromPerson) ?? rel.fromPerson;
+      const mappedTo = mergedTo.get(rel.toPerson) ?? rel.toPerson;
+      if (mappedFrom === mappedTo) return null;
+      if (filters.personIncludes.size > 0 && (!filters.personIncludes.has(mappedFrom) || !filters.personIncludes.has(mappedTo))) return null;
+      return {
+        ...rel,
+        fromPerson: mappedFrom,
+        toPerson: mappedTo
+      } as Relationship;
+    })
+    .filter((rel): rel is Relationship => Boolean(rel))
+    .filter((rel) => relationMatchesFilters(rel) && isRelationActiveByIdentity(rel));
+
+  const hasRelationshipFilters =
+    filters.books.size > 0 ||
+    filters.eras.size > 0 ||
+    filters.relations.size > 0 ||
+    filters.evidences.size > 0 ||
+    filters.personIncludes.size > 0;
+  if (hasRelationshipFilters) {
+    const connectedIds = new Set<string>();
+    for (const rel of visibleRels) {
+      connectedIds.add(rel.fromPerson);
+      connectedIds.add(rel.toPerson);
+    }
+    visiblePeople = visiblePeople.filter((person) => connectedIds.has(person.id));
+  }
+
+  if (!filters.search) {
+    const allVisibleIds = new Set(visiblePeople.map((person) => person.id));
+    return { people: visiblePeople, relationships: visibleRels, visibleIds: allVisibleIds };
+  }
+
+  const directMatches = new Set(visiblePeople.filter(personMatchesSearch).map((person) => person.id));
+  const visibleRelationships = visibleRels.filter(
+    (rel) => directMatches.has(rel.fromPerson) || directMatches.has(rel.toPerson)
+  );
+  const searchVisibleIds = new Set(directMatches);
+  for (const rel of visibleRelationships) {
+    searchVisibleIds.add(rel.fromPerson);
+    searchVisibleIds.add(rel.toPerson);
+  }
+
+  return {
+    people: visiblePeople.filter((person) => searchVisibleIds.has(person.id)),
+    relationships: visibleRelationships,
+    visibleIds: searchVisibleIds
+  };
+}
+
 function personMatchesSearch(person: Person) {
   if (!filters.search) return true;
   const term = normalize(filters.search);
@@ -292,6 +493,7 @@ function applyPreset(id: string) {
   filters.eras = new Set(preset.eraIncludes ?? []);
   filters.relations = new Set(preset.relationTypes ?? []);
   filters.evidences = new Set(preset.evidenceIncludes ?? []);
+  filters.personIncludes = new Set(preset.personIncludes ?? []);
   renderChips();
   renderGraph();
 }
@@ -304,7 +506,7 @@ function renderChips() {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = `chip ${activeSet.has(value) ? 'active' : ''}`;
-      btn.textContent = value;
+      btn.textContent = key === 'evidences' ? labelizeEvidence(value as Relationship['evidenceLevel']) : value;
       btn.onclick = () => {
         if (activeSet.has(value)) activeSet.delete(value);
         else activeSet.add(value);
@@ -360,7 +562,9 @@ function renderIdentitySection(person: Person) {
   );
   const sel = document.getElementById(`identity-select-${person.id}`) as HTMLSelectElement;
   sel.onchange = () => {
-    identitySelection[person.id] = sel.value;
+    const selected = person.identityOptions.find((o) => o.id === sel.value);
+    if (!selected) return;
+    applyIdentitySelection(person, selected.id);
     renderGraph();
     renderPersonDetail(person.id);
   };
@@ -369,16 +573,27 @@ function renderIdentitySection(person: Person) {
 function applyIdentityPreset(preset: 'conservative' | 'traditional') {
   if (!data) return;
   for (const person of data.people) {
-    const chosen = pickIdentityForPreset(person, preset) ?? person.identityOptions[0].id;
-    identitySelection[person.id] = chosen;
+    const chosenId = pickIdentityForPreset(person, preset) ?? person.identityOptions[0].id;
+    const chosen = person.identityOptions.find((option) => option.id === chosenId);
+    if (!chosen) continue;
+    if (preset === 'traditional') {
+      syncTraditionalGroupForPerson(person, chosen.id);
+    } else {
+      identitySelection[person.id] = chosen.id;
+    }
+  }
+  if (preset === 'conservative') {
+    for (const groupId of mergeGroupMembers.keys()) {
+      resetMergeGroupToConservative(groupId);
+    }
   }
   renderGraph();
   if (selectedPersonState.value) renderPersonDetail(selectedPersonState.value.id);
 }
 
 function buildRelationshipList(personId: string) {
-  if (!data) return [];
-  return data.relationships.filter(
+  const state = getVisiblePersonsAndRelations();
+  return state.relationships.filter(
     (rel) =>
       isRelationActiveByIdentity(rel) &&
       relationMatchesFilters(rel) &&
@@ -386,19 +601,38 @@ function buildRelationshipList(personId: string) {
   );
 }
 
+function rebuildMergeGroups() {
+  mergeGroupMembers.clear();
+  for (const person of data?.people ?? []) {
+    for (const option of person.identityOptions) {
+      if (!option.mergeGroupId || !option.mergeTargetPersonId || !isMergeTraditionalOption(option)) continue;
+      const group = mergeGroupMembers.get(option.mergeGroupId) ?? {
+        members: new Set<string>(),
+        targetPersonId: option.mergeTargetPersonId,
+        displayLabel: option.displayLabel ?? null
+      };
+      group.members.add(person.id);
+      if (!group.targetPersonId) group.targetPersonId = option.mergeTargetPersonId;
+      group.displayLabel = group.displayLabel || option.displayLabel || null;
+      mergeGroupMembers.set(option.mergeGroupId, group);
+    }
+  }
+}
+
 function renderPersonDetail(personId: string) {
   if (!data) return;
-  const person = data.people.find((p) => p.id === personId);
+  const state = getVisiblePersonsAndRelations();
+  const person = state.people.find((p) => p.id === personId);
   if (!person) return;
   selectedPersonState.value = person;
   const selectedIdentity = identitySelection[person.id] ?? person.identityOptions[0].id;
   const selected = person.identityOptions.find((x) => x.id === selectedIdentity)?.label ?? person.identityOptions[0].label;
   const rels = buildRelationshipList(person.id);
-  const personById = new Map(data.people.map((p) => [p.id, p]));
+  const personByIdAll = new Map(data.people.map((p) => [p.id, p]));
   const relHtml = rels
     .map((rel) => {
       const otherPersonId = rel.fromPerson === person.id ? rel.toPerson : rel.fromPerson;
-      const source = personById.get(otherPersonId);
+      const source = state.people.find((item) => item.id === otherPersonId) || personByIdAll.get(otherPersonId);
       if (!source) return '';
       const srcs = collectSourceLookup(rel.sources);
       return `
@@ -449,18 +683,16 @@ function renderLegend() {
 
 function renderGraph() {
   if (!data || !graphContainer) return;
-  const visiblePeople = data.people.filter(personMatchesSearch);
-  const visiblePeopleIds = new Set(visiblePeople.map((p) => p.id));
+  const state = getVisiblePersonsAndRelations();
+  const visiblePeople = state.people;
+  const visiblePeopleIds = state.visibleIds;
   const personColorById = new Map(
     visiblePeople.map((person) => [person.id, identityColor(person, identitySelection[person.id] ?? person.identityOptions[0].id)])
   );
-  const visibleRels = data.relationships.filter(
-    (rel) =>
-      visiblePeopleIds.has(rel.fromPerson) &&
-      visiblePeopleIds.has(rel.toPerson) &&
-      relationMatchesFilters(rel) &&
-      isRelationActiveByIdentity(rel)
-  );
+  const visibleRels = state.relationships.filter((rel) => visiblePeopleIds.has(rel.fromPerson) && visiblePeopleIds.has(rel.toPerson));
+  if (graphStatus) {
+    graphStatus.textContent = `当前显示：${visiblePeople.length} 人 · ${visibleRels.length} 条关系`;
+  }
 
   const style: cytoscape.StylesheetJson = [
     {
@@ -496,15 +728,20 @@ function renderGraph() {
         width: '2.5px',
         'curve-style': 'bezier',
         'line-color': '#60a5fa',
-        'target-arrow-shape': 'triangle',
-        'target-arrow-color': '#60a5fa',
-        'source-arrow-shape': 'triangle',
-        'source-arrow-color': '#60a5fa',
+        'target-arrow-shape': 'none',
+        'source-arrow-shape': 'none',
         label: 'data(label)',
         'font-size': 9,
         color: '#c7d2fe',
         'text-background-color': '#020617',
         'text-background-opacity': 1
+      }
+    },
+    {
+      selector: 'edge[direction="outgoing"], edge[direction="incoming"]',
+      style: {
+        'target-arrow-shape': 'triangle',
+        'target-arrow-color': '#60a5fa'
       }
     },
     {
@@ -532,7 +769,8 @@ function renderGraph() {
       return {
         group: 'edges' as const,
         data: {
-          id: `e-${rel.id}`,
+          id: `e-${rel.id}-${source}-${target}`,
+          originalId: rel.id,
           source,
           target,
           label,
@@ -560,12 +798,12 @@ function renderGraph() {
     });
     cy.on('tap', 'node', (event) => {
       const id = event.target.id();
-      const person = data?.people.find((p) => p.id === id);
+      const person = visiblePeople.find((p) => p.id === id);
       if (person) renderPersonDetail(person.id);
     });
     cy.on('mouseover', 'edge', (event) => {
       const id = event.target.id();
-      const relId = id.replace(/^e-/, '');
+      const relId = event.target.data('originalId');
       const rel = data?.relationships.find((r) => r.id === relId);
       if (!rel) return;
       event.target.style('label', `${rel.type} · ${labelizeEvidence(rel.evidenceLevel)} · ${rel.book}`);
@@ -649,6 +887,13 @@ async function boot() {
     return;
   }
   data = (await response.json()) as GraphData;
+  data.people.forEach((person) => {
+    personById.set(person.id, person);
+    if (!identitySelection[person.id] && person.identityOptions.length) {
+      identitySelection[person.id] = pickIdentityForPreset(person, 'conservative') ?? person.identityOptions[0].id;
+    }
+  });
+  rebuildMergeGroups();
 
   // default identity
   for (const person of data.people) {
@@ -660,7 +905,6 @@ async function boot() {
   presetSelect.value = data.topicPresets[0]?.id ?? 'all';
   filters.preset = presetSelect.value;
   applyPreset(filters.preset);
-  renderSourceHeader();
   renderReviewWarning();
   renderGraph();
   wireUpControls();

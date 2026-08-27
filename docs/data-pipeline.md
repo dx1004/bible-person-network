@@ -32,6 +32,18 @@
 
 `assertions.status` 与 `identity-options` 用于支持“保守/传统”双预设。
 
+`identity-options.jsonl` 支持三类身份预设：
+- `default`：默认独立身份；
+- `conservative`：保守预设；
+- `common_tradition`：传统候选预设。
+
+可选字段：
+- `merge_group_id`：传统候选分组 ID；
+- `merge_target_person_id`：该分组的目标 `person_id`；
+- `display_label`：展示用标签。
+
+`common_tradition` 下 `status=disputed` 的选项应至少成组出现，并在 `validate:data` 中校验目标一致。
+
 ## 当前编辑闸口
 
 当前自动抽取结果是候选语料，不是已经审定的人物关系数据库。只要中文主标签、关系断言或 SBLGNT 独立人名抽取仍未完成，报告必须保持 `editorial_review_required`，网页也必须显示相应提示。

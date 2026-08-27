@@ -119,6 +119,7 @@ function main() {
     sblCount: sblNames.length,
     sblNameExtraction: stepVsSbl,
     sblCoverage,
+    ...(recon?.sbl_greek_verification ? { sbl_greek_verification: recon.sbl_greek_verification } : {}),
     ...(recon?.sbl_person_scan ? { sbl_person_scan: recon.sbl_person_scan } : {}),
     ...comparison
   };

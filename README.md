@@ -22,9 +22,13 @@ npm run generate:chinese-name-candidates
 npm run check
 ```
 
-当前状态：`editorial_review_required`（中文标签、关系断言审校与 SBL 人名独立抽取尚未完成，报表已显式标注）。
+`npm run generate:chinese-name-candidates` 在未显式设置 `--cuv-usfm-dir` / `CUV_USFM_DIR` 时，默认从 `.sources/cmn-cu89s-usfm` 读取。该目录由 `npm run fetch:sources` 按 `data/manifest.json` 锁定哈希下载并解压。
+
+当前状态：`editorial_review_required`。当前可重复构建的候选库包含 361 位人物、916 个名称变体、3060 处经文提及和 288 条候选关系。中文标签与关系断言仍待独立二轮审校；SBLGNT 已完成基于 STEP 希腊词形的保守核对，但不是完整的独立 NER，报表会明确保留差异和待决项。
 
 这意味着当前网页是研究候选数据的浏览界面，不是已经定稿的人物学结论。STEPBible 自动抽取的亲属边默认作为待审候选显示。
+
+CI 会在 Ubuntu 与 Windows 上执行完整数据/网页检查，并在独立 Linux job 中启动 Neo4j、从空库连续导入两次，核对节点、关系、孤立项和两次快照一致性。
 
 ## 目录
 
@@ -36,18 +40,32 @@ npm run check
 - `docs/`：数据说明与来源说明
 - `editorial/`：中文名候选（`chinese-name-candidates.jsonl`）及审校报告
 - `editorial/chinese-name-review.jsonl`：中文名二轮人工审核清单（默认 `pending`）
+- `editorial/relationship-review.jsonl`：关系主张二轮+终审清单（默认 `pending`）
 
 常用命令：
 
 - `npm run generate:chinese-name-candidates -- --cuv-usfm-dir <path>`：显式重生成中文名候选
 - `npm run init:chinese-name-review`：生成中文名二轮审核清单（会失败并提示除非加 `--force`）
 - `npm run validate:chinese-name-review`：只校验审核清单
+- `npm run apply:chinese-name-review`：将 `final_decision=accepted` 且 round1/round2 一致的记录应用到 `data/people.jsonl`
+- `npm run apply:chinese-name-review -- --check`：只校验审核清单（不写入）
+- `npm run apply:chinese-name-review -- --dry-run`：预览应用结果（不写入）
+- `npm run init:relationship-review`：生成关系主张审校清单（默认 `pending`，`--force` 可覆盖）
+- `npm run validate:relationship-review`：只校验关系主张审校清单
+- `npm run apply:relationship-review`：将 `final_decision=accepted` 的审校结果应用到 `data/assertions.jsonl`（仅在通过 round2 且 final 与 round2 完全一致时）
+- `node scripts/apply-relationship-review.js --check`：只验流程一致性，不改数据
+- `node scripts/apply-relationship-review.js --dry-run`：预览将生效变更数量，不改数据
 - `chinese-name-review.jsonl` 记录每人前 3 个 `candidate_rank` 分组的候选，并带 round1/round2/final 的候选引用字段。
 
 中文名候选默认不自动写入 `people.jsonl`。审校采用两轮机制：
 
 1. 首轮只做提取与歧义标注：候选均保留 `status: pending`，不改 `canonical_chinese`。
 2. 二轮人工确认后，将通过审校的候选写入 `people.jsonl` 并更新 `review_status`。
+
+关系主张审校同样保持“默认保留、不自动发布”：
+
+1. 先完整生成 `relationship-review.jsonl`，每条 `asrt-*` 都有默认 `pending` 决策与快照。
+2. 两轮都需审阅后，才允许 `final_decision=accepted`。
 
 ## Neo4j
 

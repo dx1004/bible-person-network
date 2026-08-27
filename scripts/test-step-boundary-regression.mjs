@@ -11,12 +11,45 @@ function makeFixture(root) {
     + `@Article= Ancient note text\t\t\t\t\t\t\t\t\t\n`
     + `\u2013 named\tSkipperAlias\t\t\t\tMat.2.1\n`
     + `Beta@ESV\t\t\t\t\t\t\t\tMale\n`
-    + `\u2013 named\tBeta\t\t\t\tMat.3.1\n`;
+    + `\u2013 named\tBeta\t\t\t\tMat.3.1\n`
+    + `GroupFounder@ESV\t\t\t\t\t\t\t\tMale\n`
+    + `\u2013 named\tGroupFounder\t\t\t\tGen.1.1\n`
+    + `\u2013 Group\tPeople|GroupFounder\t\t\t\tMat.4.1\n`
+    + `\u2013 Greek\tPeople|GroupFounder\t\t\t\tMat.4.2\n`
+    + `\u2013 (same form as previous)\tPeople|GroupFounder\t\t\t\tMat.4.3\n`
+    + `Inferred@ESV\t\t\t\t\t\t\t\tMale\n`
+    + `\u2013 Mentioned\tInferred\t\t\t\tMat.5.1\n`;
   const properNounsDir = path.join(root, 'Proper Nouns');
   fs.mkdirSync(properNounsDir, { recursive: true });
   fs.writeFileSync(
     path.join(properNounsDir, 'TIPNR - Translators Individualised Proper Names with all References - STEPBible.org CC BY.txt'),
     stepFile,
+    'utf8'
+  );
+  fs.mkdirSync(path.join(root, 'sbl'), { recursive: true });
+}
+
+function makeRelationFixture(root) {
+  const row = (name, cols) => {
+    const defaults = [name, '', '', '', '', '', '', '', 'Male'];
+    const expanded = [...defaults];
+    for (let i = 0; i < cols.length; i += 1) expanded[i] = cols[i];
+    return expanded.join('\t');
+  };
+  const stepRows = [
+    `$========== PERSON`,
+    row('James@ESV', [ 'James@ESV', '', '', 'Zebedee', '', 'Peter', '', '', 'Male' ]),
+    `\u2013 named\tJames\t\t\t\tMat.1.1`,
+    row('Peter@ESV', [ 'Peter@ESV', '', 'James', '', '', '', '', '', 'Male' ]),
+    `\u2013 named\tPeter\t\t\t\tMat.2.1`,
+    row('Zebedee@ESV', [ 'Zebedee@ESV', '', '', 'James', '', '', '', '', 'Male' ]),
+    `\u2013 named\tZebedee\t\t\t\tMat.3.1`
+  ].join('\n');
+  const properNounsDir = path.join(root, 'Proper Nouns');
+  fs.mkdirSync(properNounsDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(properNounsDir, 'TIPNR - Translators Individualised Proper Names with all References - STEPBible.org CC BY.txt'),
+    stepRows,
     'utf8'
   );
   fs.mkdirSync(path.join(root, 'sbl'), { recursive: true });
@@ -69,6 +102,23 @@ function runIngest(stepDir, outDir, sblDir) {
   }
 }
 
+function withEmptyRelationshipSeed(run) {
+  const seeds = path.join(process.cwd(), 'editorial', 'relationship-seeds.jsonl');
+  const hadSeeds = fs.existsSync(seeds);
+  const original = hadSeeds ? fs.readFileSync(seeds, 'utf8') : '';
+
+  fs.writeFileSync(seeds, '', 'utf8');
+  try {
+    return run();
+  } finally {
+    if (hadSeeds) {
+      fs.writeFileSync(seeds, original, 'utf8');
+    } else {
+      fs.unlinkSync(seeds);
+    }
+  }
+}
+
 function main() {
   const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'nt-step-boundary-'));
   const stepDir = path.join(tmpRoot, 'step');
@@ -80,8 +130,10 @@ function main() {
     fs.mkdirSync(firstOut, { recursive: true });
     fs.mkdirSync(secondOut, { recursive: true });
 
-    runIngest(stepDir, firstOut, sblDir);
-    runIngest(stepDir, secondOut, sblDir);
+    withEmptyRelationshipSeed(() => {
+      runIngest(stepDir, firstOut, sblDir);
+      runIngest(stepDir, secondOut, sblDir);
+    });
 
     const firstSnapshot = sortedSnapshot(firstOut);
     const secondSnapshot = sortedSnapshot(secondOut);
@@ -114,6 +166,77 @@ function main() {
     }
 
     console.log('[pass] step boundary regression: skipped top-level subrecords do not leak.');
+
+    if (people.some((p) => names.some((n) => n.person_id === p.person_id && n.name_text === 'GroupFounder'))) {
+      throw new Error('Group-only NT references must not cause a named person to enter the NT corpus.');
+    }
+    if (names.some((n) => n.name_text === 'People')) {
+      throw new Error('Group aliases must not leak into person name variants.');
+    }
+    if (names.some((n) => n.name_text === 'Inferred')) {
+      throw new Error('Mentioned-only inferred identities must not enter the named-person corpus.');
+    }
+    console.log('[pass] STEP entity boundary regression: group aliases and inherited group forms are excluded.');
+
+    const alphaIdBefore = alphaPerson.person_id;
+    const fixturePath = path.join(stepDir, 'Proper Nouns', 'TIPNR - Translators Individualised Proper Names with all References - STEPBible.org CC BY.txt');
+    const originalFixture = fs.readFileSync(fixturePath, 'utf8');
+    fs.writeFileSync(
+      fixturePath,
+      originalFixture.replace('$========== PERSON\n', '$========== PERSON\nAardvark@ESV\t\t\t\t\t\t\t\tMale\n\u2013 named\tAardvark\t\t\t\tMat.1.2\n'),
+      'utf8'
+    );
+    withEmptyRelationshipSeed(() => runIngest(stepDir, firstOut, sblDir));
+    const stablePeople = readJsonl(path.join(firstOut, 'people.jsonl'));
+    const stableNames = readJsonl(path.join(firstOut, 'names.jsonl'));
+    const alphaAfter = stableNames.find((n) => n.name_text === 'Alpha');
+    if (!alphaAfter || alphaAfter.person_id !== alphaIdBefore || !stablePeople.some((p) => p.person_id === alphaIdBefore)) {
+      throw new Error('Existing STEP identity key did not preserve its person_id after insertion.');
+    }
+    console.log('[pass] stable person-id regression: existing identities retain IDs across source insertions.');
+
+    const relationStepDir = path.join(tmpRoot, 'relations');
+    const relationOut = path.join(tmpRoot, 'relations-out');
+    makeRelationFixture(relationStepDir);
+    fs.mkdirSync(relationOut, { recursive: true });
+    withEmptyRelationshipSeed(() => {
+      runIngest(relationStepDir, relationOut, sblDir);
+    });
+
+    const relPeople = readJsonl(path.join(relationOut, 'people.jsonl'));
+    const relNames = readJsonl(path.join(relationOut, 'names.jsonl'));
+    const relAssertions = readJsonl(path.join(relationOut, 'assertions.jsonl'));
+    const personIdByName = new Map(
+      relPeople.flatMap((p) =>
+        relNames
+          .filter((n) => n.person_id === p.person_id)
+          .map((n) => [n.name_text, p.person_id])
+      )
+    );
+    const parentJamesPeter = relAssertions.filter((a) => a.relation_subtype === 'parent' && a.direction === 'directed');
+    if (parentJamesPeter.length !== 1) {
+      throw new Error(`Expected one parent assertion, got ${parentJamesPeter.length}.`);
+    }
+    const parent = parentJamesPeter[0];
+    if (parent.subject_person_id !== personIdByName.get('James') || parent.object_person_id !== personIdByName.get('Peter')) {
+      throw new Error('Parent assertion direction should be parent -> child (James -> Peter).');
+    }
+    const sibling = relAssertions.filter((a) => a.relation_subtype === 'sibling' && a.direction === 'undirected');
+    if (sibling.length !== 1) {
+      throw new Error(`Expected one sibling assertion, got ${sibling.length}.`);
+    }
+    const jamesId = personIdByName.get('James');
+    const zebId = personIdByName.get('Zebedee');
+    const siblingAssertion = sibling[0];
+    if (siblingAssertion.subject_person_id.localeCompare(siblingAssertion.object_person_id) > 0) {
+      throw new Error('Sibling assertion endpoints are not in lexical order.');
+    }
+    const sibIds = [siblingAssertion.subject_person_id, siblingAssertion.object_person_id].sort();
+    const expectedIds = [jamesId, zebId].sort();
+    if (sibIds[0] !== expectedIds[0] || sibIds[1] !== expectedIds[1]) {
+      throw new Error('Sibling assertion should use lexical endpoint ordering.');
+    }
+    console.log('[pass] kinship normalization regression: duplicates are deduplicated and directed correctly.');
   } finally {
     fs.rmSync(tmpRoot, { recursive: true, force: true });
   }

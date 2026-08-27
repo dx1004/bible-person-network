@@ -7,11 +7,11 @@
   "total_person_records_seen": 6263,
   "excluded_non_human_or_non_person": 3227,
   "excluded_placeholder_entity": 53,
-  "excluded_no_nt_reference": 2613,
-  "nt_person_count": 370,
-  "name_count": 975,
-  "mention_count": 3376,
-  "assertion_count": 568,
-  "ledger_count": 8304,
+  "excluded_no_nt_reference": 2622,
+  "nt_person_count": 361,
+  "name_count": 916,
+  "mention_count": 3060,
+  "assertion_count": 288,
+  "ledger_count": 6831,
   "generatedAt": "2026-08-26T00:00:00Z"
 }

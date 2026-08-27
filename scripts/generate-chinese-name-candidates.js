@@ -13,6 +13,9 @@ const SCHEMA_PATH = path.join(ROOT, 'schemas', 'chinese-name-candidates.schema.j
 const OUTPUT_PATH = path.join(EDITORIAL_DIR, 'chinese-name-candidates.jsonl');
 const REPORT_PATH = path.join(EDITORIAL_DIR, 'chinese-name-candidates-report.json');
 const MANIFEST_PATH = path.join(DATA_DIR, 'manifest.json');
+const OVERRIDE_PATH = path.join(EDITORIAL_DIR, 'chinese-name-overrides.jsonl');
+const OVERRIDE_SCHEMA_PATH = path.join(ROOT, 'schemas', 'chinese-name-overrides.schema.json');
+const DEFAULT_CUV_USFM_DIR = path.join(ROOT, '.sources', 'cmn-cu89s-usfm');
 
 const DEFAULT_SOURCE_ID = 'source:0003';
 const DATASET_TIMESTAMP = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8')).created_at;
@@ -94,6 +97,7 @@ function parseVerseMarkers(usfmDir) {
 
   const tokenPassageCounts = new Map(); // token -> passage -> count
   const tokenPassageSet = new Map(); // token -> Set(passage)
+  const verseTextByPassage = new Map();
   const files = fs
     .readdirSync(usfmDir)
     .filter((file) => /\.usfm$/i.test(file))
@@ -116,6 +120,7 @@ function parseVerseMarkers(usfmDir) {
       continue;
     }
     let chapter = null;
+    let currentPassage = null;
 
     for (const line of content.split(/\r?\n/)) {
       if (process.env.CN_DEBUG === '1' && book === 'MAT' && line.includes('\\pn')) {
@@ -134,13 +139,16 @@ function parseVerseMarkers(usfmDir) {
       const chapterMatch = line.match(chapterRe);
       if (chapterMatch) {
         chapter = chapterMatch[1];
+        currentPassage = null;
         continue;
       }
 
       const verseMatch = line.match(verseRe);
-      if (!verseMatch || !chapter) continue;
+      if (verseMatch && chapter) currentPassage = `${book} ${chapter}:${verseMatch[1]}`;
+      if (!currentPassage) continue;
 
-      const passage = `${book} ${chapter}:${verseMatch[1]}`;
+      const passage = currentPassage;
+      verseTextByPassage.set(passage, `${verseTextByPassage.get(passage) || ''} ${line}`.trim());
       tokenRe.lastIndex = 0;
       let m;
       while ((m = tokenRe.exec(line)) !== null) {
@@ -166,8 +174,69 @@ function parseVerseMarkers(usfmDir) {
   return {
     tokenPassageCounts,
     tokenPassageSet,
+    verseTextByPassage,
     parsedFiles: files.map((file) => path.join(usfmDir, file))
   };
+}
+
+function loadCuratedOverrides(peopleIndex, verseTextByPassage, mentionsByPerson, mentionCountByPerson) {
+  const rows = readJsonl(OVERRIDE_PATH);
+  const schema = JSON.parse(fs.readFileSync(OVERRIDE_SCHEMA_PATH, 'utf8'));
+  validate(schema, rows);
+  const seen = new Set();
+  return rows.map((row) => {
+    const key = `${row.person_id}|${row.candidate_chinese}`;
+    if (seen.has(key)) throw new Error(`duplicate curated Chinese-name override: ${key}`);
+    seen.add(key);
+    const person = peopleIndex.get(row.person_id);
+    if (!person) throw new Error(`curated Chinese-name override references missing person: ${row.person_id}`);
+    const sourceText = verseTextByPassage.get(row.source_passage) || '';
+    const sourceTokens = row.source_tokens?.length ? row.source_tokens : [row.candidate_chinese];
+    if (sourceTokens.some((token) => !sourceText.includes(token))) {
+      throw new Error(`curated Chinese label components for ${row.candidate_chinese} not found at ${row.source_passage}`);
+    }
+    const mentionPassages = new Set((mentionsByPerson.get(row.person_id) || new Map()).keys());
+    const supportingPassages = [...mentionPassages].filter((passage) => {
+      const text = verseTextByPassage.get(passage) || '';
+      return sourceTokens.every((token) => text.includes(token));
+    });
+    if (!supportingPassages.includes(row.canonical_passage)) supportingPassages.push(row.canonical_passage);
+    supportingPassages.sort();
+    const allTokenPassages = [...verseTextByPassage.entries()]
+      .filter(([, text]) => sourceTokens.every((token) => text.includes(token)))
+      .map(([passage]) => passage);
+    const mentionCount = mentionCountByPerson.get(row.person_id) || 1;
+    const supportCount = supportingPassages.length;
+    const coverage = Number((supportCount / mentionCount).toFixed(4));
+    const precision = Number((supportCount / Math.max(allTokenPassages.length, 1)).toFixed(4));
+    const unionSize = Math.max(1, mentionCount + allTokenPassages.length - supportCount);
+    const jaccard = Number((supportCount / unionSize).toFixed(4));
+    const score = Number((coverage * 0.5 + precision * 0.3 + jaccard * 0.2).toFixed(4));
+    return {
+      candidate_id: '',
+      person_id: row.person_id,
+      latinized: person.latinized || '',
+      candidate_chinese: row.candidate_chinese,
+      supporting_passages: supportingPassages,
+      support_count: supportCount,
+      mention_count: mentionCount,
+      coverage,
+      precision,
+      jaccard,
+      score,
+      ambiguity: {
+        level: 'none',
+        reasons: ['curated_literal_cuv_text'],
+        notes: row.editor_note
+      },
+      status: 'pending',
+      source_id: DEFAULT_SOURCE_ID,
+      method: 'curated_cuv_literal_text',
+      score_margin_to_next: 0,
+      candidate_rank: 0,
+      high_confidence_candidate: false
+    };
+  });
 }
 
 function buildMentionIndex() {
@@ -215,7 +284,7 @@ function intersectPassages(a, b) {
 }
 
 function runCandidates({ usfmDir, peopleIndex }) {
-  const { tokenPassageCounts, tokenPassageSet, parsedFiles } = parseVerseMarkers(usfmDir);
+  const { tokenPassageCounts, tokenPassageSet, verseTextByPassage, parsedFiles } = parseVerseMarkers(usfmDir);
   const {
     mentionsByPerson,
     personsByPassage,
@@ -288,6 +357,11 @@ function runCandidates({ usfmDir, peopleIndex }) {
         candidate_rank: 0
       });
     }
+  }
+
+  for (const curated of loadCuratedOverrides(peopleIndex, verseTextByPassage, mentionsByPerson, mentionCountByPerson)) {
+    const duplicate = candidates.find((row) => row.person_id === curated.person_id && row.candidate_chinese === curated.candidate_chinese);
+    if (!duplicate) candidates.push(curated);
   }
 
   candidates.sort((a, b) => {
@@ -601,7 +675,7 @@ function finalizePersonGroup(candidates, start, end) {
 }
 
 function main() {
-  const usfmDir = parseArg('cuv-usfm-dir', process.env.CUV_USFM_DIR);
+  const usfmDir = parseArg('cuv-usfm-dir', process.env.CUV_USFM_DIR || DEFAULT_CUV_USFM_DIR);
   const validateOnlyMode = process.argv.includes('--validate-only');
 
   const people = readJsonl(path.join(DATA_DIR, 'people.jsonl'));

@@ -5,34 +5,34 @@
   "input_reference": {
     "source": "source:0003",
     "input_locator": "CUV_USFM_DIR",
-    "input_checksum": "e63a9cb94ae209bb7d16f93599b582b16002380cfcc9451997849a4df5366481"
+    "input_checksum": "025d944321ac9d032e29f37a86a3ce565b99b07454c5730d5438c39906d4b470"
   },
-  "candidate_count": 2538,
+  "candidate_count": 2401,
   "ambiguity_stats": {
-    "shared_token": 1872,
-    "none": 135,
-    "shared_token_and_multi": 525,
-    "multi_token": 6
+    "shared_token": 1700,
+    "none": 193,
+    "shared_token_and_multi": 500,
+    "multi_token": 8
   },
   "coverage": {
     "min": 0.0009,
     "max": 1,
-    "avg": 0.5216
+    "avg": 0.5444
   },
   "precision": {
     "min": 0.0043,
     "max": 1,
-    "avg": 0.4546
+    "avg": 0.46
   },
   "notes": [
     {
       "kind": "summary",
-      "total_people_with_mentions": 370,
-      "total_people_with_candidates": 369,
-      "candidate_count": 2538,
-      "high_confidence_count": 69,
-      "people_with_high_confidence_count": 69
+      "total_people_with_mentions": 361,
+      "total_people_with_candidates": 361,
+      "candidate_count": 2401,
+      "high_confidence_count": 71,
+      "people_with_high_confidence_count": 71
     }
   ],
-  "checksum": "7e4dcd349a2bd5af214d754c97e83f68a79b9ed4964e6307180a5f96b8fb238c"
+  "checksum": "2a0c3d284f5df7447b1bd1a4cdca8ba9bbc33e4507f47b09aaa163f2785e2cfe"
 }

@@ -1,232 +1,334 @@
 {
   "generatedAt": "2026-08-26T00:00:00Z",
-  "stepCount": 311,
-  "sblCount": 106,
+  "stepCount": 304,
+  "sblCount": 278,
   "sblNameExtraction": {
     "status": "implemented_limited",
     "note": "SBL 人名比较基于 STEP希腊词形与SBL经文位点的保守词形匹配，不是完整NER。",
-    "stepCount": 311,
-    "sblCount": 106
+    "stepCount": 304,
+    "sblCount": 278
   },
   "sblCoverage": {
     "sbl_book_count": 27,
-    "total_nt_refs_in_step": 2366,
-    "sbl_verified_refs": 1080,
-    "sbl_missing_refs": 1286
+    "total_nt_refs_in_step": 2228,
+    "sbl_verified_refs": 2222,
+    "sbl_missing_refs": 6
+  },
+  "sbl_greek_verification": {
+    "method": "step_lexicon_sbl_token_scan",
+    "generatedAt": "2026-08-26T00:00:00Z",
+    "total_records": 2981,
+    "checked_refs": 3527,
+    "matched_refs": 3269,
+    "unmatched_refs": 258,
+    "uncheckable_refs": 12,
+    "ambiguous_refs": 1606,
+    "person_status": {
+      "matched": 247,
+      "partial": 85,
+      "pending": 2649
+    },
+    "ambiguous_examples": [
+      {
+        "passage": "MAT 1:10",
+        "persons": [
+          "Amon",
+          "Amos"
+        ],
+        "token": "αμως"
+      },
+      {
+        "passage": "MAT 1:10",
+        "persons": [
+          "Amon",
+          "Amos"
+        ],
+        "token": "αμως"
+      },
+      {
+        "passage": "MAT 1:10",
+        "persons": [
+          "Amon",
+          "Amos"
+        ],
+        "token": "αμως"
+      },
+      {
+        "passage": "MAT 1:10",
+        "persons": [
+          "Amon",
+          "Amos"
+        ],
+        "token": "αμως"
+      },
+      {
+        "passage": "LUK 3:25",
+        "persons": [
+          "Amon",
+          "Amos"
+        ],
+        "token": "αμως"
+      },
+      {
+        "passage": "LUK 2:36",
+        "persons": [
+          "Anna",
+          "Annas"
+        ],
+        "token": "αννα"
+      },
+      {
+        "passage": "LUK 3:2",
+        "persons": [
+          "Anna",
+          "Annas"
+        ],
+        "token": "αννας"
+      },
+      {
+        "passage": "JHN 18:13",
+        "persons": [
+          "Anna",
+          "Annas"
+        ],
+        "token": "αννας"
+      },
+      {
+        "passage": "JHN 18:24",
+        "persons": [
+          "Anna",
+          "Annas"
+        ],
+        "token": "αννας"
+      },
+      {
+        "passage": "ACT 4:6",
+        "persons": [
+          "Anna",
+          "Annas"
+        ],
+        "token": "αννας"
+      },
+      {
+        "passage": "LUK 2:1",
+        "persons": [
+          "Augustus",
+          "Claudius",
+          "Tiberius"
+        ],
+        "token": "αυγουστος | καισαρ"
+      },
+      {
+        "passage": "ACT 25:21",
+        "persons": [
+          "Augustus",
+          "Claudius",
+          "Tiberius"
+        ],
+        "token": "σεβαστος | καισαρ"
+      },
+      {
+        "passage": "LUK 2:1",
+        "persons": [
+          "Augustus",
+          "Claudius",
+          "Tiberius"
+        ],
+        "token": "αυγουστος | καισαρ"
+      },
+      {
+        "passage": "LUK 3:1",
+        "persons": [
+          "Augustus",
+          "Claudius",
+          "Tiberius"
+        ],
+        "token": "καισαρ"
+      },
+      {
+        "passage": "ACT 4:36",
+        "persons": [
+          "Barnabas",
+          "Josech",
+          "Joseph",
+          "Joses"
+        ],
+        "token": "βαρναβας | ιωσηφ"
+      },
+      {
+        "passage": "ACT 4:36",
+        "persons": [
+          "Barnabas",
+          "Josech",
+          "Joseph",
+          "Joses"
+        ],
+        "token": "βαρναβας | ιωσηφ"
+      },
+      {
+        "passage": "ACT 4:36",
+        "persons": [
+          "Barnabas",
+          "Josech",
+          "Joseph",
+          "Joses"
+        ],
+        "token": "βαρναβας | ιωσηφ"
+      },
+      {
+        "passage": "HEB 11:4",
+        "persons": [
+          "Cain",
+          "Cainan",
+          "Kenan"
+        ],
+        "token": "καιν"
+      },
+      {
+        "passage": "1JN 3:12",
+        "persons": [
+          "Cain",
+          "Cainan",
+          "Kenan"
+        ],
+        "token": "καιν"
+      },
+      {
+        "passage": "JUD 1:11",
+        "persons": [
+          "Cain",
+          "Cainan",
+          "Kenan"
+        ],
+        "token": "καιν"
+      },
+      {
+        "passage": "LUK 3:36",
+        "persons": [
+          "Cain",
+          "Cainan",
+          "Kenan"
+        ],
+        "token": "καιναν | καιναμ"
+      },
+      {
+        "passage": "2TI 4:21",
+        "persons": [
+          "Claudia",
+          "Claudius",
+          "Lysias"
+        ],
+        "token": "κλαυδια"
+      },
+      {
+        "passage": "ACT 11:28",
+        "persons": [
+          "Claudia",
+          "Claudius",
+          "Lysias"
+        ],
+        "token": "κλαυδιος"
+      },
+      {
+        "passage": "ACT 18:2",
+        "persons": [
+          "Claudia",
+          "Claudius",
+          "Lysias"
+        ],
+        "token": "κλαυδιος"
+      },
+      {
+        "passage": "ACT 11:28",
+        "persons": [
+          "Claudia",
+          "Claudius",
+          "Lysias"
+        ],
+        "token": "κλαυδιος"
+      },
+      {
+        "passage": "ACT 17:7",
+        "persons": [
+          "Augustus",
+          "Claudius",
+          "Tiberius"
+        ],
+        "token": "καισαρ"
+      },
+      {
+        "passage": "ACT 25:8",
+        "persons": [
+          "Augustus",
+          "Claudius",
+          "Tiberius"
+        ],
+        "token": "καισαρ"
+      },
+      {
+        "passage": "ACT 25:10",
+        "persons": [
+          "Augustus",
+          "Claudius",
+          "Tiberius"
+        ],
+        "token": "καισαρ"
+      },
+      {
+        "passage": "ACT 25:11",
+        "persons": [
+          "Augustus",
+          "Claudius",
+          "Tiberius"
+        ],
+        "token": "καισαρ"
+      },
+      {
+        "passage": "ACT 25:12",
+        "persons": [
+          "Augustus",
+          "Claudius",
+          "Tiberius"
+        ],
+        "token": "καισαρ"
+      }
+    ],
+    "notes": "Conservative scan by normalized Greek token match in SBLGNT verse text. Not a full NER; ambiguity and missing-reference cases stay pending."
   },
   "sbl_person_scan": {
     "method": "step_lexicon_sbl_token_scan",
     "status": "implemented_limited",
-    "total_sbl_scan_persons": 106
+    "total_sbl_scan_persons": 278
   },
-  "onlyInStepCount": 205,
+  "onlyInStepCount": 26,
   "onlyInSblCount": 0,
   "onlyInStep": [
-    "Abiud",
-    "Achaicus",
     "Achim",
-    "Addi",
-    "Aeneas",
-    "Agabus",
-    "Agrippa",
-    "Alexander",
-    "Alphaeus",
-    "Amos",
-    "Ampliatus",
-    "Ananias",
-    "Andrew",
-    "Andronicus",
-    "Anna",
-    "Annas",
-    "Antipas",
-    "Apelles",
-    "Apollos",
-    "Apphia",
-    "Aquila",
-    "Archelaus",
-    "Archippus",
-    "Aretas",
-    "Aristarchus",
-    "Aristobulus",
-    "Artemas",
-    "Asyncritus",
-    "Augustus",
-    "Azor",
-    "Barabbas",
-    "Bar-jesus",
-    "Barnabas",
-    "Bartholomew",
-    "Bartimaeus",
-    "Bernice",
-    "Blastus",
-    "Caiaphas",
-    "Cainan",
-    "Carpus",
-    "Chloe",
-    "Chuza",
-    "Claudia",
-    "Claudius",
+    "Asa",
+    "Boaz",
     "Clement",
-    "Cornelius",
-    "Cosam",
-    "Crescens",
-    "Crispus",
-    "Damaris",
-    "Demas",
-    "Demetrius",
-    "Dionysius",
-    "Diotrephes",
-    "Drusilla",
-    "Eleazar",
     "Eliakim",
-    "Eliezer",
-    "Eliud",
-    "Elizabeth",
+    "Elisha",
     "Elmadam",
-    "Epaenetus",
-    "Epaphras",
-    "Epaphroditus",
-    "Er",
-    "Erastus",
-    "Esli",
-    "Eubulus",
-    "Eunice",
-    "Euodia",
-    "Eutychus",
-    "Felix",
-    "Festus",
-    "Fortunatus",
-    "Gaius",
-    "Gallio",
-    "Gamaliel",
-    "Heli",
-    "Hermes",
-    "Hermas",
-    "Hermogenes",
-    "Herod",
-    "Herodias",
-    "Herodion",
-    "Hymenaeus",
-    "Jacob",
+    "Hamor",
+    "Issachar",
     "Jairus",
-    "Jambres",
-    "James",
-    "Jannai",
-    "Jannes",
-    "Jason",
-    "Joanan",
-    "Joanna",
-    "Joda",
-    "John",
+    "Jared",
+    "Jezebel",
     "Jonam",
     "Jorim",
-    "Josech",
-    "Joses",
-    "Judas",
-    "Jude",
-    "Julia",
-    "Julius",
-    "Junia",
-    "Justus",
-    "Lazarus",
-    "Linus",
     "Lois",
-    "Lucius",
-    "Luke",
-    "Lydia",
-    "Lysanias",
-    "Lysias",
-    "Maath",
-    "Malchus",
-    "Manaen",
-    "Mark",
-    "Martha",
-    "Mary",
-    "Mary_Magdalene",
-    "Mattatha",
-    "Mattathias",
-    "Matthan",
-    "Matthat",
-    "Matthew",
-    "Matthias",
-    "Melchi",
-    "Melea",
     "Menna",
-    "Mnason",
-    "Naggai",
-    "Nahum",
-    "Narcissus",
-    "Nathanael",
-    "Nereus",
-    "Neri",
-    "Nero",
+    "Naphtali",
+    "Nathan",
     "Nicanor",
-    "Nicodemus",
-    "Nicolaus",
-    "Nympha",
-    "Olympas",
-    "Onesimus",
-    "Onesiphorus",
-    "Parmenas",
-    "Patrobas",
-    "Paul",
-    "Persis",
-    "Peter",
-    "Phanuel",
+    "Obed",
     "Philemon",
-    "Philetus",
-    "Philip",
-    "Philologus",
     "Phlegon",
-    "Phoebe",
-    "Phygelus",
-    "Pilate",
-    "Priscilla",
-    "Prochorus",
-    "Publius",
-    "Pudens",
-    "Pyrrhus",
-    "Quartus",
-    "Quirinius",
-    "Rhesa",
-    "Rhoda",
-    "Rufus",
-    "Salome",
     "Sapphira",
-    "Sceva",
-    "Secundus",
-    "Semein",
     "Sergius_Paulus",
-    "Silas",
-    "Simon",
-    "Sopater",
-    "Sosthenes",
-    "Stachys",
-    "Stephanas",
-    "Stephen",
-    "Susanna",
-    "Syntyche",
-    "Tabitha",
-    "Tertius",
-    "Tertullus",
-    "Theophilus",
-    "Theudas",
-    "Thomas",
-    "Tiberius",
-    "Timaeus",
-    "Timon",
-    "Timothy",
-    "Titus",
-    "Trophimus",
-    "Tryphaena",
-    "Tryphosa",
-    "Tychicus",
-    "Tyrannus",
-    "Urbanus",
-    "Zacchaeus",
-    "Zadok",
-    "Zebedee",
-    "Zenas"
+    "Serug",
+    "Stachys"
   ],
   "onlyInSbl": []
 }

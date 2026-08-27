@@ -38,8 +38,9 @@ body {
 
 .layout {
   display: grid;
-  grid-template-columns: 1.1fr 1.35fr;
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
   gap: 1rem;
+  align-items: start;
 }
 
 .card {
@@ -66,8 +67,8 @@ label,
 }
 
 .toolbar {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(220px, 1.4fr) repeat(2, minmax(150px, 1fr));
   gap: 0.75rem;
   margin-top: 1rem;
 }
@@ -75,7 +76,7 @@ label,
 .field {
   display: grid;
   gap: 0.35rem;
-  min-width: 160px;
+  min-width: 0;
 }
 
 input[type='text'],
@@ -97,6 +98,7 @@ button {
 }
 
 .chip {
+  width: auto;
   border: 1px solid rgba(125, 211, 252, 0.35);
   border-radius: 999px;
   padding: 0.3rem 0.7rem;
@@ -112,7 +114,26 @@ button {
 .filter-row {
   margin-top: 1rem;
   display: grid;
-  gap: 0.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.filter-panel {
+  margin-top: 0.8rem;
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  border-radius: 12px;
+  padding: 0.7rem;
+}
+
+.filter-panel summary {
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.filter-reset {
+  width: min(220px, 100%);
+  margin-top: 0.8rem;
 }
 
 .pill-group {
@@ -121,11 +142,19 @@ button {
 }
 
 .graph-wrap {
-  height: 76vh;
+  margin-top: 1rem;
+  height: 68vh;
+  min-height: 520px;
   border: 1px solid rgba(125, 211, 252, 0.2);
   border-radius: 14px;
   background: #020617;
   overflow: hidden;
+}
+
+.graph-status {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .identity {
@@ -159,7 +188,9 @@ button {
 }
 
 .details {
-  max-height: 76vh;
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
   overflow: auto;
 }
 
@@ -213,6 +244,36 @@ button {
   .details {
     min-height: 52vh;
     max-height: 62vh;
+  }
+
+  .details {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  #app {
+    padding: 0.5rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+    border-radius: 12px;
+  }
+
+  .toolbar,
+  .filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .graph-wrap {
+    height: 58vh;
+    min-height: 420px;
+  }
+
+  .chip {
+    font-size: 0.82rem;
+    padding: 0.28rem 0.58rem;
   }
 }
 

@@ -2,7 +2,7 @@
 
 ## 输入
 
-- `--cuv-usfm-dir` 或环境变量 `CUV_USFM_DIR`：CUV 简体 USFM 根目录。
+- `--cuv-usfm-dir` 或环境变量 `CUV_USFM_DIR`：CUV 简体 USFM 根目录。默认路径为 `.sources/cmn-cu89s-usfm`。
 - `data/mentions.jsonl`：用于 `person_id + passage` 对齐。
 - `data/people.jsonl`：输出时补齐 `person_id` 与 `latinized`。
 
@@ -14,7 +14,7 @@
 `check` 流程不再默认再生成：
 
 - `npm run check` 调用 `validate:chinese-name-candidates`，不依赖本机 CUV 路径。
-- `npm run generate:chinese-name-candidates -- --cuv-usfm-dir ...` 显式生成中文候选（可使用 `CUV_USFM_DIR`）。
+- `npm run generate:chinese-name-candidates` 生成中文候选（默认读取 `.sources/cmn-cu89s-usfm`）。如需覆盖可用 `--cuv-usfm-dir` 或 `CUV_USFM_DIR`。
 - `npm run validate:chinese-name-candidates` 执行提交文件校验。
 
 ## 字段说明
@@ -97,6 +97,9 @@
 - `npm run init:chinese-name-review`：生成 `editorial/chinese-name-review.jsonl`，为每个 `data/people.jsonl` 中的角色写一行审核记录，包含每人 `candidate_rank` 前 3 个分组的 Top 选项（遇并列自动保留），并带 `created_at/updated_at` 固定为 `data/manifest.json` 的 `created_at`。
 - `--force`：仅当确需重建人工可编辑的清单时才允许覆盖已有文件。
 - `npm run validate:chinese-name-review`：只做严格 schema 与一致性校验（不会重建清单）。
+- `npm run apply:chinese-name-review`：应用审核：仅当 `final_decision=accepted` 且 `round1`/`round2` 都为 `accepted` 且三者一致，才更新 `people`（`canonical_chinese`、`status`、`review_status.chinese_label_status`）。
+- `npm run apply:chinese-name-review -- --check`：只复验审核清单，不写入。
+- `npm run apply:chinese-name-review -- --dry-run`：预演可应用条目数量，不写入。
 
 审核记录字段：
 

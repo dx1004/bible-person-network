@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "New Testament person scope override",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["person_key", "decision", "reason", "evidence_passages", "editor_note"],
+  "properties": {
+    "person_key": { "type": "string", "minLength": 1 },
+    "decision": { "const": "exclude" },
+    "reason": {
+      "enum": ["not_explicitly_named_in_sblgnt", "inferred_historical_identity"]
+    },
+    "evidence_passages": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^(?:MAT|MRK|LUK|JHN|ACT|ROM|1CO|2CO|GAL|EPH|PHP|COL|1TH|2TH|1TI|2TI|TIT|PHM|HEB|JAS|1PE|2PE|1JN|2JN|3JN|JUD|REV) [0-9]+:[0-9]+$" }
+    },
+    "editor_note": { "type": "string", "minLength": 1 }
+  }
+}

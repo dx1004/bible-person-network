@@ -155,6 +155,70 @@ function main() {
   }
   for (const opt of identityOptions) {
     assert(peopleSet.has(opt.person_id), `identity-options.jsonl: person_id not found ${opt.person_id}`);
+    if (opt.merge_group_id) {
+      assert(
+        String(opt.identity_scope || '').toLowerCase() === 'common_tradition' || String(opt.identity_scope || '').toLowerCase() === 'common-tradition',
+        `identity-options.jsonl: merge_group ${opt.merge_group_id} requires identity_scope=common_tradition`
+      );
+      assert(
+        typeof opt.merge_target_person_id === 'string' && opt.merge_target_person_id.length > 0,
+        `identity-options.jsonl: merge_group ${opt.merge_group_id} missing merge_target_person_id`
+      );
+      assert(
+        typeof opt.display_label === 'string' && opt.display_label.length > 0,
+        `identity-options.jsonl: merge_group ${opt.merge_group_id} missing display_label`
+      );
+      assert(peopleSet.has(opt.merge_target_person_id), `identity-options.jsonl: merge_target_person_id not found ${opt.merge_target_person_id}`);
+      const status = String(opt.status || '').toLowerCase();
+      if (status && status !== 'independent' && status !== 'conservative' && status !== 'confirmed') {
+        assert(
+          status === 'disputed' || status === 'traditional' || status === 'pending' || status === 'common_tradition' || status === 'common-tradition',
+          `identity-options.jsonl: merge_group ${opt.merge_group_id} has unsupported status ${opt.status}`
+        );
+      }
+    } else {
+      assert(!opt.display_label, `identity-options.jsonl: display_label should only be set with merge_group`);
+      assert(!opt.merge_target_person_id, `identity-options.jsonl: merge_target_person_id should only be set with merge_group`);
+    }
+  }
+
+  const mergeGroups = new Map();
+  for (const opt of identityOptions) {
+    if (!opt.merge_group_id) continue;
+    const group = String(opt.merge_group_id);
+    const state = mergeGroups.get(group) ?? { members: new Set(), target: null, scope: new Set(), targetsInMembers: new Set(), allMembersSet: new Set() };
+    state.members.add(opt.person_id);
+    if (opt.merge_target_person_id) {
+      state.allMembersSet.add(opt.person_id);
+      if (state.target && state.target !== opt.merge_target_person_id) {
+        errors.push(`identity-options.jsonl: merge_group ${group} has inconsistent merge_target_person_id`);
+      } else {
+        state.target = opt.merge_target_person_id;
+      }
+      state.targetsInMembers.add(opt.merge_target_person_id);
+    }
+    if (opt.merge_group_id && opt.identity_scope) state.scope.add(String(opt.identity_scope));
+    mergeGroups.set(group, state);
+  }
+  for (const [group, state] of mergeGroups) {
+    if (state.members.size < 2) {
+      errors.push(`identity-options.jsonl: merge_group ${group} must contain at least two options`);
+    }
+    if (state.members.size >= 2 && !state.target) {
+      errors.push(`identity-options.jsonl: merge_group ${group} missing merge_target_person_id`);
+    }
+    if (state.members.size >= 2 && !state.allMembersSet.has(state.target)) {
+      errors.push(`identity-options.jsonl: merge_group ${group} merge_target_person_id must be a group member`);
+    }
+    if (state.scope.size >= 1) {
+      for (const scope of state.scope) {
+        const s = String(scope || '').toLowerCase();
+        if (s !== 'common_tradition' && s !== 'common-tradition') {
+          errors.push(`identity-options.jsonl: merge_group ${group} identity_scope must be common_tradition`);
+          break;
+        }
+      }
+    }
   }
 
   const counts = {
@@ -232,8 +296,19 @@ function main() {
     ...assertions.map((a) => [a.assertion_id, a.subject_person_id, a.object_person_id, a.relation_type, a.relation_subtype || '', a.direction, a.status, a.confidence, a.editorial_status].map(csvValue).join(','))
   ].join('\n'));
   fs.writeFileSync(path.join(NEO4J_DIR, 'identity_option_nodes.csv'), [
-    'option_id,person_id,identity_key,status,identity_scope,rationale,editor_note',
-    ...identityOptions.map((o) => [o.option_id, o.person_id, o.identity_key, o.status, o.identity_scope, o.rationale || '', o.editor_note || ''].map(csvValue).join(','))
+    'option_id,person_id,identity_key,status,identity_scope,merge_group_id,merge_target_person_id,display_label,rationale,editor_note',
+    ...identityOptions.map((o) => [
+      o.option_id,
+      o.person_id,
+      o.identity_key,
+      o.status,
+      o.identity_scope,
+      o.merge_group_id || '',
+      o.merge_target_person_id || '',
+      o.display_label || '',
+      o.rationale || '',
+      o.editor_note || ''
+    ].map(csvValue).join(','))
   ].join('\n'));
   fs.writeFileSync(path.join(NEO4J_DIR, 'passage_nodes.csv'), [
     'passage',
@@ -271,7 +346,7 @@ function main() {
     'LOAD CSV WITH HEADERS FROM "file:///name_nodes.csv" AS row MATCH (p:Person {person_id: row.person_id}) MERGE (n:NameVariant {name_id: row.name_id}) SET n += row MERGE (p)-[:HAS_NAME]->(n);',
     'LOAD CSV WITH HEADERS FROM "file:///evidence_nodes.csv" AS row MERGE (s:Source {source_id: row.source_id}) SET s += row;',
     'LOAD CSV WITH HEADERS FROM "file:///assertion_nodes.csv" AS row MERGE (a:Assertion {assertion_id: row.assertion_id}) SET a += row;',
-    'LOAD CSV WITH HEADERS FROM "file:///identity_option_nodes.csv" AS row MATCH (p:Person {person_id: row.person_id}) MERGE (i:IdentityOption {option_id: row.option_id}) SET i.identity_key = row.identity_key, i.status = row.status, i.identity_scope = row.identity_scope, i.rationale = row.rationale, i.editor_note = row.editor_note MERGE (p)-[:HAS_IDENTITY_OPTION]->(i);',
+    'LOAD CSV WITH HEADERS FROM "file:///identity_option_nodes.csv" AS row MATCH (p:Person {person_id: row.person_id}) MERGE (i:IdentityOption {option_id: row.option_id}) SET i.identity_key = row.identity_key, i.status = row.status, i.identity_scope = row.identity_scope, i.merge_group_id = CASE row.merge_group_id WHEN "" THEN null ELSE row.merge_group_id END, i.merge_target_person_id = CASE row.merge_target_person_id WHEN "" THEN null ELSE row.merge_target_person_id END, i.display_label = CASE row.display_label WHEN "" THEN null ELSE row.display_label END, i.rationale = row.rationale, i.editor_note = row.editor_note MERGE (p)-[:HAS_IDENTITY_OPTION]->(i);',
     'LOAD CSV WITH HEADERS FROM "file:///passage_nodes.csv" AS row MERGE (p:Passage {passage: row.passage}) SET p.passage = row.passage;',
     'LOAD CSV WITH HEADERS FROM "file:///mention_edges.csv" AS row MATCH (person:Person {person_id: row.person_id}), (psg:Passage {passage: row.passage}) MERGE (person)-[r:MENTIONED_IN]->(psg) SET r.mention_id = row.mention_id, r.source_id = row.source_id, r.status = row.status;',
     'LOAD CSV WITH HEADERS FROM "file:///assertion_nodes.csv" AS row MATCH (s:Person {person_id: row.subject_person_id}), (o:Person {person_id: row.object_person_id}), (a:Assertion {assertion_id: row.assertion_id}) MERGE (a)-[:SUBJECT]->(s) MERGE (a)-[:OBJECT]->(o);',

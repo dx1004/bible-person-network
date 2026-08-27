@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Relationship review rows",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_id",
+    "assertion_id",
+    "subject_person_id",
+    "object_person_id",
+    "relation_type",
+    "direction",
+    "nt_passage_alignment",
+    "evidence_snapshot",
+    "assertion_snapshot",
+    "assertion_signature",
+    "round1",
+    "round2",
+    "final_decision",
+    "source_id",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^rrr-\\d{4}$" },
+    "assertion_id": { "type": "string", "pattern": "^asrt-\\d{4}$" },
+    "subject_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "object_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "relation_type": { "type": "string", "enum": ["kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile"] },
+    "relation_subtype": { "type": ["string", "null"], "enum": ["parent", "child", "sibling", "partner", null] },
+    "direction": { "type": "string", "enum": ["directed", "undirected"] },
+    "nt_passage_alignment": {
+      "type": "string",
+      "enum": ["both_endpoints_mentioned", "one_endpoint_mentioned", "neither_endpoint_mentioned", "non_nt_locator"]
+    },
+    "evidence_snapshot": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "passage", "evidence_level", "note", "certainty"],
+        "properties": {
+          "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
+          "passage": { "type": "string", "minLength": 1 },
+          "evidence_level": { "type": "string", "enum": ["nt_text", "ancient_text", "reference", "modern_reference", "editorial"] },
+          "note": { "type": "string" },
+          "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "assertion_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_person_id", "object_person_id", "relation_type", "relation_subtype", "direction", "evidence", "status", "editorial_status", "confidence", "created_at", "updated_at"],
+      "properties": {
+        "subject_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+        "object_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+        "relation_type": { "type": "string", "enum": ["kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile"] },
+        "relation_subtype": { "type": ["string", "null"], "enum": ["parent", "child", "sibling", "partner", null] },
+        "direction": { "type": "string", "enum": ["directed", "undirected"] },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_id", "passage", "evidence_level", "note", "certainty"],
+            "properties": {
+              "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
+              "passage": { "type": "string", "minLength": 1 },
+              "evidence_level": { "type": "string", "enum": ["nt_text", "ancient_text", "reference", "modern_reference", "editorial"] },
+              "note": { "type": "string" },
+              "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        },
+        "status": { "type": "string", "enum": ["active", "inactive", "superseded"] },
+        "editorial_status": { "type": "string", "enum": ["conservative", "common_tradition", "pending"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "assertion_signature": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "round1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision_relation_type",
+        "decision_direction",
+        "decision_relation_subtype",
+        "decision_evidence_refs",
+        "reviewer",
+        "decision_note",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "decision_relation_type": { "type": ["string", "null"], "enum": [null, "kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile"] },
+        "decision_relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "partner"] },
+        "decision_direction": { "type": ["string", "null"], "enum": [null, "directed", "undirected"] },
+        "decision_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_id", "passage", "evidence_level", "note", "certainty"],
+            "properties": {
+              "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
+              "passage": { "type": "string", "minLength": 1 },
+              "evidence_level": { "type": "string", "enum": ["nt_text", "ancient_text", "reference", "modern_reference", "editorial"] },
+              "note": { "type": "string" },
+              "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "round2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision_relation_type",
+        "decision_relation_subtype",
+        "decision_direction",
+        "decision_evidence_refs",
+        "reviewer",
+        "decision_note",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "decision_relation_type": { "type": ["string", "null"], "enum": [null, "kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile"] },
+        "decision_relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "partner"] },
+        "decision_direction": { "type": ["string", "null"], "enum": [null, "directed", "undirected"] },
+        "decision_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_id", "passage", "evidence_level", "note", "certainty"],
+            "properties": {
+              "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
+              "passage": { "type": "string", "minLength": 1 },
+              "evidence_level": { "type": "string", "enum": ["nt_text", "ancient_text", "reference", "modern_reference", "editorial"] },
+              "note": { "type": "string" },
+              "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "final_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision_relation_type",
+        "decision_relation_subtype",
+        "decision_direction",
+        "decision_evidence_refs",
+        "reviewer",
+        "decision_note",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "decision_relation_type": { "type": ["string", "null"], "enum": [null, "kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile"] },
+        "decision_relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "partner"] },
+        "decision_direction": { "type": ["string", "null"], "enum": [null, "directed", "undirected"] },
+        "decision_evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_id", "passage", "evidence_level", "note", "certainty"],
+            "properties": {
+              "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
+              "passage": { "type": "string", "minLength": 1 },
+              "evidence_level": { "type": "string", "enum": ["nt_text", "ancient_text", "reference", "modern_reference", "editorial"] },
+              "note": { "type": "string" },
+              "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "subject_person_name": { "type": "string", "minLength": 1 },
+    "object_person_name": { "type": "string", "minLength": 1 },
+    "editorial_notes": { "type": "string" }
+  }
+}
