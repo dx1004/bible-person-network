@@ -409,7 +409,7 @@ function validateOnly() {
       throw new Error(`Unknown person reference in ${row.assertion_id}`);
     }
 
-    const expectedAlignment = classifyAlignment(assertion.evidence || [], row.subject_person_id, row.object_person_id, mentionsByPerson);
+    const expectedAlignment = classifyAlignment(row.evidence_snapshot || [], row.subject_person_id, row.object_person_id, mentionsByPerson);
     if (expectedAlignment !== row.nt_passage_alignment) {
       throw new Error(`nt_passage_alignment drift for ${row.assertion_id}: ${row.nt_passage_alignment} != ${expectedAlignment}`);
     }
@@ -420,44 +420,44 @@ function validateOnly() {
         throw new Error(`Unknown source_id ${evidence.source_id} in evidence_snapshot ${row.assertion_id}`);
       }
     }
-    const expectedEvidence = (assertion.evidence || []).map((ev) => ({
+    const currentEvidence = (assertion.evidence || []).map((ev) => ({
       source_id: ev.source_id,
       passage: ev.passage,
       evidence_level: ev.evidence_level,
       note: ev.note || '',
       certainty: ev.certainty ?? 0
     }));
-    if (!evidenceMatches(expectedEvidence, row.evidence_snapshot)) {
+    if (row.final_decision?.status === 'pending' && !evidenceMatches(currentEvidence, row.evidence_snapshot)) {
       throw new Error(`evidence_snapshot drift for ${row.assertion_id}`);
     }
 
-    const expectedSnapshot = {
+    const currentSnapshot = {
       subject_person_id: assertion.subject_person_id,
       object_person_id: assertion.object_person_id,
       relation_type: assertion.relation_type,
       relation_subtype: assertion.relation_subtype ?? null,
       direction: assertion.direction,
-      evidence: expectedEvidence,
+      evidence: currentEvidence,
       status: assertion.status,
       editorial_status: assertion.editorial_status,
       confidence: assertion.confidence,
       created_at: assertion.created_at,
       updated_at: assertion.updated_at
     };
-    if (!evidenceMatches(expectedSnapshot, row.assertion_snapshot)) {
+    if (row.final_decision?.status === 'pending' && !evidenceMatches(currentSnapshot, row.assertion_snapshot)) {
       throw new Error(`assertion_snapshot drift for ${row.assertion_id}`);
     }
     const expectedSig = hashSha256(stableStringify({
       assertion_id: assertion.assertion_id,
-      subject_person_id: assertion.subject_person_id,
-      object_person_id: assertion.object_person_id,
-      relation_type: assertion.relation_type,
-      relation_subtype: assertion.relation_subtype ?? null,
-      direction: assertion.direction,
-      evidence: expectedEvidence,
-      editorial_status: assertion.editorial_status,
-      status: assertion.status,
-      confidence: assertion.confidence
+      subject_person_id: row.assertion_snapshot.subject_person_id,
+      object_person_id: row.assertion_snapshot.object_person_id,
+      relation_type: row.assertion_snapshot.relation_type,
+      relation_subtype: row.assertion_snapshot.relation_subtype ?? null,
+      direction: row.assertion_snapshot.direction,
+      evidence: row.assertion_snapshot.evidence,
+      editorial_status: row.assertion_snapshot.editorial_status,
+      status: row.assertion_snapshot.status,
+      confidence: row.assertion_snapshot.confidence
     }));
     if (row.assertion_signature !== expectedSig) {
       throw new Error(`assertion_signature drift for ${row.assertion_id}`);
@@ -483,6 +483,29 @@ function validateOnly() {
         || !evidenceMatches(round2.decision_evidence_refs, finalDecision.decision_evidence_refs)
       ) {
         throw new Error(`final accepted must match round2 exactly: ${row.assertion_id}`);
+      }
+      if (
+        assertion.subject_person_id !== row.assertion_snapshot.subject_person_id
+        || assertion.object_person_id !== row.assertion_snapshot.object_person_id
+        || assertion.relation_type !== finalDecision.decision_relation_type
+        || (assertion.relation_subtype ?? null) !== finalDecision.decision_relation_subtype
+        || assertion.direction !== finalDecision.decision_direction
+        || !evidenceMatches(currentEvidence, finalDecision.decision_evidence_refs)
+        || assertion.status !== 'active'
+        || assertion.editorial_status !== 'conservative'
+      ) {
+        throw new Error(`accepted decision application drift for ${row.assertion_id}`);
+      }
+    }
+    if (finalDecision.status === 'rejected') {
+      const rejectedSnapshot = {
+        ...row.assertion_snapshot,
+        status: 'superseded',
+        updated_at: finalDecision.reviewed_at
+      };
+      if (!evidenceMatches(currentSnapshot, row.assertion_snapshot)
+        && !evidenceMatches(currentSnapshot, rejectedSnapshot)) {
+        throw new Error(`rejected decision application drift for ${row.assertion_id}`);
       }
     }
     row.final_decision = finalDecision;

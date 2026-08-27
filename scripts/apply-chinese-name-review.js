@@ -11,6 +11,7 @@ const EDITORIAL_DIR = path.join(ROOT, 'editorial');
 const PEOPLE_PATH = path.join(DATA_DIR, 'people.jsonl');
 const CANDIDATES_PATH = path.join(EDITORIAL_DIR, 'chinese-name-candidates.jsonl');
 const REVIEWS_PATH = path.join(EDITORIAL_DIR, 'chinese-name-review.jsonl');
+const RELATIONSHIP_REVIEWS_PATH = path.join(EDITORIAL_DIR, 'relationship-review.jsonl');
 
 const SOURCE_ID = 'source:0003';
 
@@ -211,6 +212,18 @@ function main() {
 
   if (applied > 0) {
     writeJsonl(PEOPLE_PATH, nextPeople);
+    if (fs.existsSync(RELATIONSHIP_REVIEWS_PATH)) {
+      const namesByPerson = new Map(nextPeople.map((person) => [
+        person.person_id,
+        person.canonical_chinese || person.latinized || person.person_id
+      ]));
+      const relationshipReviews = readJsonl(RELATIONSHIP_REVIEWS_PATH).map((row) => ({
+        ...row,
+        subject_person_name: namesByPerson.get(row.subject_person_id) || row.subject_person_name,
+        object_person_name: namesByPerson.get(row.object_person_id) || row.object_person_name
+      }));
+      writeJsonl(RELATIONSHIP_REVIEWS_PATH, relationshipReviews);
+    }
   } else {
     console.log('No applied items; no people updates written');
   }

@@ -19,13 +19,15 @@ function readJsonl(filePath, skipEmpty = false) {
 function countPendingReview(rows) {
   let chinesePending = 0;
   let relationPending = 0;
+  let relationRejected = 0;
   for (const row of rows.assertions) {
-    if (row.editorial_status === 'pending') relationPending += 1;
+    if (row.status === 'superseded') relationRejected += 1;
+    else if (row.editorial_status === 'pending') relationPending += 1;
   }
   for (const row of rows.people) {
     if (row?.review_status?.chinese_label_status === 'pending') chinesePending += 1;
   }
-  return { chinesePending, relationPending };
+  return { chinesePending, relationPending, relationRejected };
 }
 
 function reconciliationStatus() {
@@ -58,7 +60,8 @@ if (versionParts.length !== 3 || versionParts.some((part) => !Number.isInteger(p
 }
 const people = readJsonl(path.join(DATA_DIR, 'people.jsonl')).map((line) => JSON.parse(line));
 const assertions = readJsonl(path.join(DATA_DIR, 'assertions.jsonl')).map((line) => JSON.parse(line));
-const { chinesePending, relationPending } = countPendingReview({ people, assertions });
+const { chinesePending, relationPending, relationRejected } = countPendingReview({ people, assertions });
+const publishedRelationships = assertions.filter((row) => row.status !== 'superseded').length;
 const sblNameExtractionStatus = reconciliationStatus();
 
 const needsReview = (
@@ -71,6 +74,11 @@ const needsReview = (
 
 const report = {
   ...run,
+  counts: {
+    ...run.counts,
+    publishedRelationships,
+    rejectedAssertions: relationRejected
+  },
   generatedAt: new Date(datasetTimestamp).toISOString(),
   version: {
     major: versionParts[0],
@@ -83,6 +91,8 @@ const report = {
     `Name variants: ${run.counts.names}`,
     `Mentions: ${run.counts.mentions}`,
     `Assertions: ${run.counts.assertions}`,
+    `Published relationships: ${publishedRelationships}`,
+    `Rejected assertions retained for audit: ${relationRejected}`,
     `Sources: ${run.counts.sources}`,
     `Identity options: ${run.counts.identityOptions}`,
     `Chinese labels pending review: ${chinesePending}`,

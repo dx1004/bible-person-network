@@ -243,15 +243,23 @@ function applyRelationshipReviews({ check, dryRun }) {
     }
     if (finalDecision.status === 'rejected') {
       counts.rejected += 1;
+      assertionMap.set(row.assertion_id, {
+        ...assertion,
+        status: 'superseded',
+        updated_at: finalDecision.reviewed_at
+      });
       continue;
     }
 
     const current = assertion;
     const updatedEvidence = finalDecision.decision_evidence_refs.map((ref) => ({ ...ref }));
+    const { relation_subtype: _previousSubtype, ...currentWithoutSubtype } = current;
     const next = {
-      ...current,
+      ...currentWithoutSubtype,
       relation_type: finalDecision.decision_relation_type,
-      relation_subtype: finalDecision.decision_relation_subtype,
+      ...(finalDecision.decision_relation_subtype === null
+        ? {}
+        : { relation_subtype: finalDecision.decision_relation_subtype }),
       direction: finalDecision.decision_direction,
       evidence: updatedEvidence,
       status: 'active',

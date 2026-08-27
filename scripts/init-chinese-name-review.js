@@ -187,15 +187,6 @@ function validateOnly() {
     candidateIdsByPerson.set(candidate.person_id, candidateIds);
   }
 
-  const decisionCandidates = new Map();
-  const topCandidateSet = new Map(); // person_id -> Set(candidate_id)
-  for (const personCandidates of candidatesByPerson.values()) {
-    const candidateRanks = personCandidates.length
-      ? pickTopCandidatesForPerson(personCandidates).map((entry) => entry.candidate_id)
-      : [];
-    topCandidateSet.set(personCandidates[0]?.person_id, new Set(candidateRanks));
-  }
-
   const reviewPeople = new Set();
   for (const row of reviews) {
     reviewPeople.add(row.person_id);
@@ -221,6 +212,7 @@ function validateOnly() {
         throw new Error(`Reference to candidate outside source person bucket: ${ref.candidate_id}`);
       }
     }
+    const reviewCandidateSet = new Set(row.top_candidate_refs.map((ref) => ref.candidate_id));
     for (const [decisionName, decision, fieldName] of [
       ['round1', row.round1, 'proposed_chinese'],
       ['round2', row.round2, 'proposed_chinese'],
@@ -253,7 +245,7 @@ function validateOnly() {
         if (candidate.person_id !== row.person_id) {
           throw new Error(`${decisionName} candidate mismatch: ${selected} belongs to ${candidate.person_id}`);
         }
-        if (!topCandidateSet.get(row.person_id)?.has(selected)) {
+        if (!reviewCandidateSet.has(selected)) {
           throw new Error(`${decisionName} selection must come from top_candidate_refs: ${selected} (${row.person_id})`);
         }
         if (candidateText !== candidate.candidate_chinese) {

@@ -16,6 +16,7 @@
     "init:relationship-review": "node scripts/init-relationship-review.js",
     "apply:relationship-review": "node scripts/apply-relationship-review.js",
     "validate:relationship-review": "node scripts/init-relationship-review.js --validate-only",
+    "merge:independent-reviews": "node scripts/merge-independent-reviews.js",
     "generate:chinese-name-candidates": "node scripts/generate-chinese-name-candidates.js",
     "validate:chinese-name-candidates": "node scripts/generate-chinese-name-candidates.js --validate-only",
     "reconcile": "node scripts/reconcile-sources.js",
@@ -23,6 +24,8 @@
     "test:step-boundary": "node scripts/test-step-boundary-regression.mjs",
     "build:web": "npm --prefix web run build",
     "typecheck:web": "npm --prefix web run typecheck",
+    "pages:preview": "npm run build:web && wrangler pages deploy web/dist --project-name new-testament-person-network --branch preview",
+    "pages:production": "npm run build:web && wrangler pages deploy web/dist --project-name new-testament-person-network --branch main",
     "check": "npm run validate:data && npm run validate:chinese-name-candidates && npm run validate:chinese-name-review && npm run apply:chinese-name-review -- --check && npm run validate:relationship-review && npm run apply:relationship-review -- --check && npm run reconcile && npm run report && npm run test:step-boundary && npm run typecheck:web && npm run build:web && npm --prefix web run check-identity"
   },
   "engines": {
@@ -31,5 +34,8 @@
   "dependencies": {
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.126.0"
   }
 }

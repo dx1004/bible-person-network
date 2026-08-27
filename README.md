@@ -4,6 +4,8 @@
 
 GitHub：<https://github.com/dx1004/new-testament-person-network>
 
+网站：<https://nt-people.coudx.com>
+
 ## 运行方式
 
 ```bash
@@ -24,9 +26,9 @@ npm run check
 
 `npm run generate:chinese-name-candidates` 在未显式设置 `--cuv-usfm-dir` / `CUV_USFM_DIR` 时，默认从 `.sources/cmn-cu89s-usfm` 读取。该目录由 `npm run fetch:sources` 按 `data/manifest.json` 锁定哈希下载并解压。
 
-当前状态：`editorial_review_required`。当前可重复构建的候选库包含 361 位人物、916 个名称变体、3060 处经文提及和 288 条候选关系。中文标签与关系断言仍待独立二轮审校；SBLGNT 已完成基于 STEP 希腊词形的保守核对，但不是完整的独立 NER，报表会明确保留差异和待决项。
+当前状态：`editorial_review_required`。当前可重复构建的资料库包含 361 位人物、916 个名称变体、3060 处经文提及和 288 条审计主张。两位独立审校员一致接受 355 个中文主名与 161 条关系；25 条关系继续作为候选显示，102 条共同否决的错误连线保留在审计资料中但不发布到关系网。另有 6 个中文主名待决。SBLGNT 已完成基于 STEP 希腊词形的保守核对，但不是完整的独立 NER，报表会明确保留差异和待决项。
 
-这意味着当前网页是研究候选数据的浏览界面，不是已经定稿的人物学结论。STEPBible 自动抽取的亲属边默认作为待审候选显示。
+这意味着当前网页仍是研究版，不是已经定稿的人物学结论。待决关系会明确显示为候选关系。
 
 CI 会在 Ubuntu 与 Windows 上执行完整数据/网页检查，并在独立 Linux job 中启动 Neo4j、从空库连续导入两次，核对节点、关系、孤立项和两次快照一致性。
 
@@ -75,6 +77,14 @@ Neo4j 仅供本地研究与构建，不作为公开网站后端。复制 `neo4j/
 - Windows PowerShell：`powershell -ExecutionPolicy Bypass -File neo4j/import-cycle.ps1`
 
 两种脚本都会清空项目专用 Neo4j 容器中的数据库、连续导入两次，并比较人物、主张和提及计数。请勿指向存有其他资料的 Neo4j 实例。
+
+## Cloudflare Pages
+
+公开网页是纯静态 HTML、CSS、JavaScript 和 JSON，不连接 Neo4j，也不使用 Cloudflare Functions。Neo4j 仅用于本地研究、导入复核与构建验收；Cloudflare Pages 免费静态托管即可运行当前版本。
+
+- 预览发布：`npm run pages:preview`
+- 正式发布：`npm run pages:production`
+- 自定义域名：<https://nt-people.coudx.com>
 
 ## 许可
 

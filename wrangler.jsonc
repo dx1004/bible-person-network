@@ -1,0 +1,6 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "new-testament-person-network",
+  "pages_build_output_dir": "./web/dist",
+  "compatibility_date": "2026-08-26"
+}

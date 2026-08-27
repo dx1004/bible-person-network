@@ -348,7 +348,7 @@ async function loadJSON(fileName, fallback = []) {
         };
       });
 
-    const relationships = assertions.map((rel) => {
+    const relationships = assertions.filter((rel) => rel.status !== 'superseded').map((rel) => {
       const evidenceEntries = Array.isArray(rel.evidence) ? rel.evidence : [];
       const passages = unique(evidenceEntries.map((e) => passageClean(e.passage || '')));
       const sourceIds = unique(evidenceEntries.map((e) => e.source_id || '').filter(Boolean));
@@ -491,7 +491,7 @@ async function loadJSON(fileName, fallback = []) {
     };
 
     const expectedPeople = reportPeopleCount;
-    const expectedRelationships = reportAssertionsCount;
+    const expectedRelationships = Number(report?.counts?.publishedRelationships ?? reportAssertionsCount);
     const peopleCount = graph.people.length;
 
     if (!Number.isFinite(expectedPeople) || expectedPeople <= 0) {
