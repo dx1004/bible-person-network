@@ -171,3 +171,42 @@ The selected option supplied the information architecture: searchable people ind
 ## Final result
 
 **passed**
+
+---
+
+# Design QA — Three-column Research Atlas
+
+## Reference and implementation
+
+- Selected reference: `/var/folders/6x/d1g8hh216r57md7fjqfn1qw00000gn/T/codex-clipboard-90663ba2-428a-4b31-8124-742c5a930cfa.png` (1487 × 1058).
+- Recreated the reference's white research-tool shell: full-width search and presets, persistent person index, central evidence graph, persistent person inspector, and bottom relationship legend.
+- Preserved the current static Cytoscape data architecture and current reviewed counts rather than copying the stale mock counts.
+
+## Visual evidence
+
+- Final desktop capture: `/tmp/nt-people-reference-layout-qa/02-desktop.png`.
+- Matching Paul-search state: `/tmp/nt-people-reference-layout-qa/05-desktop-search.png`.
+- Same-size reference comparison: `/tmp/nt-people-reference-layout-qa/04-reference-vs-build.png`.
+- Responsive capture: `/tmp/nt-people-reference-layout-qa/03-mobile.png`.
+- The final screen matches the reference's primary hierarchy, column proportions, restrained blue/green/red evidence palette, circular nodes, labeled connectors, dense inspector, and research-first tone.
+
+## Interaction and accessibility evidence
+
+- Global and left-panel search inputs stay synchronized and retain IME-safe debouncing.
+- Topic shortcuts, evidence checkboxes, identity presets, person selection, relationship selection, zoom, fit, and source links remain functional.
+- Keyboard focus states, localized accessible names, text alternatives, reduced-motion behavior, loading, empty, and error states remain present.
+- All relationships remain readable in the inspector even when the graph limits visible nodes for clarity.
+
+## Validation evidence
+
+- Frontend Design Premium strict audit passed with zero findings.
+- Full data validation, TypeScript checking, deterministic STEP regressions, production build, person-era checks, and identity checks passed.
+- Published data remains 364 people and 222 accepted relationships; 83 assertions remain pending and 50 rejected assertions remain retained for audit.
+
+## Governance note
+
+- `DESIGN.md` still records the earlier dark crystal palette. This implementation treats the supplied light three-column direction as a runtime trial until the canonical design record is separately approved.
+
+## Final result
+
+**passed**

@@ -1,4 +1,4 @@
-import './style.css';
+import './style-reference.css';
 import './phosphor.css';
 import cytoscape from 'cytoscape';
 
@@ -94,14 +94,14 @@ type VisibleModel = {
   mergedTo: Map<string, string>;
 };
 
-const GRAPH_EDGE_LIMIT = 8;
+const GRAPH_EDGE_LIMIT = 12;
 const SEARCH_RESULT_LIMIT = 80;
 const ALL_EVIDENCE: EvidenceLevel[] = ['nt_text', 'ancient', 'modern'];
 const evidenceLabel: Record<EvidenceLevel, string> = {
   nt_text: '新约经文', ancient: '古代原始史料', modern: '现代权威工具书'
 };
 const evidenceColor: Record<EvidenceLevel, string> = {
-  nt_text: '#79dcec', ancient: '#8fcfb1', modern: '#b993e2'
+  nt_text: '#3478d4', ancient: '#2f7f49', modern: '#df6159'
 };
 const certaintyLabel = { high: '高', medium: '中', low: '低' } as const;
 
@@ -110,10 +110,9 @@ if (!appRoot) throw new Error('app container is missing');
 
 appRoot.innerHTML = `
   <div class="app-shell" data-mobile-panel="graph" data-drawer="none" aria-busy="true">
-    <div class="world-backdrop" aria-hidden="true"></div>
     <header class="topbar">
       <div class="brand-block">
-        <h1><span>Astral Scripture Atlas</span><span class="brand-divider" aria-hidden="true"></span><small>新约人物关系探索图谱</small></h1>
+        <div><h1>新约人物关系网</h1><p>静态关系图（基于 public/data/graph.json）</p></div>
       </div>
       <div class="global-search">
         <label class="sr-only" for="search">搜索人物中文名、别名、希腊文或拉丁转写</label>
@@ -123,25 +122,18 @@ appRoot.innerHTML = `
         <button id="clear-search" class="icon-button search-clear" type="button" data-onclick="direct" aria-label="清空搜索" hidden><i class="ph ph-x" aria-hidden="true"></i></button>
       </div>
       <div class="top-controls">
-        <label class="compact-field" for="topic-select"><span>当前专题</span><select id="topic-select"></select></label>
-        <label class="compact-field" for="identity-preset"><span>身份方案</span><select id="identity-preset">
+        <label class="compact-field" for="topic-select"><span>专题视图</span><select id="topic-select"></select></label>
+        <label class="compact-field" for="identity-preset"><span>身份预设</span><select id="identity-preset">
           <option value="conservative">全部保守</option><option value="traditional">常见传统</option><option value="custom" disabled>逐项自定义</option>
         </select></label>
-        <details class="evidence-menu">
-          <summary><span>证据</span><strong id="evidence-summary-text">全部</strong><i class="ph ph-caret-down" aria-hidden="true"></i></summary>
-          <div class="evidence-controls reading-surface" role="group" aria-label="证据层筛选">
-            ${ALL_EVIDENCE.map((level) => `<label class="evidence-toggle evidence-${level}"><input type="checkbox" value="${level}" checked><i class="ph ph-circle evidence-dot" aria-hidden="true"></i>${evidenceLabel[level]}</label>`).join('')}
-          </div>
-        </details>
-        <div class="dataset-counts sr-only" aria-label="数据集计数"><strong id="people-total">—</strong><span>人物</span><strong id="relations-total">—</strong><span>已发布关系</span></div>
+        <div class="dataset-counts" aria-label="数据集计数"><strong id="people-total">—</strong><span>人物</span><strong id="relations-total">—</strong><span>关系</span></div>
+        <button id="header-fit" class="header-action" type="button" data-onclick="direct"><i class="ph ph-layout" aria-hidden="true"></i><span>视图</span></button>
+        <a class="header-action" href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer"><i class="ph ph-book-open" aria-hidden="true"></i><span>帮助</span></a>
       </div>
     </header>
     <div id="review-warning" class="review-warning reading-surface" role="status" hidden>
       <i class="ph ph-warning-circle" aria-hidden="true"></i><span>当前数据仍需要编辑审校，请勿把待审内容视为定稿。</span>
     </div>
-    <nav class="command-rail reading-surface" aria-label="关系网工具">
-      <button type="button" data-onclick="delegated" data-drawer-target="people" aria-label="查找人物" aria-pressed="false"><i class="ph ph-users" aria-hidden="true"></i><span>查找人物</span></button>
-    </nav>
     <nav class="mobile-tabs reading-surface" aria-label="移动端视图">
       <button type="button" data-onclick="direct" data-mobile-target="people"><i class="ph ph-users" aria-hidden="true"></i>人物</button>
       <button type="button" data-onclick="direct" data-mobile-target="graph" aria-pressed="true"><i class="ph ph-git-branch" aria-hidden="true"></i>图谱</button>
@@ -149,8 +141,8 @@ appRoot.innerHTML = `
     </nav>
     <main class="workspace">
       <aside class="people-pane reading-surface" aria-labelledby="people-heading">
-        <div class="pane-heading"><div><p class="eyebrow">人物索引</p><h2 id="people-heading" tabindex="-1">查找人物</h2></div><div class="pane-actions"><span id="people-result-count" class="count-badge">—</span><button class="icon-button drawer-close" type="button" data-onclick="delegated" data-drawer-close aria-label="关闭人物索引"><i class="ph ph-x" aria-hidden="true"></i></button></div></div>
-        <div id="topic-shortcuts" class="topic-shortcuts" aria-label="专题快捷选择"></div>
+        <div class="pane-heading"><div><p class="eyebrow">人物检索</p><h2 id="people-heading" tabindex="-1">搜索结果</h2></div><div class="pane-actions"><span id="people-result-count" class="count-badge">—</span><button class="icon-button drawer-close" type="button" data-onclick="delegated" data-drawer-close aria-label="关闭人物索引"><i class="ph ph-x" aria-hidden="true"></i></button></div></div>
+        <label class="people-search" for="people-search"><i class="ph ph-magnifying-glass" aria-hidden="true"></i><input id="people-search" type="search" autocomplete="off" placeholder="搜索人物" /></label>
         <details class="advanced-filters">
           <summary><i class="ph ph-sliders-horizontal" aria-hidden="true"></i>精细筛选</summary>
           <div class="filter-section"><div class="filter-heading"><strong>人物时代</strong><button type="button" data-onclick="direct" id="clear-eras" class="text-button">清除</button></div><div id="era-filters" class="checkbox-grid era-filter-grid"></div></div>
@@ -162,8 +154,14 @@ appRoot.innerHTML = `
         <div id="people-empty" class="empty-state compact" hidden><i class="ph ph-magnifying-glass" aria-hidden="true"></i><strong>没有匹配人物</strong><p>可清空搜索或重置专题与筛选。</p></div>
       </aside>
       <section class="graph-pane" aria-labelledby="graph-heading">
+        <div class="graph-filterbar">
+          <div class="topic-strip"><strong>专题视图：</strong><div id="topic-shortcuts" class="topic-shortcuts" aria-label="专题快捷选择"></div></div>
+          <div class="evidence-filter-row"><strong>证据层（可多选）</strong><div class="evidence-controls" role="group" aria-label="证据层筛选">
+            ${ALL_EVIDENCE.map((level) => `<label class="evidence-toggle evidence-${level}"><input type="checkbox" value="${level}" checked><i class="ph ph-check-square" aria-hidden="true"></i>${evidenceLabel[level]}</label>`).join('')}
+          </div><span id="evidence-summary-text" class="sr-only">全部</span><button id="show-legend" class="legend-button" type="button" data-onclick="direct" aria-label="查看图例说明"><i class="ph ph-info" aria-hidden="true"></i>图例说明</button></div>
+        </div>
         <div class="graph-toolbar">
-          <div class="focus-heading reading-surface"><p class="eyebrow">当前焦点 · 一度关系</p><h2 id="graph-heading" tabindex="-1">选择人物查看一度关系</h2><p id="focus-subtitle">点击晶体人物，沿光路查看联系</p></div>
+          <div class="focus-heading reading-surface"><p class="eyebrow">当前焦点 · 一度关系</p><h2 id="graph-heading" tabindex="-1">选择人物查看一度关系</h2><p id="focus-subtitle">点击人物节点切换焦点</p></div>
           <div class="graph-toolbar-actions">
             <button id="fit-graph" class="icon-button" type="button" data-onclick="direct" aria-label="适应画布"><i class="ph ph-arrows-out" aria-hidden="true"></i></button>
             <button id="center-focus" class="icon-button" type="button" data-onclick="direct" aria-label="回到焦点人物"><i class="ph ph-crosshair" aria-hidden="true"></i></button>
@@ -177,15 +175,15 @@ appRoot.innerHTML = `
             <button id="zoom-out" class="icon-button" type="button" data-onclick="direct" aria-label="缩小"><i class="ph ph-minus" aria-hidden="true"></i></button>
           </div>
         </div>
-        <div class="graph-footer reading-surface" aria-live="polite">
-          <div class="ribbon-heading"><span>证据带</span><strong id="evidence-ribbon-title">选择一条光路查看关系</strong></div>
-          <p id="evidence-ribbon-meta">人物关系及出处会显示在这里。</p>
+        <div class="graph-footer reading-surface" tabindex="-1" aria-live="polite">
+          <div class="legend-block"><strong>关系线与证据图例</strong><span class="legend-line evidence-nt_text">新约经文</span><span class="legend-line evidence-ancient">古代原始史料</span><span class="legend-line evidence-modern">现代权威工具书</span></div>
+          <div class="ribbon-heading"><span>当前选择</span><strong id="evidence-ribbon-title">选择一条关系线查看出处</strong><small id="evidence-ribbon-meta">人物关系及出处会显示在这里。</small></div>
           <p id="graph-status">正在载入关系图…</p>
-          <button type="button" class="ribbon-action" data-onclick="delegated" data-drawer-target="details">查看完整出处 <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+          <button type="button" class="ribbon-action" data-onclick="delegated" data-drawer-target="details">查看完整资料 <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
         </div>
       </section>
       <aside class="inspector-pane reading-surface" aria-labelledby="inspector-heading">
-        <div class="pane-heading inspector-heading"><div><p class="eyebrow">人物关系档案</p><h2 id="inspector-heading" tabindex="-1">研究详情</h2></div><div class="pane-actions"><button id="fit-graph-inspector" class="icon-button inspector-fit" type="button" data-onclick="direct" aria-label="适应关系图"><i class="ph ph-arrows-out" aria-hidden="true"></i></button><button class="icon-button drawer-close mobile-close" type="button" data-onclick="direct" data-mobile-target="graph" data-drawer-close aria-label="关闭详情"><i class="ph ph-x" aria-hidden="true"></i></button></div></div>
+        <div class="pane-heading inspector-heading"><div><p class="eyebrow">人物详情</p><h2 id="inspector-heading" tabindex="-1">人物与关系</h2></div><div class="pane-actions"><button id="fit-graph-inspector" class="icon-button inspector-fit" type="button" data-onclick="direct" aria-label="适应关系图"><i class="ph ph-arrows-out" aria-hidden="true"></i></button><button class="icon-button drawer-close mobile-close" type="button" data-onclick="direct" data-mobile-target="graph" data-drawer-close aria-label="关闭详情"><i class="ph ph-x" aria-hidden="true"></i></button></div></div>
         <div id="inspector-content" class="inspector-content"><div class="loading-state" role="status"><i class="ph ph-spinner-gap loader" aria-hidden="true"></i>正在载入资料…</div></div>
       </aside>
     </main>
@@ -194,6 +192,7 @@ appRoot.innerHTML = `
 
 const shell = document.querySelector('.app-shell') as HTMLDivElement;
 const searchInput = document.getElementById('search') as HTMLInputElement;
+const peopleSearchInput = document.getElementById('people-search') as HTMLInputElement;
 const clearSearchButton = document.getElementById('clear-search') as HTMLButtonElement;
 const topicSelect = document.getElementById('topic-select') as HTMLSelectElement;
 const identityPresetSelect = document.getElementById('identity-preset') as HTMLSelectElement;
@@ -409,16 +408,14 @@ function renderGraph() {
   const width = Math.max(graphContainer.clientWidth, 320); const height = Math.max(graphContainer.clientHeight, 520);
   const neighborIds = nodes.filter((person) => person.id !== selectedPersonId).map((person) => person.id);
   const positions = new Map<string, { x: number; y: number }>();
-  const center = { x: width * 0.5, y: height * (isCompactGraph ? 0.54 : 0.52) };
-  const radiusX = width * (isCompactGraph ? 0.34 : 0.33);
-  const radiusY = height * (isCompactGraph ? 0.24 : 0.35);
+  const center = { x: width * 0.5, y: height * (isCompactGraph ? 0.52 : 0.48) };
+  const radiusX = width * (isCompactGraph ? 0.35 : 0.36);
+  const radiusY = height * (isCompactGraph ? 0.27 : 0.36);
   positions.set(selectedPersonId, center);
   neighborIds.forEach((personId, index) => {
     const angle = -Math.PI / 2 + (Math.PI * 2 * index) / Math.max(neighborIds.length, 1);
-    positions.set(personId, {
-      x: center.x + Math.cos(angle) * radiusX,
-      y: center.y + Math.sin(angle) * radiusY
-    });
+    const stagger = 0.84 + ((index * 37) % 5) * 0.045;
+    positions.set(personId, { x: center.x + Math.cos(angle) * radiusX * stagger, y: center.y + Math.sin(angle) * radiusY * stagger });
   });
   cy?.destroy();
   cy = cytoscape({
@@ -434,16 +431,16 @@ function renderGraph() {
       })
     ],
     style: [
-      { selector: 'node', style: { label: 'data(label)', color: '#26334a', 'font-family': 'Noto Serif SC, Songti SC, STSong, serif', 'font-size': isCompactGraph ? 15 : 18, 'font-weight': 700, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': '88px', 'text-outline-color': '#f8fbff', 'text-outline-width': 3, 'background-color': '#ffffff', 'background-opacity': 0, 'background-image': '/assets/crystal-node.png', 'background-image-opacity': 0.96, 'background-fit': 'cover', 'background-clip': 'node', 'border-width': 0, width: isCompactGraph ? 72 : 96, height: isCompactGraph ? 72 : 96, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
-      { selector: 'node[era = "旧约背景"]', style: { 'underlay-color': '#c5a7ff' } },
-      { selector: 'node[era = "耶稣时期"]', style: { 'underlay-color': '#ffe89a' } },
+      { selector: 'node', style: { label: 'data(label)', color: '#16233a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 12 : 14, 'font-weight': 700, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': '72px', 'background-color': '#f4f7fb', 'background-opacity': 1, 'border-color': '#6b98d8', 'border-width': 1.5, width: isCompactGraph ? 58 : 70, height: isCompactGraph ? 58 : 70, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'node[era = "旧约背景"]', style: { 'background-color': '#eef7ef', 'border-color': '#5e9470' } },
+      { selector: 'node[era = "耶稣时期"]', style: { 'background-color': '#fff1ee', 'border-color': '#df8178' } },
       { selector: 'node[era = "时代待审"]', style: { opacity: 0.72 } },
-      { selector: 'node[isFocus = 1]', style: { 'background-image': '/assets/crystal-focus.png', width: isCompactGraph ? 118 : 156, height: isCompactGraph ? 118 : 156, 'font-size': isCompactGraph ? 22 : 27 } },
-      { selector: 'node:selected', style: { 'border-color': '#f3cc7b', 'border-width': 2 } },
-      { selector: 'node.route-neighbor', style: { 'border-color': '#e7be67', 'border-width': 3 } },
-      { selector: 'edge', style: { width: 1.8, 'curve-style': 'straight', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.76, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.46, label: isCompactGraph ? '' : 'data(label)', color: '#566780', 'font-family': 'Noto Serif SC, Songti SC, STSong, serif', 'font-size': 12, 'font-weight': 600, 'text-rotation': 'autorotate', 'text-background-color': '#f5f9fd', 'text-background-opacity': 0.56, 'text-background-padding': '3', 'text-outline-color': '#f8fbff', 'text-outline-width': 2, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
-      { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.54 } },
-      { selector: 'edge.is-hovered, edge:selected', style: { width: 3.5, 'line-color': '#f1c86f', 'line-opacity': 1, 'source-arrow-color': '#f1c86f', 'target-arrow-color': '#f1c86f', 'arrow-scale': 0.68, 'underlay-color': '#fff6d8', 'underlay-opacity': 0.7, 'underlay-padding': 5, 'z-index': 20 } }
+      { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 5, width: isCompactGraph ? 82 : 90, height: isCompactGraph ? 82 : 90, 'font-size': isCompactGraph ? 16 : 20, 'underlay-opacity': 0 } },
+      { selector: 'node:selected', style: { 'border-color': '#245fae', 'border-width': 3 } },
+      { selector: 'node.route-neighbor', style: { 'border-color': '#245fae', 'border-width': 3 } },
+      { selector: 'edge', style: { width: 2, 'curve-style': 'straight', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.92, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.65, label: isCompactGraph ? '' : 'data(label)', color: 'data(evidenceColor)', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 11, 'font-weight': 600, 'text-rotation': 'autorotate', 'text-background-color': '#fffefa', 'text-background-opacity': 0.9, 'text-background-padding': '3', 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.72 } },
+      { selector: 'edge.is-hovered, edge:selected', style: { width: 4, 'line-opacity': 1, 'arrow-scale': 0.8, 'underlay-color': '#d9e7fb', 'underlay-opacity': 0.75, 'underlay-padding': 4, 'z-index': 20 } }
     ],
     layout: { name: 'preset', fit: false, animate: false },
     minZoom: 0.25, maxZoom: 2.5, selectionType: 'single'
@@ -531,7 +528,7 @@ function syncUrlState() {
 }
 function loadUrlState() {
   if (!data) return; const params = new URLSearchParams(window.location.search); const initialTopic = params.get('topic') || 'all'; applyTopic(data.topicPresets.some((topic) => topic.id === initialTopic) ? initialTopic : 'all', false);
-  filters.search = params.get('q') || ''; searchInput.value = filters.search; clearSearchButton.hidden = !filters.search;
+  filters.search = params.get('q') || ''; searchInput.value = filters.search; peopleSearchInput.value = filters.search; clearSearchButton.hidden = !filters.search;
   const rawEvidence = params.get('evidence'); const evidence = rawEvidence?.split(',').filter((value): value is EvidenceLevel => ALL_EVIDENCE.includes(value as EvidenceLevel)); if (rawEvidence === 'none') filters.evidences = new Set(); else if (evidence?.length) filters.evidences = new Set(evidence);
   const eras = params.get('eras')?.split(',').filter(Boolean); const books = params.get('books')?.split(',').filter(Boolean); const types = params.get('types')?.split(',').filter(Boolean); if (eras?.length || books?.length || types?.length) { filters.eras = new Set(eras || []); filters.books = new Set(books || []); filters.relations = new Set(types || []); markFiltersCustom(); }
   const preset = params.get('identity'); setIdentityPreset(preset === 'traditional' ? 'traditional' : 'conservative', false); selectedPersonId = params.get('person') || data.people.find((person) => person.nameZh === '保罗')?.id || data.people[0]?.id || '';
@@ -544,11 +541,14 @@ async function loadGraphData() {
   try { const response = await fetch('./data/graph.json', { cache: 'no-store' }); if (!response.ok) throw new Error(`HTTP ${response.status}`); data = await response.json() as GraphData; rebuildIndexes(); loadUrlState(); renderCountsAndMeta(); renderDataViews(); shell.setAttribute('aria-busy', 'false'); }
   catch (error) { renderLoadError(error instanceof Error ? error.message : '未知错误'); }
 }
-function updateSearch(value: string) { filters.search = value.trim(); clearSearchButton.hidden = !filters.search; renderPeopleList(); if (filters.search && !window.matchMedia('(max-width: 900px)').matches) setDrawer('people'); syncUrlState(); }
+function updateSearch(value: string) { filters.search = value.trim(); searchInput.value = value; peopleSearchInput.value = value; clearSearchButton.hidden = !filters.search; renderPeopleList(); if (filters.search && !window.matchMedia('(max-width: 900px)').matches) setDrawer('people'); syncUrlState(); }
 
 searchInput.addEventListener('compositionstart', () => { isComposing = true; });
 searchInput.addEventListener('compositionend', () => { isComposing = false; window.clearTimeout(searchTimer); updateSearch(searchInput.value); });
 searchInput.addEventListener('input', () => { if (isComposing) return; window.clearTimeout(searchTimer); if (!searchInput.value) updateSearch(''); else searchTimer = window.setTimeout(() => updateSearch(searchInput.value), 300); });
+peopleSearchInput.addEventListener('compositionstart', () => { isComposing = true; });
+peopleSearchInput.addEventListener('compositionend', () => { isComposing = false; window.clearTimeout(searchTimer); updateSearch(peopleSearchInput.value); });
+peopleSearchInput.addEventListener('input', () => { if (isComposing) return; window.clearTimeout(searchTimer); if (!peopleSearchInput.value) updateSearch(''); else searchTimer = window.setTimeout(() => updateSearch(peopleSearchInput.value), 300); });
 clearSearchButton.addEventListener('click', () => { searchInput.value = ''; updateSearch(''); searchInput.focus(); });
 topicSelect.addEventListener('change', () => { if (topicSelect.value !== 'custom') applyTopic(topicSelect.value); });
 identityPresetSelect.addEventListener('change', () => { if (identityPresetSelect.value === 'conservative' || identityPresetSelect.value === 'traditional') setIdentityPreset(identityPresetSelect.value); });
@@ -575,7 +575,9 @@ document.querySelectorAll<HTMLButtonElement>('[data-drawer-close]').forEach((but
 document.getElementById('zoom-in')?.addEventListener('click', () => cy?.zoom({ level: Math.min(2.5, cy.zoom() * 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } }));
 document.getElementById('zoom-out')?.addEventListener('click', () => cy?.zoom({ level: Math.max(0.25, cy.zoom() / 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } }));
 document.getElementById('fit-graph')?.addEventListener('click', () => cy?.fit(undefined, 56));
+document.getElementById('header-fit')?.addEventListener('click', () => cy?.fit(undefined, 56));
 document.getElementById('fit-graph-inspector')?.addEventListener('click', () => cy?.fit(undefined, 56));
+document.getElementById('show-legend')?.addEventListener('click', () => document.querySelector<HTMLElement>('.graph-footer')?.focus());
 document.getElementById('center-focus')?.addEventListener('click', () => { const focus = cy?.$id(selectedPersonId); if (focus?.length) cy?.animate({ center: { eles: focus }, zoom: Math.max(cy.zoom(), 0.9), duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220 }); });
 document.addEventListener('keydown', (event) => { if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === 'k') { event.preventDefault(); searchInput.focus(); } });
 let resizeTimer = 0;
