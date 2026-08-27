@@ -28,6 +28,7 @@ EXPECTED_IDENTITY_OPTIONS="$(awk 'NR>1 && NF' "$IMPORT_DIR/identity_option_nodes
 EXPECTED_PASSAGES="$(awk 'NR>1 && NF' "$IMPORT_DIR/passage_nodes.csv" | wc -l | tr -d ' ')"
 EXPECTED_EVIDENCE_ROWS="$(awk 'NR>1 && NF' "$IMPORT_DIR/assertion_evidence.csv" | wc -l | tr -d ' ')"
 EXPECTED_SUPPORTED_BY="$((EXPECTED_EVIDENCE_ROWS * 2))"
+IMPORT_CYPHER="$(cat "$IMPORT_DIR/import.cypher")"
 
 cleanup() {
   docker compose -f "$COMPOSE_FILE" down -v
@@ -46,7 +47,7 @@ query_scalar() {
 
 import_once() {
   run_once "MATCH (n) DETACH DELETE n;"
-  cat "$ROOT_DIR/import/import.cypher" | docker compose -f "$COMPOSE_FILE" exec -T neo4j \
+  printf '%s\n' "$IMPORT_CYPHER" | docker compose -f "$COMPOSE_FILE" exec -T neo4j \
     cypher-shell -u "$NEO4J_USER" -p "$NEO4J_PASSWORD" --database=neo4j --non-interactive
 }
 

@@ -29,6 +29,7 @@ $ExpectedSources = (Import-Csv (Join-Path $ImportDir "evidence_nodes.csv")).Coun
 $ExpectedIdentityOptions = (Import-Csv (Join-Path $ImportDir "identity_option_nodes.csv")).Count
 $ExpectedPassages = (Import-Csv (Join-Path $ImportDir "passage_nodes.csv")).Count
 $ExpectedSupportedBy = (Import-Csv (Join-Path $ImportDir "assertion_evidence.csv")).Count * 2
+$ImportCypher = Get-Content -Raw $ImportFile
 
 function Invoke-Cypher([string]$Query) {
     $result = docker compose -f $ComposeFile exec -T neo4j cypher-shell -u $env:NEO4J_USER -p $env:NEO4J_PASSWORD --database=neo4j --format plain $Query
@@ -103,7 +104,7 @@ function Test-Integrity {
 
 function Import-Once {
     Invoke-Cypher "MATCH (n) DETACH DELETE n;" | Out-Null
-    Get-Content -Raw $ImportFile | docker compose -f $ComposeFile exec -T neo4j cypher-shell -u $env:NEO4J_USER -p $env:NEO4J_PASSWORD --database=neo4j --non-interactive
+    $ImportCypher | docker compose -f $ComposeFile exec -T neo4j cypher-shell -u $env:NEO4J_USER -p $env:NEO4J_PASSWORD --database=neo4j --non-interactive
     if ($LASTEXITCODE -ne 0) { throw "Neo4j import failed" }
 }
 
