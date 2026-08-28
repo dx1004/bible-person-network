@@ -64,7 +64,7 @@
       "license": "proprietary_restricted",
       "url": "https://www.logos.com/product/36564/lexham-bible-dictionary",
       "scope": "bible",
-      "access_status": "official_temporary_access_verified",
+      "access_status": "member_access_verified",
       "systematic_review_status": "not_started",
       "status": "pending"
     },
@@ -72,9 +72,9 @@
       "source_id": "source:0009",
       "provider": "Anchor Yale Bible Dictionary",
       "license": "proprietary_restricted",
-      "url": "https://yalebooks.yale.edu/",
+      "url": "https://archive.org/details/anchorbibledicti0001unse_l6c5",
       "scope": "bible",
-      "access_status": "member_catalog_checked_no_approved_edition",
+      "access_status": "controlled_digital_lending_verified",
       "systematic_review_status": "not_started",
       "status": "pending"
     }

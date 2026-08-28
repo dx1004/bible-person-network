@@ -33,6 +33,7 @@
         "member_catalog_unverified",
         "official_temporary_access_verified",
         "member_catalog_checked_no_approved_edition",
+        "controlled_digital_lending_verified",
         "member_access_verified"
       ]
     },
