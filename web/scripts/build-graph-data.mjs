@@ -547,18 +547,52 @@ async function loadJSON(fileName, fallback = []) {
         .flatMap((relationship) => [relationship.fromPerson, relationship.toPerson])
     );
 
+    const herodFamilyPeople = mapTopicPersonIds(['nt-people-0014', 'nt-people-0037', 'nt-people-0059', 'nt-people-0082', 'nt-people-0124', 'nt-people-0125', 'nt-people-0126', 'nt-people-0127', 'nt-people-0275', 'nt-people-0277']);
+    const herodFamilyLabels = Object.fromEntries([
+      ['nt-people-0014', '亚基帕二世'],
+      ['nt-people-0037', '希律·亚基老'],
+      ['nt-people-0059', '百妮基'],
+      ['nt-people-0082', '土西拉'],
+      ['nt-people-0124', '希律·亚基帕一世'],
+      ['nt-people-0125', '希律·安提帕'],
+      ['nt-people-0126', '希律大帝'],
+      ['nt-people-0127', '希罗底'],
+      ['nt-people-0275', '分封王腓力'],
+      ['nt-people-0277', '希律·腓力一世']
+    ].map(([personId, label]) => [mapPersonId(personId), label]));
+    const herodFamilyRanks = Object.fromEntries([
+      ['nt-people-0126', 0],
+      ['nt-people-0037', 1],
+      ['nt-people-0125', 1],
+      ['nt-people-0277', 1],
+      ['nt-people-0275', 1],
+      ['nt-people-0124', 2],
+      ['nt-people-0127', 2],
+      ['nt-people-0014', 3],
+      ['nt-people-0059', 3],
+      ['nt-people-0082', 3]
+    ].map(([personId, rank]) => [mapPersonId(personId), rank]));
     const topicPresets = [
       { id: 'all', name: '全部', relationTypes: [], bookIncludes: [], eraIncludes: [], evidenceIncludes: [] },
       {
         id: 'herodFamily',
         name: '希律家族',
-        relationTypes: [],
+        relationTypes: [
+          '亲属关系-父母/祖先',
+          '亲属关系-子女/后代',
+          '亲属关系-手足',
+          '亲属关系-婚姻/伴侣',
+          '亲属关系-其他'
+        ],
         bookIncludes: [],
         eraIncludes: [],
         evidenceIncludes: ['nt_text', 'ot_text', 'ancient', 'modern'],
-        personIncludes: [
-          ...mapTopicPersonIds(['nt-people-0014', 'nt-people-0037', 'nt-people-0059', 'nt-people-0082', 'nt-people-0124', 'nt-people-0125', 'nt-people-0126', 'nt-people-0127', 'nt-people-0275', 'nt-people-0277'])
-        ]
+        personIncludes: herodFamilyPeople,
+        focusPersonId: mapPersonId('nt-people-0126'),
+        graphMode: 'family_tree',
+        personLabels: herodFamilyLabels,
+        personRanks: herodFamilyRanks,
+        personOrder: mapTopicPersonIds(['nt-people-0126', 'nt-people-0037', 'nt-people-0125', 'nt-people-0277', 'nt-people-0275', 'nt-people-0124', 'nt-people-0127', 'nt-people-0014', 'nt-people-0059', 'nt-people-0082'])
       },
       {
         id: 'family',

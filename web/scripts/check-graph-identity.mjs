@@ -292,6 +292,15 @@ async function main() {
         throw new Error(`topic preset ${topic.id} references missing person ${personId}`);
       }
     }
+    if (topic.focusPersonId && !includedPeople.has(topic.focusPersonId)) {
+      throw new Error(`topic preset ${topic.id} focus person is not included: ${topic.focusPersonId}`);
+    }
+    for (const personId of Object.keys(topic.personLabels || {})) {
+      if (!includedPeople.has(personId)) throw new Error(`topic preset ${topic.id} labels person outside the topic: ${personId}`);
+    }
+    for (const personId of Object.keys(topic.personRanks || {})) {
+      if (!includedPeople.has(personId)) throw new Error(`topic preset ${topic.id} ranks person outside the topic: ${personId}`);
+    }
     const matches = graph.relationships.filter((rel) => {
       if (topic.relationTypes.length && !topic.relationTypes.includes(rel.type)) return false;
       if (topic.bookIncludes.length && !relationshipBooks(rel).some((book) => topic.bookIncludes.includes(book))) return false;
@@ -302,6 +311,12 @@ async function main() {
     });
     if (!matches.length) throw new Error(`topic preset ${topic.id} has no matching relationships`);
     console.log(`[topic-check] ${topic.id}=${matches.length}`);
+  }
+
+  const herodTopic = graph.topicPresets.find((topic) => topic.id === 'herodFamily');
+  if (herodTopic?.graphMode !== 'family_tree') throw new Error('Herod topic must use the family-tree presentation');
+  for (const expectedLabel of ['希律大帝', '希律·安提帕', '希律·亚基帕一世', '亚基帕二世', '分封王腓力', '希律·腓力一世']) {
+    if (!Object.values(herodTopic.personLabels || {}).includes(expectedLabel)) throw new Error(`Herod topic is missing disambiguated label: ${expectedLabel}`);
   }
 
   const familyTopic = graph.topicPresets.find((topic) => topic.id === 'family');

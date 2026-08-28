@@ -66,12 +66,17 @@
 
 ### topicPresets 字段
 
-- `id`: `all` / `discipleship` / `family` / `paulTeam` / `acts`
+- `id`: `all` / `herodFamily` / `discipleship` / `family` / `paulTeam` / `acts`
 - `name`: 显示名
 - `relationTypes`: 筛选类型列表（可为空）
 - `bookIncludes`: 书卷包含条件（可为空）
 - `eraIncludes`: 人物时代包含条件（可为空）
 - `personIncludes`: 人物 ID 包含条件（可为空）
 - `evidenceIncludes`: 证据层级筛选（可为空）
+- `focusPersonId`: 可选，专题首次打开时的默认焦点人物
+- `graphMode`: 可选，`focus` 或 `family_tree`；后者使用完整专题的代际布局
+- `personLabels`: 可选，专题内用于区分同名人物的显示名映射；不替代人物权威中文名
+- `personRanks`: 可选，家谱布局中的代际行号映射
+- `personOrder`: 可选，同一代际中的从左到右人物顺序
 
 字段缺失时前端有降级策略，保证可正常渲染。

@@ -67,6 +67,11 @@ type TopicPreset = {
   eraIncludes: string[];
   evidenceIncludes: EvidenceLevel[];
   personIncludes?: string[];
+  focusPersonId?: string;
+  graphMode?: 'focus' | 'family_tree';
+  personLabels?: Record<string, string>;
+  personRanks?: Record<string, number>;
+  personOrder?: string[];
 };
 type GraphData = {
   migration?: {
@@ -122,6 +127,19 @@ const evidenceColor: Record<EvidenceLevel, string> = {
   modern: '#df6159'
 };
 const certaintyLabel = { high: '高', medium: '中', low: '低' } as const;
+const relationshipShortLabel: Record<string, string> = {
+  '亲属关系-父母/祖先': '父系',
+  '亲属关系-子女/后代': '后代',
+  '亲属关系-手足': '手足',
+  '亲属关系-婚姻/伴侣': '婚姻',
+  '亲属关系-其他': '亲属',
+  '长期同工': '同工',
+  '师徒': '师徒',
+  '接待': '接待',
+  '政治权属': '权属',
+  '司法行为': '司法',
+  '明确敌对': '敌对'
+};
 
 const appRoot = document.getElementById('app');
 if (!appRoot) throw new Error('app container is missing');
@@ -190,6 +208,7 @@ appRoot.innerHTML = `
           </div>
         </div>
         <div class="graph-stage">
+          <p id="graph-mode-note" class="graph-mode-note" hidden></p>
           <div id="graph" role="img" aria-label="选中人物的一度关系图；所有关系也可在右侧文字列表读取"></div>
           <div id="graph-empty" class="empty-state graph-empty" hidden><i class="ph ph-git-branch" aria-hidden="true"></i><strong>当前筛选下没有关系</strong><p>图谱已隐藏。可开启更多证据层、重置筛选，或更换焦点人物。</p></div>
           <div class="zoom-controls" aria-label="图谱缩放">
@@ -239,6 +258,7 @@ const graphContainer = document.getElementById('graph')!;
 const graphEmpty = document.getElementById('graph-empty') as HTMLDivElement;
 const graphHeading = document.getElementById('graph-heading')!;
 const graphStatus = document.getElementById('graph-status')!;
+const graphModeNote = document.getElementById('graph-mode-note') as HTMLParagraphElement;
 const focusSubtitle = document.getElementById('focus-subtitle')!;
 const evidenceRibbonTitle = document.getElementById('evidence-ribbon-title')!;
 const evidenceRibbonMeta = document.getElementById('evidence-ribbon-meta')!;
@@ -412,17 +432,26 @@ function buildVisibleModel(): VisibleModel {
   people.sort((a, b) => a.nameZh.localeCompare(b.nameZh, 'zh-Hans'));
   return { people, relationships, personMap, mergedTo };
 }
-function personMatchesSearch(person: Person, term: string) { return !term || [person.nameZh, person.nameLat, ...person.aliases].some((value) => normalize(value).includes(term)); }
+function personMatchesSearch(person: Person, term: string) { return !term || [personDisplayName(person), person.nameZh, person.nameLat, ...person.aliases].some((value) => normalize(value).includes(term)); }
+function activeTopic() { return data?.topicPresets.find((topic) => topic.id === filters.topic); }
+function personDisplayName(person?: Person) {
+  if (!person) return '';
+  return activeTopic()?.personLabels?.[person.id] || person.nameZh;
+}
 
 function applyTopic(topicId: string, rerender = true) {
   if (!data) return; const topic = data.topicPresets.find((candidate) => candidate.id === topicId); if (!topic) return;
   filters.topic = topic.id; filters.books = new Set(topic.bookIncludes || []); filters.relations = new Set(topic.relationTypes || []); filters.eras = new Set(topic.eraIncludes || []); filters.evidences = new Set(topic.evidenceIncludes?.length ? topic.evidenceIncludes : ALL_EVIDENCE); filters.personIncludes = new Set(topic.personIncludes || []);
   topicSelect.value = topic.id;
   syncEvidenceControls();
-  if (rerender && topic.id !== 'all') {
+  if (topic.id !== 'all') {
     const topicModel = buildVisibleModel();
     const currentDegree = topicModel.relationships.filter((relationship) => relationship.fromPerson === selectedPersonId || relationship.toPerson === selectedPersonId).length;
-    if (currentDegree === 0 && topicModel.relationships.length) {
+    const preferredFocus = resolvePersonId(topic.focusPersonId || '');
+    if (preferredFocus && topicModel.personMap.has(preferredFocus)) {
+      selectedPersonId = preferredFocus;
+      selectedRelationId = '';
+    } else if (currentDegree === 0 && topicModel.relationships.length) {
       const degrees = new Map<string, number>();
       topicModel.relationships.forEach((relationship) => {
         degrees.set(relationship.fromPerson, (degrees.get(relationship.fromPerson) || 0) + 1);
@@ -461,22 +490,54 @@ function renderAdvancedFilters() {
 }
 function renderPeopleList() {
   if (!currentModel) return; const term = normalize(filters.search); const matches = currentModel.people.filter((person) => personMatchesSearch(person, term));
-  matches.sort((a, b) => Number(b.id === selectedPersonId) - Number(a.id === selectedPersonId) || a.nameZh.localeCompare(b.nameZh, 'zh-Hans'));
+  matches.sort((a, b) => Number(b.id === selectedPersonId) - Number(a.id === selectedPersonId) || personDisplayName(a).localeCompare(personDisplayName(b), 'zh-Hans'));
   const shown = matches.slice(0, SEARCH_RESULT_LIMIT);
   peopleResultCount.textContent = term ? `${matches.length} 项` : `${currentModel.people.length} 人`; peopleEmpty.hidden = matches.length > 0; peopleList.hidden = matches.length === 0;
-  peopleList.innerHTML = shown.map((person) => { const relationCount = currentModel?.relationships.filter((relationship) => relationship.fromPerson === person.id || relationship.toPerson === person.id).length || 0; const aliasPreview = person.aliases.slice(0, 3).join(' · ') || person.nameLat; return `<button type="button" data-onclick="delegated" class="person-row" data-person-id="${escapeHtml(person.id)}" aria-pressed="${person.id === selectedPersonId}"><i class="ph ph-user-circle person-icon" aria-hidden="true"></i><span class="person-row-copy"><span class="person-name-line"><strong>${escapeHtml(person.nameZh)}</strong><span class="era-badge">${escapeHtml(person.era)}</span></span><small>${escapeHtml(aliasPreview)}</small></span><span class="relation-count" aria-label="${relationCount} 条当前关系">${relationCount}</span></button>`; }).join('');
+  peopleList.innerHTML = shown.map((person) => { const relationCount = currentModel?.relationships.filter((relationship) => relationship.fromPerson === person.id || relationship.toPerson === person.id).length || 0; const displayName = personDisplayName(person); const hasContextLabel = displayName !== person.nameZh; const aliasPreview = [hasContextLabel ? person.nameZh : '', ...person.aliases.slice(0, 2)].filter(Boolean).join(' · ') || person.nameLat; return `<button type="button" data-onclick="delegated" class="person-row${hasContextLabel ? ' topic-disambiguated' : ''}" data-person-id="${escapeHtml(person.id)}" aria-pressed="${person.id === selectedPersonId}"><i class="ph ph-user-circle person-icon" aria-hidden="true"></i><span class="person-row-copy"><span class="person-name-line"><strong>${escapeHtml(displayName)}</strong><span class="era-badge">${escapeHtml(person.era)}</span></span><small>${escapeHtml(aliasPreview)}</small></span><span class="relation-count" aria-label="${relationCount} 条当前关系">${relationCount}</span></button>`; }).join('');
   if (matches.length > SEARCH_RESULT_LIMIT) peopleList.insertAdjacentHTML('beforeend', `<p class="list-limit-note">另有 ${matches.length - SEARCH_RESULT_LIMIT} 项；继续输入可缩小范围。</p>`);
 }
 function relationshipPriority(relationship: Relationship) { return ({ nt_text: 30, ot_text: 28, ancient: 20, modern: 10 }[relationship.evidenceLevel]) + ({ high: 3, medium: 2, low: 1 }[relationship.certainty]); }
 function focusRelationships(model: VisibleModel) { return model.relationships.filter((relationship) => relationship.fromPerson === selectedPersonId || relationship.toPerson === selectedPersonId).sort((a, b) => relationshipPriority(b) - relationshipPriority(a) || a.type.localeCompare(b.type, 'zh-Hans')); }
+function familyRelationKind(relationship: Relationship) {
+  if (relationship.type.includes('父母/祖先') || relationship.type.includes('子女/后代')) return 'parent';
+  if (relationship.type.includes('婚姻/伴侣')) return 'marriage';
+  if (relationship.type.includes('手足')) return 'sibling';
+  return 'other';
+}
+function familyTreeRelationships(model: VisibleModel) {
+  const parentRelations = model.relationships.filter((relationship) => familyRelationKind(relationship) === 'parent');
+  const parentByChild = new Map<string, Set<string>>();
+  for (const relationship of parentRelations) {
+    const parents = parentByChild.get(relationship.toPerson) || new Set<string>();
+    parents.add(relationship.fromPerson);
+    parentByChild.set(relationship.toPerson, parents);
+  }
+  const sharesVisibleParent = (relationship: Relationship) => {
+    const fromParents = parentByChild.get(relationship.fromPerson) || new Set<string>();
+    const toParents = parentByChild.get(relationship.toPerson) || new Set<string>();
+    return [...fromParents].some((parentId) => toParents.has(parentId));
+  };
+  const kindRank = { parent: 0, marriage: 1, sibling: 2, other: 3 } as const;
+  return model.relationships
+    .filter((relationship) => familyRelationKind(relationship) !== 'sibling' || !sharesVisibleParent(relationship))
+    .sort((a, b) => kindRank[familyRelationKind(a)] - kindRank[familyRelationKind(b)] || relationshipPriority(b) - relationshipPriority(a));
+}
 
 function renderGraph() {
   if (!currentModel) return;
   const selected = currentModel.personMap.get(selectedPersonId) || originalPersonById.get(selectedPersonId);
   if (!selected) return;
+  const topic = activeTopic();
+  const isFamilyTree = topic?.graphMode === 'family_tree';
+  const selectedName = personDisplayName(selected);
+  const relationships = isFamilyTree ? familyTreeRelationships(currentModel) : focusRelationships(currentModel);
 
-  graphHeading.textContent = `${selected.nameZh}的一度关系`;
-  const relationships = focusRelationships(currentModel);
+  graphHeading.textContent = isFamilyTree ? `${topic?.name || '家族'}谱系` : `${selectedName}的一度关系`;
+  graphModeNote.hidden = false;
+  graphModeNote.textContent = isFamilyTree
+    ? '代际视图 · 实线：父母／祖先 · 虚线：婚姻 · 点线：手足'
+    : '一度关系 · 点击人物切换焦点 · 点击关系查看类型与出处';
+  graphContainer.setAttribute('aria-label', isFamilyTree ? '希律家族代际关系图；点选人物后可在右侧读取全部关系和出处' : '选中人物的一度关系图；所有关系也可在右侧文字列表读取');
 
   if (!relationships.length) {
     if (cy) {
@@ -488,7 +549,7 @@ function renderGraph() {
     zoomControls.hidden = true;
     graphEmpty.hidden = false;
     focusSubtitle.textContent = `${selected.era} · ${relationships.length} 条当前关系`;
-    evidenceRibbonTitle.textContent = `${selected.nameZh} · ${relationships.length} 条一度关系`;
+    evidenceRibbonTitle.textContent = `${selectedName} · ${relationships.length} 条一度关系`;
     evidenceRibbonMeta.textContent = '当前筛选下无可显示关系，图谱已隐藏。可开启更多证据层、重置筛选，或更换焦点人物。';
     graphStatus.textContent = '当前筛选下无可显示关系。';
     return;
@@ -500,55 +561,82 @@ function renderGraph() {
   graphEmpty.hidden = true;
 
   const isCompactGraph = window.innerWidth <= 620;
-  const edgeLimit = isCompactGraph ? 6 : GRAPH_EDGE_LIMIT;
+  const edgeLimit = isFamilyTree ? (isCompactGraph ? 6 : 10) : (isCompactGraph ? 6 : GRAPH_EDGE_LIMIT);
   const displayedRelationships = relationships.slice(0, edgeLimit);
   const nodeIds = new Set<string>([selectedPersonId]);
   displayedRelationships.forEach((relationship) => { nodeIds.add(relationship.fromPerson); nodeIds.add(relationship.toPerson); });
   const nodes = [...nodeIds].map((personId) => currentModel?.personMap.get(personId) || originalPersonById.get(personId)).filter((person): person is Person => Boolean(person));
 
   const capped = relationships.length > displayedRelationships.length;
-  focusSubtitle.textContent = `${selected.era} · ${relationships.length} 条当前关系 · 点击人物切换焦点`;
-  evidenceRibbonTitle.textContent = `${selected.nameZh} · ${relationships.length} 条一度关系`;
-  evidenceRibbonMeta.textContent = '点击一条发光路径，查看关系类型、经文位置和资料来源。';
+  focusSubtitle.textContent = isFamilyTree
+    ? '按代际排列 · 已省略可由共同父系推知的重复手足线 · 点击人物查看详情'
+    : `${selected.era} · ${relationships.length} 条当前关系 · 点击人物切换焦点`;
+  evidenceRibbonTitle.textContent = isFamilyTree ? `${topic?.name || '家族'} · ${currentModel.relationships.length} 条已审关系` : `${selectedName} · ${relationships.length} 条一度关系`;
+  evidenceRibbonMeta.textContent = isFamilyTree ? '实线为父母／祖先，虚线为婚姻，点线为手足；点击关系查看出处。' : '点击一条发光路径，查看关系类型、经文位置和资料来源。';
   const width = Math.max(graphContainer.clientWidth, 320);
-  const height = Math.max(graphContainer.clientHeight, 520);
-  graphStatus.textContent = capped ? `画布显示 ${displayedRelationships.length}/${relationships.length} 条一度关系；右侧列表保留全部 ${relationships.length} 条。` : `当前显示 ${nodes.length} 人 · ${relationships.length} 条一度关系。`;
+  const visibleStageHeight = graphContainer.parentElement?.clientHeight || graphContainer.clientHeight;
+  const height = Math.max(visibleStageHeight, 300);
+  graphStatus.textContent = isFamilyTree
+    ? `家族图显示 ${displayedRelationships.length}/${currentModel.relationships.length} 条结构关系；重复手足线已折叠，点选人物可查看全部关系。`
+    : capped ? `画布显示 ${displayedRelationships.length}/${relationships.length} 条一度关系；右侧列表保留全部 ${relationships.length} 条。` : `当前显示 ${nodes.length} 人 · ${relationships.length} 条一度关系。`;
   const neighborIds = nodes.filter((person) => person.id !== selectedPersonId).map((person) => person.id);
   const positions = new Map<string, { x: number; y: number }>();
   const center = { x: width * 0.5, y: height * (isCompactGraph ? 0.46 : 0.48) };
   const radiusX = width * (isCompactGraph ? 0.3 : 0.36);
   const radiusY = height * (isCompactGraph ? 0.2 : 0.36);
 
-  positions.set(selectedPersonId, center);
-  neighborIds.forEach((personId, index) => {
-    const startAngle = neighborIds.length <= 2 ? 0 : -Math.PI / 2;
-    const angle = startAngle + (Math.PI * 2 * index) / Math.max(neighborIds.length, 1);
-    const stagger = 0.84 + ((index * 37) % 5) * 0.045;
-    positions.set(personId, { x: center.x + Math.cos(angle) * radiusX * stagger, y: center.y + Math.sin(angle) * radiusY * stagger });
-  });
+  if (isFamilyTree) {
+    const order = new Map((topic?.personOrder || []).map((personId, index) => [personId, index]));
+    const rankGroups = new Map<number, string[]>();
+    for (const node of nodes) {
+      const rank = topic?.personRanks?.[node.id] ?? 0;
+      const group = rankGroups.get(rank) || [];
+      group.push(node.id);
+      rankGroups.set(rank, group);
+    }
+    const ranks = [...rankGroups.keys()].sort((a, b) => a - b);
+    ranks.forEach((rank, rankIndex) => {
+      const group = (rankGroups.get(rank) || []).sort((a, b) => (order.get(a) ?? 999) - (order.get(b) ?? 999));
+      const y = ranks.length === 1 ? center.y : height * (0.12 + (0.76 * rankIndex) / (ranks.length - 1));
+      group.forEach((personId, index) => {
+        const x = group.length === 1 ? center.x : width * (0.12 + (0.76 * index) / (group.length - 1));
+        positions.set(personId, { x, y });
+      });
+    });
+  } else {
+    positions.set(selectedPersonId, center);
+    neighborIds.forEach((personId, index) => {
+      const startAngle = neighborIds.length <= 2 ? 0 : -Math.PI / 2;
+      const angle = startAngle + (Math.PI * 2 * index) / Math.max(neighborIds.length, 1);
+      const stagger = 0.84 + ((index * 37) % 5) * 0.045;
+      positions.set(personId, { x: center.x + Math.cos(angle) * radiusX * stagger, y: center.y + Math.sin(angle) * radiusY * stagger });
+    });
+  }
 
   cy?.destroy();
   cy = cytoscape({
     container: graphContainer,
     elements: [
-      ...nodes.map((person) => ({ group: 'nodes' as const, data: { id: person.id, label: person.nameZh, era: person.era, isFocus: person.id === selectedPersonId ? 1 : 0 }, position: positions.get(person.id) })),
+      ...nodes.map((person) => ({ group: 'nodes' as const, data: { id: person.id, label: personDisplayName(person), era: person.era, isFocus: person.id === selectedPersonId ? 1 : 0 }, position: positions.get(person.id) })),
       ...displayedRelationships.map((relationship) => {
         const sourceArrow = relationship.direction === 'incoming' || relationship.direction === 'bidirectional' ? 'triangle' : 'none';
         const targetArrow = relationship.direction === 'incoming' || relationship.direction === 'undirected' ? 'none' : 'triangle';
-        return { group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, passage: relationship.passages[0] || '', direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], sourceArrow, targetArrow } };
+        return { group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, shortLabel: relationshipShortLabel[relationship.type] || relationship.type, passage: relationship.passages[0] || '', direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], relationKind: isFamilyTree ? familyRelationKind(relationship) : 'default', sourceArrow, targetArrow } };
       })
     ],
     style: [
-      { selector: 'node', style: { label: 'data(label)', color: '#16233a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 14 : 16, 'font-weight': 700, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': '74px', 'background-color': '#f4f7fb', 'background-opacity': 1, 'border-color': '#6b98d8', 'border-width': 1.5, width: isCompactGraph ? 60 : 72, height: isCompactGraph ? 60 : 72, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'node', style: { label: 'data(label)', shape: 'round-rectangle', color: '#16233a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 13 : 15, 'font-weight': 700, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': isFamilyTree ? '104px' : '86px', 'background-color': '#f4f7fb', 'background-opacity': 1, 'border-color': '#6b98d8', 'border-width': 1.5, width: isFamilyTree ? (isCompactGraph ? 92 : 118) : (isCompactGraph ? 82 : 98), height: isFamilyTree ? (isCompactGraph ? 48 : 56) : (isCompactGraph ? 44 : 50), 'overlay-opacity': 0, 'underlay-opacity': 0 } },
       { selector: 'node[era = "旧约背景"]', style: { 'background-color': '#eef7ef', 'border-color': '#5e9470' } },
       { selector: 'node[era = "耶稣时期"]', style: { 'background-color': '#fff1ee', 'border-color': '#df8178' } },
       { selector: 'node[era = "时代待审"]', style: { opacity: 0.72 } },
-      { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 4, width: isCompactGraph ? 84 : 94, height: isCompactGraph ? 84 : 94, 'font-size': isCompactGraph ? 18 : 23, 'underlay-opacity': 0 } },
+      { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 4, width: isFamilyTree ? (isCompactGraph ? 104 : 132) : (isCompactGraph ? 98 : 116), height: isFamilyTree ? (isCompactGraph ? 56 : 66) : (isCompactGraph ? 52 : 60), 'font-size': isFamilyTree ? (isCompactGraph ? 14 : 17) : (isCompactGraph ? 15 : 18), 'underlay-opacity': 0 } },
       { selector: 'node:selected', style: { 'border-color': '#245fae', 'border-width': 3 } },
       { selector: 'node.route-neighbor', style: { 'border-color': '#245fae', 'border-width': 3 } },
-      { selector: 'edge', style: { width: 1.6, 'curve-style': 'straight', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.82, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.62, label: isCompactGraph ? '' : 'data(label)', color: 'data(evidenceColor)', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 12, 'font-weight': 600, 'text-rotation': 'autorotate', 'text-background-color': '#fffefa', 'text-background-opacity': 0.82, 'text-background-padding': '2', 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'edge', style: { width: isFamilyTree ? 1.8 : 1.5, 'curve-style': isFamilyTree ? 'bezier' : 'straight', 'control-point-step-size': isFamilyTree ? 34 : 40, 'line-color': 'data(evidenceColor)', 'line-opacity': isFamilyTree ? 0.7 : 0.72, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.62, label: 'data(shortLabel)', color: '#46546a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 10 : 11, 'font-weight': 600, 'text-rotation': 'autorotate', 'text-background-color': '#fffefa', 'text-background-opacity': 0.94, 'text-background-padding': '3', 'text-background-shape': 'roundrectangle', 'text-border-color': '#dfe5ec', 'text-border-width': 0.7, 'text-border-opacity': 0.9, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'edge[relationKind = "marriage"]', style: { 'line-style': 'dashed', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
+      { selector: 'edge[relationKind = "sibling"]', style: { 'line-style': 'dotted', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
       { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.72 } },
-      { selector: 'edge.is-hovered, edge:selected', style: { width: 3.2, 'line-opacity': 1, 'arrow-scale': 0.72, 'underlay-color': '#d9e7fb', 'underlay-opacity': 0.45, 'underlay-padding': 3, 'z-index': 20 } }
+      { selector: 'edge.is-hovered, edge:selected', style: { width: 3.2, 'line-opacity': 1, 'arrow-scale': 0.72, 'font-size': isCompactGraph ? 11 : 12, 'text-background-opacity': 1, 'underlay-color': '#d9e7fb', 'underlay-opacity': 0.45, 'underlay-padding': 3, 'z-index': 20 } }
     ],
     layout: { name: 'preset', fit: false, animate: false },
     minZoom: 0.25, maxZoom: 2.5, selectionType: 'single'
@@ -582,19 +670,19 @@ function renderInspector() {
     const from = currentModel?.personMap.get(selectedRelationship.fromPerson) || originalPersonById.get(selectedRelationship.fromPerson);
     const to = currentModel?.personMap.get(selectedRelationship.toPerson) || originalPersonById.get(selectedRelationship.toPerson);
     const headline = selectedRelationship.direction === 'undirected' || selectedRelationship.direction === 'bidirectional'
-      ? `${from?.nameZh || selectedRelationship.fromPerson} ↔ ${to?.nameZh || selectedRelationship.toPerson}`
-      : `${from?.nameZh || selectedRelationship.fromPerson} → ${to?.nameZh || selectedRelationship.toPerson}`;
-    return `<section class="selected-relation" aria-label="选中关系"><div class="section-kicker"><i class="ph ph-circle evidence-dot evidence-${selectedRelationship.evidenceLevel}" aria-hidden="true"></i>${escapeHtml(evidenceLabel[selectedRelationship.evidenceLevel])}</div><h3>${escapeHtml(headline)}</h3><p>${escapeHtml(selectedRelationship.type)} · ${escapeHtml(relationshipDirection(selectedRelationship, person.id))} · ${certaintyLabel[selectedRelationship.certainty]}确定度</p><div class="passage-list">${selectedRelationship.passages.map((passage) => `<code>${escapeHtml(passage)}</code>`).join('')}</div><div class="source-links">${selectedRelationship.sources.map(sourceLink).join('')}</div>${other ? `<button type="button" data-onclick="delegated" class="secondary-button" data-go-person="${escapeHtml(other.id)}">转到${escapeHtml(other.nameZh)}</button>` : ''}</section>`;
+      ? `${personDisplayName(from)} ↔ ${personDisplayName(to)}`
+      : `${personDisplayName(from)} → ${personDisplayName(to)}`;
+    return `<section class="selected-relation" aria-label="选中关系"><div class="section-kicker"><i class="ph ph-circle evidence-dot evidence-${selectedRelationship.evidenceLevel}" aria-hidden="true"></i>${escapeHtml(evidenceLabel[selectedRelationship.evidenceLevel])}</div><h3>${escapeHtml(headline)}</h3><p>${escapeHtml(selectedRelationship.type)} · ${escapeHtml(relationshipDirection(selectedRelationship, person.id))} · ${certaintyLabel[selectedRelationship.certainty]}确定度</p><div class="passage-list">${selectedRelationship.passages.map((passage) => `<code>${escapeHtml(passage)}</code>`).join('')}</div><div class="source-links">${selectedRelationship.sources.map(sourceLink).join('')}</div>${other ? `<button type="button" data-onclick="delegated" class="secondary-button" data-go-person="${escapeHtml(other.id)}">转到${escapeHtml(personDisplayName(other))}</button>` : ''}</section>`;
   })() : '';
   if (selectedRelationship) {
     const from = currentModel.personMap.get(selectedRelationship.fromPerson) || originalPersonById.get(selectedRelationship.fromPerson);
     const to = currentModel.personMap.get(selectedRelationship.toPerson) || originalPersonById.get(selectedRelationship.toPerson);
-    evidenceRibbonTitle.textContent = `${from?.nameZh || selectedRelationship.fromPerson} · ${selectedRelationship.type} · ${to?.nameZh || selectedRelationship.toPerson}`;
+    evidenceRibbonTitle.textContent = `${personDisplayName(from) || selectedRelationship.fromPerson} · ${selectedRelationship.type} · ${personDisplayName(to) || selectedRelationship.toPerson}`;
     evidenceRibbonMeta.textContent = `${evidenceLabel[selectedRelationship.evidenceLevel]} · ${certaintyLabel[selectedRelationship.certainty]}确定度 · ${selectedRelationship.passages.join('、') || '出处待补'}`;
   }
   const relationRows = relationships.map((relationship) => {
     const otherId = relationship.fromPerson === person.id ? relationship.toPerson : relationship.fromPerson; const other = currentModel?.personMap.get(otherId) || originalPersonById.get(otherId);
-    return `<button type="button" data-onclick="delegated" class="relation-row evidence-border-${relationship.evidenceLevel}" data-relation-id="${escapeHtml(relationship.id)}" aria-pressed="${relationship.id === selectedRelationId}"><span class="relation-row-main"><strong>${escapeHtml(other?.nameZh || otherId)}</strong><small>${escapeHtml(relationship.type)} · ${escapeHtml(relationshipDirection(relationship, person.id))}</small></span><span class="relation-row-meta"><span>${escapeHtml(evidenceLabel[relationship.evidenceLevel])}</span><span>${relationship.passages.length} 处</span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`;
+    return `<button type="button" data-onclick="delegated" class="relation-row evidence-border-${relationship.evidenceLevel}" data-relation-id="${escapeHtml(relationship.id)}" aria-pressed="${relationship.id === selectedRelationId}"><span class="relation-row-main"><strong>${escapeHtml(personDisplayName(other) || otherId)}</strong><small>${escapeHtml(relationship.type)} · ${escapeHtml(relationshipDirection(relationship, person.id))}</small></span><span class="relation-row-meta"><span>${escapeHtml(evidenceLabel[relationship.evidenceLevel])}</span><span>${relationship.passages.length} 处</span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`;
   }).join('');
   const scopedMentions = person.mentions.filter((mention) => {
     if (filters.scope === 'bible') return true;
@@ -611,7 +699,7 @@ function renderInspector() {
       ? (hasNT && hasOT ? '<div class="alias-line"><button type="button" class="secondary-button" data-go-scope="nt">查看其新约出处</button></div>' : '')
       : '';
   inspectorContent.innerHTML = `
-    <section class="person-summary"><div class="person-title-row"><i class="ph ph-user-circle large-person-icon" aria-hidden="true"></i><div><p class="eyebrow">选中人物</p><h3>${escapeHtml(person.nameZh)}</h3><p>${escapeHtml(person.nameLat || '')}</p></div></div><div class="person-era-line"><span class="era-badge prominent">${escapeHtml(person.era)}</span>${person.era === '旧约背景' ? '<span>此人物生活在旧约时期，但因被新约点名而收录。</span>' : ''}</div><div class="alias-line">${person.aliases.slice(0, 8).map((alias) => `<span>${escapeHtml(alias)}</span>`).join('')}</div><label class="identity-field" for="person-identity"><span>身份选项</span><select id="person-identity" ${identityPerson.identityOptions.length < 2 ? 'disabled' : ''}>${identityPerson.identityOptions.map((option) => `<option value="${escapeHtml(option.id)}" ${option.id === selectedIdentity?.id ? 'selected' : ''}>${escapeHtml(option.label)} · ${escapeHtml(option.status)}</option>`).join('')}</select></label>${person.notes ? `<p class="editor-note"><i class="ph ph-info" aria-hidden="true"></i>${escapeHtml(person.notes)}</p>` : ''}</section>
+      <section class="person-summary"><div class="person-title-row"><i class="ph ph-user-circle large-person-icon" aria-hidden="true"></i><div><p class="eyebrow">选中人物</p><h3>${escapeHtml(personDisplayName(person))}</h3><p>${escapeHtml(person.nameLat || '')}</p></div></div><div class="person-era-line"><span class="era-badge prominent">${escapeHtml(person.era)}</span>${person.era === '旧约背景' ? '<span>此人物生活在旧约时期，但因被新约点名而收录。</span>' : ''}</div><div class="alias-line">${personDisplayName(person) !== person.nameZh ? `<span>${escapeHtml(person.nameZh)}</span>` : ''}${person.aliases.slice(0, 8).map((alias) => `<span>${escapeHtml(alias)}</span>`).join('')}</div><label class="identity-field" for="person-identity"><span>身份选项</span><select id="person-identity" ${identityPerson.identityOptions.length < 2 ? 'disabled' : ''}>${identityPerson.identityOptions.map((option) => `<option value="${escapeHtml(option.id)}" ${option.id === selectedIdentity?.id ? 'selected' : ''}>${escapeHtml(option.label)} · ${escapeHtml(option.status)}</option>`).join('')}</select></label>${person.notes ? `<p class="editor-note"><i class="ph ph-info" aria-hidden="true"></i>${escapeHtml(person.notes)}</p>` : ''}</section>
     <section class="inspector-section"><div class="section-heading"><h3>关系总览</h3><span>${relationships.length}</span></div><div class="relation-list">${relationRows || '<div class="empty-state compact"><strong>无匹配关系</strong><p>可调整专题或证据层。</p></div>'}</div></section>
     ${selectedRelationshipHtml}
     <details class="mention-details"><summary>${mentionScopeTitle}出现位置 <span>${scopedMentions.length}</span></summary><ul class="mention-list">${mentionRows}</ul>${moreMentions ? `<p class="list-limit-note">另有 ${moreMentions} 处；完整位置保存在公开数据文件中。</p>` : ''}</details>${scopeSwitcher}`;
@@ -662,22 +750,23 @@ function syncUrlState() {
   set('person', selectedPersonId);
   set('scope', filters.scope, 'bible');
   set('evidence', evidenceValue, [...ALL_EVIDENCE].sort().join(','));
-  set('eras', [...filters.eras].sort().join(','));
-  set('books', [...filters.books].sort().join(','));
-  set('types', [...filters.relations].sort().join(','));
+  const persistManualFilters = filters.topic === 'custom';
+  set('eras', persistManualFilters ? [...filters.eras].sort().join(',') : '');
+  set('books', persistManualFilters ? [...filters.books].sort().join(',') : '');
+  set('types', persistManualFilters ? [...filters.relations].sort().join(',') : '');
   window.history.replaceState(null, '', url);
 }
 function loadUrlState() {
-  if (!data) return; const params = new URLSearchParams(window.location.search); const initialTopic = params.get('topic') || 'all'; applyTopic(data.topicPresets.some((topic) => topic.id === initialTopic) ? initialTopic : 'all', false);
+  if (!data) return; const params = new URLSearchParams(window.location.search); const requestedTopic = params.get('topic') || 'all'; const initialTopic = data.topicPresets.some((topic) => topic.id === requestedTopic) ? requestedTopic : 'all'; applyTopic(initialTopic, false);
   filters.search = params.get('q') || ''; searchInput.value = filters.search; peopleSearchInput.value = filters.search; clearSearchButton.hidden = !filters.search;
   const rawEvidence = params.get('evidence'); const evidence = rawEvidence?.split(',').filter((value): value is EvidenceLevel => ALL_EVIDENCE.includes(value as EvidenceLevel)); if (rawEvidence === 'none') filters.evidences = new Set(); else if (evidence?.length) filters.evidences = new Set(evidence);
   const rawScope = params.get('scope');
   filters.scope = rawScope === 'nt' || rawScope === 'ot' || rawScope === 'bible' ? rawScope : 'bible';
   scopeSelect.value = filters.scope;
-  const eras = params.get('eras')?.split(',').filter(Boolean); const books = params.get('books')?.split(',').filter(Boolean); const types = params.get('types')?.split(',').filter(Boolean); if (eras?.length || books?.length || types?.length) { filters.eras = new Set(eras || []); filters.books = new Set(books || []); filters.relations = new Set(types || []); markFiltersCustom(); }
+  const eras = params.get('eras')?.split(',').filter(Boolean); const books = params.get('books')?.split(',').filter(Boolean); const types = params.get('types')?.split(',').filter(Boolean); if (initialTopic === 'all' && (eras?.length || books?.length || types?.length)) { filters.eras = new Set(eras || []); filters.books = new Set(books || []); filters.relations = new Set(types || []); markFiltersCustom(); }
   const preset = params.get('identity'); setIdentityPreset(preset === 'traditional' ? 'traditional' : 'conservative', false);
   const requestedPerson = params.get('person');
-  selectedPersonId = resolvePersonId(requestedPerson || '') || data.people.find((person) => person.nameZh === '保罗')?.id || data.people[0]?.id || '';
+  selectedPersonId = resolvePersonId(requestedPerson || '') || selectedPersonId || data.people.find((person) => person.nameZh === '保罗')?.id || data.people[0]?.id || '';
 }
 function renderLoadError(message: string) {
   shell.setAttribute('aria-busy', 'false'); inspectorContent.innerHTML = `<div class="error-state" role="alert"><i class="ph ph-warning-circle" aria-hidden="true"></i><strong>资料载入失败</strong><p>${escapeHtml(message)}</p><button id="retry-load" class="primary-button" type="button" data-onclick="direct">重新载入</button></div>`; document.getElementById('retry-load')?.addEventListener('click', () => void loadGraphData());

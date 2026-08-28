@@ -37705,7 +37705,13 @@
     {
       "id": "herodFamily",
       "name": "希律家族",
-      "relationTypes": [],
+      "relationTypes": [
+        "亲属关系-父母/祖先",
+        "亲属关系-子女/后代",
+        "亲属关系-手足",
+        "亲属关系-婚姻/伴侣",
+        "亲属关系-其他"
+      ],
       "bookIncludes": [],
       "eraIncludes": [],
       "evidenceIncludes": [
@@ -37725,6 +37731,44 @@
         "person-000127",
         "person-000275",
         "person-000277"
+      ],
+      "focusPersonId": "person-000126",
+      "graphMode": "family_tree",
+      "personLabels": {
+        "person-000014": "亚基帕二世",
+        "person-000037": "希律·亚基老",
+        "person-000059": "百妮基",
+        "person-000082": "土西拉",
+        "person-000124": "希律·亚基帕一世",
+        "person-000125": "希律·安提帕",
+        "person-000126": "希律大帝",
+        "person-000127": "希罗底",
+        "person-000275": "分封王腓力",
+        "person-000277": "希律·腓力一世"
+      },
+      "personRanks": {
+        "person-000126": 0,
+        "person-000037": 1,
+        "person-000125": 1,
+        "person-000277": 1,
+        "person-000275": 1,
+        "person-000124": 2,
+        "person-000127": 2,
+        "person-000014": 3,
+        "person-000059": 3,
+        "person-000082": 3
+      },
+      "personOrder": [
+        "person-000126",
+        "person-000037",
+        "person-000125",
+        "person-000277",
+        "person-000275",
+        "person-000124",
+        "person-000127",
+        "person-000014",
+        "person-000059",
+        "person-000082"
       ]
     },
     {
