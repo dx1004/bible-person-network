@@ -55,6 +55,55 @@ The selected option supplied the information architecture: searchable people ind
 
 ---
 
+# Design QA — Compact Header Controls and Canonical Light System
+
+## Scope and visual truth
+
+- Source crops: `/Users/dx/Desktop/Screenshot 2026-08-27 at 6.41.38 PM.png` (792 × 158) and `/Users/dx/Desktop/Screenshot 2026-08-27 at 6.41.40 PM.png` (336 × 160).
+- Rendered implementation: `/tmp/nt-people-compact-header-qa/01-desktop-final.png` at 1487 × 900 CSS pixels, 1× capture density.
+- Responsive evidence: `/tmp/nt-people-compact-header-qa/03-mid-final.png` at 1192 × 754 and `/tmp/nt-people-compact-header-qa/04-mobile-final.png` at 500 × 844.
+- State: light research atlas; 保罗 selected; query `保罗`; all topics; conservative identity preset.
+- Focused comparison inspected the original control/action crops against the rendered 80px desktop header. A persistent montage was not generated because the browser rejected the local data-URL comparison surface; the source and rendered images remained directly inspectable in the same QA run.
+
+## Findings and fixes
+
+- Earlier P2: global search, topic/identity controls, and View/Help actions felt vertically heavy relative to the requested compact header rhythm.
+- Fix: search is 44px high; topic and identity selects are 38px; labels are 12px at 14.4px line height; View/Help actions are 52 × 44px with 18px icons.
+- Fix: introduced explicit runtime tokens `--control-sm: 38px` and `--control-search: 44px`; desktop and mobile search now consume the same search-height token.
+- Post-fix desktop measurements: search 454 × 44; topic 148 × 38; identity 142 × 38; actions 52 × 44; zero horizontal overflow.
+- Post-fix 1192px measurements: search 464 × 44; controls remain 38px; low-priority View/Help actions are hidden; zero horizontal overflow.
+- Post-fix 500px measurements: search 480 × 44; topic and identity 190 × 38; header 178px; zero horizontal overflow.
+- P0/P1/P2 remaining: none.
+
+## Interaction and browser validation
+
+- Clear search empties immediately, hides the clear action, returns focus to `#search`, and removes `q` from the URL; re-entering `保罗` restores the query.
+- Topic select changes to `paulTeam`, updates URL state, and returns cleanly to `all`.
+- Browser console contained only Vite connection debug entries; no error entries.
+- Desktop, compact desktop, and mobile captures preserve the graph, list, and inspector without content overlap caused by this header pass.
+
+## Reconcile drift
+
+| DESIGN.md rule | Runtime evidence | Verdict | Action |
+|---|---|---|---|
+| Former dark crystal palette | Active `web/src/style-reference.css` uses a warm-white canvas and paper research surface | DRIFT resolved | Adopted the approved light research-atlas system in `DESIGN.md` |
+| Former runtime owner `web/src/style.css` | `web/src/main.ts` imports `style-reference.css` | DRIFT resolved | Documented Model B ownership at `web/src/style-reference.css` |
+| Search/select/action dimensions | `44 / 38 / 52×44` in runtime tokens and shared header styles | MATCH | Kept canonical tokens and runtime consumers aligned |
+
+## Validation evidence
+
+- `npx -p @google/design.md designmd lint DESIGN.md`: 0 errors, 0 warnings.
+- `npm run typecheck:web`: passed.
+- Frontend Design Premium strict audit: 0 findings.
+- `npm run check`: passed, including data validation, deterministic STEP regressions, production build, person-era and identity checks.
+- `git diff --check`: passed.
+
+## Final result
+
+**passed**
+
+---
+
 # Design QA — UX/UI Detail Refinement
 
 ## Evaluation result
