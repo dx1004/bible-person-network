@@ -9,6 +9,9 @@
     "step_identity_key",
     "candidate_status",
     "canonical_chinese",
+    "review_method",
+    "protocol_version",
+    "review_roles",
     "round1",
     "round2",
     "final_decision",
@@ -22,6 +25,45 @@
     "step_identity_key": { "type": "string", "minLength": 1 },
     "candidate_status": { "type": "string", "enum": ["pending", "accepted", "excluded"] },
     "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
+  "review_method": { "type": "string", "enum": ["multi_agent_ai_review"] },
+  "protocol_version": { "type": "string", "minLength": 1 },
+    "review_roles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["editorial", "critic", "boardroom"],
+      "properties": {
+        "editorial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role_id", "model_id", "prompt_version"],
+          "properties": {
+            "role_id": { "type": "string", "const": "editorial_a" },
+            "model_id": { "type": "string", "minLength": 1 },
+            "prompt_version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "critic": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role_id", "model_id", "prompt_version"],
+          "properties": {
+            "role_id": { "type": "string", "const": "critic_b" },
+            "model_id": { "type": "string", "minLength": 1 },
+            "prompt_version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "boardroom": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role_id", "model_id", "prompt_version"],
+          "properties": {
+            "role_id": { "type": "string", "const": "boardroom_adjudicator" },
+            "model_id": { "type": "string", "minLength": 1 },
+            "prompt_version": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
     "round1": {
       "type": "object",
       "additionalProperties": false,
@@ -47,7 +89,10 @@
         "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
         "reviewer": { "type": ["string", "null"] },
         "decision_note": { "type": "string" },
-        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+        "reviewer_role_id": { "type": ["string", "null"], "enum": ["editorial_a", "critic_b", "boardroom_adjudicator", null] },
+        "reviewer_model_id": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer_prompt_version": { "type": ["string", "null"], "minLength": 1 }
       }
     },
     "round2": {
@@ -75,7 +120,10 @@
         "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
         "reviewer": { "type": ["string", "null"] },
         "decision_note": { "type": "string" },
-        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+        "reviewer_role_id": { "type": ["string", "null"], "enum": ["editorial_a", "critic_b", "boardroom_adjudicator", null] },
+        "reviewer_model_id": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer_prompt_version": { "type": ["string", "null"], "minLength": 1 }
       }
     },
     "final_decision": {
@@ -103,7 +151,10 @@
         "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
         "reviewer": { "type": ["string", "null"] },
         "decision_note": { "type": "string" },
-        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+        "reviewer_role_id": { "type": ["string", "null"], "enum": ["editorial_a", "critic_b", "boardroom_adjudicator", null] },
+        "reviewer_model_id": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer_prompt_version": { "type": ["string", "null"], "minLength": 1 }
       }
     },
     "source_id": { "type": "string", "enum": ["source:0002"] },

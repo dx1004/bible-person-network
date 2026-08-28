@@ -21,7 +21,7 @@
     "review_id": { "type": "string", "pattern": "^ctir-\\d{4}$" },
     "candidate_id": { "type": "string", "pattern": "^otc-\\d{4}$" },
     "step_identity_key": { "type": "string", "minLength": 1 },
-    "candidate_canonical_name": { "type": "string", "minLength": 1 },
+    "candidate_canonical_name": { "type": ["string", "null"], "minLength": 1 },
     "nt_ref_count": { "type": "integer", "minimum": 1 },
     "step_identity_matches": {
       "type": "array",
@@ -50,6 +50,86 @@
       },
       "default": []
     },
+    "review_method": { "type": ["string", "null"], "enum": ["multi_agent_ai_review", null] },
+    "protocol_version": { "type": ["string", "null"], "minLength": 1 },
+    "review_roles": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [],
+      "properties": {
+        "round1": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "editorial_a" },
+            "model_id": { "type": "string", "minLength": 1 },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "round2": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "critic_b" },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "final_decision": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "boardroom_adjudicator" },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "evidence_auditor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "evidence_auditor" },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "editorial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "editorial_a" },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "critic": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "critic_b" },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "boardroom": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "boardroom_adjudicator" },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
     "round1": {
       "type": "object",
       "additionalProperties": false,
@@ -75,7 +155,10 @@
         "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
         "reviewer": { "type": ["string", "null"] },
         "decision_note": { "type": "string" },
-        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+        "reviewer_role_id": { "type": ["string", "null"], "enum": ["editorial_a", "critic_b", "boardroom_adjudicator", null] },
+        "reviewer_model_id": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer_prompt_version": { "type": ["string", "null"], "minLength": 1 }
       }
     },
     "round2": {
@@ -103,7 +186,10 @@
         "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
         "reviewer": { "type": ["string", "null"] },
         "decision_note": { "type": "string" },
-        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+        "reviewer_role_id": { "type": ["string", "null"], "enum": ["editorial_a", "critic_b", "boardroom_adjudicator", null] },
+        "reviewer_model_id": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer_prompt_version": { "type": ["string", "null"], "minLength": 1 }
       }
     },
     "final_decision": {
@@ -131,7 +217,24 @@
         "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
         "reviewer": { "type": ["string", "null"] },
         "decision_note": { "type": "string" },
-        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+        "reviewer_role_id": { "type": ["string", "null"], "enum": ["editorial_a", "critic_b", "boardroom_adjudicator", null] },
+        "reviewer_model_id": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer_prompt_version": { "type": ["string", "null"], "minLength": 1 }
+      }
+    },
+    "evidence_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reviewer_role_id", "notes", "evidence_refs"],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "passed", "failed"] },
+        "reviewer_role_id": { "type": ["string", "null"], "enum": ["evidence_auditor", null] },
+        "reviewer_model_id": { "type": ["string", "null"], "minLength": 1 },
+        "prompt_version": { "type": ["string", "null"], "minLength": 1 },
+        "checked_at": { "type": ["string", "null"], "format": "date-time" },
+        "notes": { "type": "string" },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } }
       }
     },
     "source_id": { "type": "string", "enum": ["source:0002"] },

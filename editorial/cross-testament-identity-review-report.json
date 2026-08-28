@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-26T00:00:00Z",
+  "generated_at": "2026-08-26T00:00:00.000Z",
   "source_id": "source:0002",
   "manifest_created_at": "2026-08-26T00:00:00Z",
   "input_candidate_count": 2720,
@@ -8,9 +8,11 @@
   "exact_match_count": 100,
   "with_matches": 100,
   "without_matches": 8,
+  "final_accepted_count": 97,
+  "final_pending_count": 11,
+  "final_rejected_count": 0,
   "output_path": "editorial/cross-testament-identity-review.jsonl",
   "report_path": "editorial/cross-testament-identity-review-report.json",
-  "note": "Cross-testament identity snapshot remains pending for manual OT/NT identity linkage review.",
-  "row_hash": "7b30556ec63ffcbc592fd5c26b86871e15ca5ec7e91f45bf18e0a811edbc2ff4",
-  "output_checksum": "fce6ffa640428ab69722a19e6f43fd529e2121a41a3641b5ce44792df34e4ab2"
+  "note": "Cross-testament identity snapshot uses multi-role AI review; unresolved or conflicting items remain pending.",
+  "output_checksum": "35e339952a66e9645d787c87ba37b8ac416fa2899940f7b079624a0537ec6944"
 }

@@ -20,10 +20,10 @@
 - `npm run report`：输出当前构建报告摘要。
 - `npm run check`：按顺序执行数据校验、来源核对、报告、网页类型检查与生产构建。
 
-- `npm run init:old-testament-person-review`：根据旧约候选生成两轮人工审校快照，默认 `pending`。
-- `npm run validate:old-testament-person-review`：校验审校快照，要求 `final` 与 `round1/2` 一致。
-- `npm run generate:cross-testament-identity-review`：生成旧约候选与 `identity-options` 的跨约身份候选快照（不入库）。
-- `npm run validate:cross-testament-identity-review`：校验跨约身份快照。
+- `npm run init:old-testament-person-review`：根据旧约候选生成双轮独立 AI 审校快照，默认 `pending`。
+- `npm run validate:old-testament-person-review`：校验审校快照，要求 `final` 与 `round1/2` 一致，且必须满足 multi-agent 协议记录。
+- `npm run generate:cross-testament-identity-review`：生成旧约候选与 `identity-options` 的跨约身份候选快照（不入库），自动填充 `multi_agent_ai_review` 元信息（方法、版本、角色模型）。
+- `npm run validate:cross-testament-identity-review`：校验跨约身份快照（含 `review_method`、`protocol_version`、角色与证据审计元信息）。
 
 ## 证据与发布边界
 
