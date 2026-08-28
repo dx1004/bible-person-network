@@ -112,7 +112,7 @@ appRoot.innerHTML = `
   <div class="app-shell" data-mobile-panel="graph" data-drawer="none" aria-busy="true">
     <header class="topbar">
       <div class="brand-block">
-        <div><h1>新约人物关系网</h1><p>静态关系图（基于 public/data/graph.json）</p></div>
+        <div><h1>新约人物关系网</h1><p>人物、关系与出处的可核查图谱</p></div>
       </div>
       <div class="global-search">
         <label class="sr-only" for="search">搜索人物中文名、别名、希腊文或拉丁转写</label>
@@ -172,7 +172,7 @@ appRoot.innerHTML = `
         </div>
         <div class="graph-stage">
           <div id="graph" role="img" aria-label="选中人物的一度关系图；所有关系也可在右侧文字列表读取"></div>
-          <div id="graph-empty" class="empty-state graph-empty" hidden><i class="ph ph-git-branch" aria-hidden="true"></i><strong>当前筛选下没有关系</strong><p>人物仍保留在画布；可开启更多证据层或重置专题。</p></div>
+          <div id="graph-empty" class="empty-state graph-empty" hidden><i class="ph ph-git-branch" aria-hidden="true"></i><strong>当前筛选下没有关系</strong><p>图谱已隐藏。可开启更多证据层、重置筛选，或更换焦点人物。</p></div>
           <div class="zoom-controls" aria-label="图谱缩放">
             <button id="zoom-in" class="icon-button" type="button" data-onclick="direct" aria-label="放大"><i class="ph ph-plus" aria-hidden="true"></i></button>
             <button id="zoom-out" class="icon-button" type="button" data-onclick="direct" aria-label="缩小"><i class="ph ph-minus" aria-hidden="true"></i></button>
@@ -190,7 +190,16 @@ appRoot.innerHTML = `
         <div id="inspector-content" class="inspector-content"><div class="loading-state" role="status"><i class="ph ph-spinner-gap loader" aria-hidden="true"></i>正在载入资料…</div></div>
       </aside>
     </main>
-    <footer class="site-footer"><span id="dataset-version">数据版本载入中</span><span>纯静态站点 · 不连接公开 Neo4j</span><a href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer">资料与代码 <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a></footer>
+    <footer class="site-footer">
+      <div class="site-footer-metadata">
+        <span id="dataset-version">数据版本载入中</span>
+        <span>纯静态站点 · 不连接公开 Neo4j</span>
+      </div>
+      <nav class="site-footer-links" aria-label="资料与联系方式">
+        <a class="site-footer-link" href="mailto:xunalinxu1004@coudx.com"><i class="ph ph-envelope-simple" aria-hidden="true"></i><span>联系：xunalinxu1004@coudx.com</span></a>
+        <a class="site-footer-link" href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer">资料与代码 <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>
+      </nav>
+    </footer>
   </div>`;
 
 const shell = document.querySelector('.app-shell') as HTMLDivElement;
@@ -216,6 +225,14 @@ const evidenceRibbonMeta = document.getElementById('evidence-ribbon-meta')!;
 const evidenceSummaryText = document.getElementById('evidence-summary-text')!;
 const inspectorContent = document.getElementById('inspector-content')!;
 const reviewWarning = document.getElementById('review-warning') as HTMLDivElement;
+const graphToolbarActions = document.querySelector('.graph-toolbar-actions') as HTMLDivElement;
+const zoomControls = document.querySelector('.zoom-controls') as HTMLDivElement;
+const fitGraphButton = document.getElementById('fit-graph') as HTMLButtonElement | null;
+const headerFitButton = document.getElementById('header-fit') as HTMLButtonElement | null;
+const fitGraphInspectorButton = document.getElementById('fit-graph-inspector') as HTMLButtonElement | null;
+const centerFocusButton = document.getElementById('center-focus') as HTMLButtonElement | null;
+const zoomInButton = document.getElementById('zoom-in') as HTMLButtonElement | null;
+const zoomOutButton = document.getElementById('zoom-out') as HTMLButtonElement | null;
 
 let data: GraphData | null = null;
 let cy: cytoscape.Core | null = null;
@@ -399,21 +416,54 @@ function relationshipPriority(relationship: Relationship) { return ({ nt_text: 3
 function focusRelationships(model: VisibleModel) { return model.relationships.filter((relationship) => relationship.fromPerson === selectedPersonId || relationship.toPerson === selectedPersonId).sort((a, b) => relationshipPriority(b) - relationshipPriority(a) || a.type.localeCompare(b.type, 'zh-Hans')); }
 
 function renderGraph() {
-  if (!currentModel) return; const selected = currentModel.personMap.get(selectedPersonId) || originalPersonById.get(selectedPersonId); if (!selected) return;
-  graphHeading.textContent = `${selected.nameZh}的一度关系`; const relationships = focusRelationships(currentModel); const isCompactGraph = window.innerWidth <= 620; const edgeLimit = isCompactGraph ? 6 : GRAPH_EDGE_LIMIT; const displayedRelationships = relationships.slice(0, edgeLimit); const nodeIds = new Set<string>([selectedPersonId]);
+  if (!currentModel) return;
+  const selected = currentModel.personMap.get(selectedPersonId) || originalPersonById.get(selectedPersonId);
+  if (!selected) return;
+
+  graphHeading.textContent = `${selected.nameZh}的一度关系`;
+  const relationships = focusRelationships(currentModel);
+
+  if (!relationships.length) {
+    if (cy) {
+      cy.destroy();
+      cy = null;
+    }
+    graphContainer.hidden = true;
+    graphToolbarActions.hidden = true;
+    zoomControls.hidden = true;
+    graphEmpty.hidden = false;
+    focusSubtitle.textContent = `${selected.era} · ${relationships.length} 条当前关系`;
+    evidenceRibbonTitle.textContent = `${selected.nameZh} · ${relationships.length} 条一度关系`;
+    evidenceRibbonMeta.textContent = '当前筛选下无可显示关系，图谱已隐藏。可开启更多证据层、重置筛选，或更换焦点人物。';
+    graphStatus.textContent = '当前筛选下无可显示关系。';
+    return;
+  }
+
+  graphContainer.hidden = false;
+  graphToolbarActions.hidden = false;
+  zoomControls.hidden = false;
+  graphEmpty.hidden = true;
+
+  const isCompactGraph = window.innerWidth <= 620;
+  const edgeLimit = isCompactGraph ? 6 : GRAPH_EDGE_LIMIT;
+  const displayedRelationships = relationships.slice(0, edgeLimit);
+  const nodeIds = new Set<string>([selectedPersonId]);
   displayedRelationships.forEach((relationship) => { nodeIds.add(relationship.fromPerson); nodeIds.add(relationship.toPerson); });
   const nodes = [...nodeIds].map((personId) => currentModel?.personMap.get(personId) || originalPersonById.get(personId)).filter((person): person is Person => Boolean(person));
-  graphEmpty.hidden = relationships.length > 0; const capped = relationships.length > displayedRelationships.length;
+
+  const capped = relationships.length > displayedRelationships.length;
   focusSubtitle.textContent = `${selected.era} · ${relationships.length} 条当前关系 · 点击人物切换焦点`;
   evidenceRibbonTitle.textContent = `${selected.nameZh} · ${relationships.length} 条一度关系`;
   evidenceRibbonMeta.textContent = '点击一条发光路径，查看关系类型、经文位置和资料来源。';
+  const width = Math.max(graphContainer.clientWidth, 320);
+  const height = Math.max(graphContainer.clientHeight, 520);
   graphStatus.textContent = capped ? `画布显示 ${displayedRelationships.length}/${relationships.length} 条一度关系；右侧列表保留全部 ${relationships.length} 条。` : `当前显示 ${nodes.length} 人 · ${relationships.length} 条一度关系。`;
-  const width = Math.max(graphContainer.clientWidth, 320); const height = Math.max(graphContainer.clientHeight, 520);
   const neighborIds = nodes.filter((person) => person.id !== selectedPersonId).map((person) => person.id);
   const positions = new Map<string, { x: number; y: number }>();
   const center = { x: width * 0.5, y: height * (isCompactGraph ? 0.46 : 0.48) };
   const radiusX = width * (isCompactGraph ? 0.3 : 0.36);
   const radiusY = height * (isCompactGraph ? 0.2 : 0.36);
+
   positions.set(selectedPersonId, center);
   neighborIds.forEach((personId, index) => {
     const startAngle = neighborIds.length <= 2 ? 0 : -Math.PI / 2;
@@ -421,6 +471,7 @@ function renderGraph() {
     const stagger = 0.84 + ((index * 37) % 5) * 0.045;
     positions.set(personId, { x: center.x + Math.cos(angle) * radiusX * stagger, y: center.y + Math.sin(angle) * radiusY * stagger });
   });
+
   cy?.destroy();
   cy = cytoscape({
     container: graphContainer,
@@ -453,7 +504,11 @@ function renderGraph() {
   cy.on('tap', 'edge', (event) => selectRelationship(String(event.target.id()), true));
   cy.on('mouseover', 'edge', (event) => { const edge = event.target; edge.addClass('is-hovered'); edge.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor'); });
   cy.on('mouseout', 'edge', (event) => { const edge = event.target; edge.removeClass('is-hovered'); if (!edge.selected()) edge.connectedNodes().not('[isFocus = 1]').removeClass('route-neighbor'); });
-  if (selectedRelationId) { const selectedEdge = cy.$id(selectedRelationId); selectedEdge.select(); selectedEdge.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor'); }
+  if (selectedRelationId) {
+    const selectedEdge = cy.$id(selectedRelationId);
+    selectedEdge.select();
+    selectedEdge.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor');
+  }
 }
 
 function sourceLink(sourceId: string) {
@@ -576,13 +631,19 @@ document.querySelectorAll<HTMLButtonElement>('[data-drawer-target]').forEach((bu
   if (button.dataset.drawerTarget === 'filters') document.querySelector<HTMLDetailsElement>('.advanced-filters')?.setAttribute('open', '');
 }));
 document.querySelectorAll<HTMLButtonElement>('[data-drawer-close]').forEach((button) => button.addEventListener('click', () => setDrawer('none')));
-document.getElementById('zoom-in')?.addEventListener('click', () => cy?.zoom({ level: Math.min(2.5, cy.zoom() * 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } }));
-document.getElementById('zoom-out')?.addEventListener('click', () => cy?.zoom({ level: Math.max(0.25, cy.zoom() / 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } }));
-document.getElementById('fit-graph')?.addEventListener('click', () => cy?.fit(undefined, 56));
-document.getElementById('header-fit')?.addEventListener('click', () => cy?.fit(undefined, 56));
-document.getElementById('fit-graph-inspector')?.addEventListener('click', () => cy?.fit(undefined, 56));
+zoomInButton?.addEventListener('click', () => {
+  if (!cy) return;
+  cy.zoom({ level: Math.min(2.5, cy.zoom() * 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } });
+});
+zoomOutButton?.addEventListener('click', () => {
+  if (!cy) return;
+  cy.zoom({ level: Math.max(0.25, cy.zoom() / 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } });
+});
+fitGraphButton?.addEventListener('click', () => cy?.fit(undefined, 56));
+headerFitButton?.addEventListener('click', () => cy?.fit(undefined, 56));
+fitGraphInspectorButton?.addEventListener('click', () => cy?.fit(undefined, 56));
 document.getElementById('show-legend')?.addEventListener('click', () => document.querySelector<HTMLElement>('.graph-footer')?.focus());
-document.getElementById('center-focus')?.addEventListener('click', () => { const focus = cy?.$id(selectedPersonId); if (focus?.length) cy?.animate({ center: { eles: focus }, zoom: Math.max(cy.zoom(), 0.9), duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220 }); });
+centerFocusButton?.addEventListener('click', () => { const focus = cy?.$id(selectedPersonId); if (focus?.length) cy?.animate({ center: { eles: focus }, zoom: Math.max(cy.zoom(), 0.9), duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220 }); });
 document.addEventListener('keydown', (event) => { if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === 'k') { event.preventDefault(); searchInput.focus(); } });
 let resizeTimer = 0;
 window.addEventListener('resize', () => {

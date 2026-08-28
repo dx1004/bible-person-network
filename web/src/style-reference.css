@@ -188,7 +188,12 @@ code { padding: 3px 5px; border: 1px solid var(--line); border-radius: 4px; colo
 .empty-state p, .error-state p { margin: 0; font-size: var(--text-xs); }
 .loader { color: var(--blue); font-size: 1.3rem; animation: spin 900ms linear infinite; }
 .site-footer { position: fixed; z-index: 31; inset: auto 0 0; display: flex; gap: 18px; align-items: center; height: 36px; padding: 0 20px; border-top: 1px solid var(--line); color: #596579; font-size: var(--text-xs); background: #fff; }
-.site-footer a { margin-left: auto; }
+.site-footer .site-footer-metadata { display: flex; gap: 8px; align-items: center; min-width: 0; flex-wrap: wrap; }
+.site-footer-links { margin-left: auto; display: inline-flex; gap: 14px; align-items: center; }
+.site-footer-link { display: inline-flex; gap: 6px; align-items: center; color: #445168; text-decoration: none; transition: color .15s ease; }
+.site-footer-link:hover { color: var(--blue); text-decoration: underline; }
+.site-footer-link i { color: #5c6d86; font-size: .95rem; }
+.site-footer-link span { white-space: nowrap; overflow-wrap: anywhere; }
 .people-list, .inspector-content, .relation-list, .checkbox-grid, .topic-shortcuts { scrollbar-color: #bcc5d1 transparent; scrollbar-width: thin; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 1320px) {
@@ -228,7 +233,9 @@ code { padding: 3px 5px; border: 1px solid var(--line); border-radius: 4px; colo
   .legend-block { display: none; }
   .ribbon-action { display: inline-flex; }
   .zoom-controls { bottom: 12px; }
-  .site-footer { position: relative; flex-wrap: wrap; height: auto; min-height: 36px; padding-block: 7px; }
+  .site-footer { position: relative; justify-content: center; flex-wrap: wrap; gap: 8px; height: auto; min-height: 36px; padding-block: 7px; text-align: center; }
+  .site-footer-metadata { justify-content: center; }
+  .site-footer-links { margin-left: 0; width: 100%; justify-content: center; }
 }
 @media (max-width: 560px) {
   .brand-block p { display: none; }
@@ -242,6 +249,9 @@ code { padding: 3px 5px; border: 1px solid var(--line); border-radius: 4px; colo
   .topic-shortcuts button, .evidence-toggle { min-height: var(--control); padding-inline: 9px; font-size: var(--text-xs); }
   .relation-row { grid-template-columns: minmax(0,1fr); }
   .relation-row-meta { grid-template-columns: auto auto 1fr; }
+  .site-footer-links { display: grid; grid-template-columns: 1fr; width: auto; gap: 6px; }
+  .site-footer-link { font-size: var(--text-xs); }
+  .site-footer-link span { font-size: var(--text-xs); }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
