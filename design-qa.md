@@ -316,3 +316,48 @@ The selected option supplied the information architecture: searchable people ind
 ## Final result
 
 **passed**
+
+---
+
+# Design QA — Header Search Row Refinement
+
+## Scope and visual truth
+
+- Source visual truth: `/var/folders/6x/d1g8hh216r57md7fjqfn1qw00000gn/T/codex-clipboard-91a1279d-9cbf-4169-a0ae-c83d5df5cffc.png`.
+- Final implementation: `/tmp/nt-people-search-row-qa/04-header-after.png` at a 1487 × 900 CSS viewport and 1× normalized capture density.
+- Full-view comparison input: `/tmp/nt-people-search-row-qa/08-full-reference-vs-after.jpg`.
+- Focused header comparison input: `/tmp/nt-people-search-row-qa/07-header-reference-vs-after.jpg`.
+- State: light research atlas, Paul selected, search query `保罗`, conservative identity preset, all evidence layers enabled.
+
+## Findings and comparison history
+
+- Earlier P2: the 1487 px search field was 513 px wide versus approximately 454 px in the source, pushing the filter group too far right and weakening the header's rhythm.
+- Fix: changed the desktop header grid to a measured 310 px brand track, 454 px search track, and flexible toolbar track. The final search field is 454 px and the toolbar begins at x=814, closely matching the source.
+- Earlier P2: dataset totals were displayed as two horizontal number-label rows rather than two side-by-side metrics.
+- Fix: grouped each total with its label and rendered the two metrics side by side, matching the source hierarchy.
+- Earlier P2: the search clear action appeared as a separate boxed control and the search text was visually undersized.
+- Fix: reduced the clear control to a 36 px ghost action inside the field and raised search text to 16 px while preserving its accessible name, immediate clearing, URL synchronization, and focus return.
+- Earlier P2: at 1192 px the search field compressed to 352 px while low-priority View and Help actions remained visible.
+- Fix: compact desktop hides those two actions and expands search to 464 px; the 1192 px layout has zero horizontal overflow.
+- Post-fix evidence: `/tmp/nt-people-search-row-qa/05-mid-after.png` at 1192 × 754 and `/tmp/nt-people-search-row-qa/06-mobile-after.png` at 500 × 844.
+
+## Required fidelity surfaces
+
+- Fonts and typography: the header maintains the existing serif brand and sans utility pairing; search is 16 px, labels remain 13 px, metric labels 12 px, and totals 20 px.
+- Spacing and layout rhythm: header height remains 80 px on desktop, the search and select baselines are centered, and the compact row returns space to the primary search task.
+- Colors and tokens: the existing warm-white canvas, blue field outline, cool-gray dividers, and dark text tokens are unchanged.
+- Image and asset fidelity: no new raster or illustrative assets were required; existing Phosphor icons remain sharp and consistent.
+- Copy and content: labels, counts, query state, and source-facing terminology are unchanged.
+
+## Interaction and validation evidence
+
+- Clear-search interaction passed: it empties the field immediately, hides itself, restores the shortcut, returns focus to `#search`, and updates the URL and results when the query is re-entered.
+- Browser checks passed at 1487 × 900, 1192 × 754, and 500 × 844 with zero horizontal overflow.
+- TypeScript passed.
+- Frontend Design Premium strict audit passed with zero findings.
+- Full `npm run check` passed, including data validation, deterministic STEP regressions, production build, person-era checks, and identity checks.
+- P0/P1/P2 remaining: none.
+
+## Final result
+
+**passed**

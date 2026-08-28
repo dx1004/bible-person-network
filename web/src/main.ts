@@ -126,7 +126,10 @@ appRoot.innerHTML = `
         <label class="compact-field" for="identity-preset"><span>身份预设</span><select id="identity-preset">
           <option value="conservative">全部保守</option><option value="traditional">常见传统</option><option value="custom" disabled>逐项自定义</option>
         </select></label>
-        <div class="dataset-counts" aria-label="数据集计数"><strong id="people-total">—</strong><span>人物</span><strong id="relations-total">—</strong><span>关系</span></div>
+        <div class="dataset-counts" aria-label="数据集计数">
+          <div class="dataset-stat"><strong id="people-total">—</strong><span>人物</span></div>
+          <div class="dataset-stat"><strong id="relations-total">—</strong><span>关系</span></div>
+        </div>
         <button id="header-fit" class="header-action" type="button" data-onclick="direct"><i class="ph ph-layout" aria-hidden="true"></i><span>视图</span></button>
         <a class="header-action" href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer"><i class="ph ph-book-open" aria-hidden="true"></i><span>帮助</span></a>
       </div>
