@@ -408,9 +408,9 @@ function renderGraph() {
   const width = Math.max(graphContainer.clientWidth, 320); const height = Math.max(graphContainer.clientHeight, 520);
   const neighborIds = nodes.filter((person) => person.id !== selectedPersonId).map((person) => person.id);
   const positions = new Map<string, { x: number; y: number }>();
-  const center = { x: width * 0.5, y: height * (isCompactGraph ? 0.52 : 0.48) };
-  const radiusX = width * (isCompactGraph ? 0.35 : 0.36);
-  const radiusY = height * (isCompactGraph ? 0.27 : 0.36);
+  const center = { x: width * 0.5, y: height * (isCompactGraph ? 0.46 : 0.48) };
+  const radiusX = width * (isCompactGraph ? 0.3 : 0.36);
+  const radiusY = height * (isCompactGraph ? 0.2 : 0.36);
   positions.set(selectedPersonId, center);
   neighborIds.forEach((personId, index) => {
     const angle = -Math.PI / 2 + (Math.PI * 2 * index) / Math.max(neighborIds.length, 1);
@@ -431,14 +431,14 @@ function renderGraph() {
       })
     ],
     style: [
-      { selector: 'node', style: { label: 'data(label)', color: '#16233a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 12 : 14, 'font-weight': 700, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': '72px', 'background-color': '#f4f7fb', 'background-opacity': 1, 'border-color': '#6b98d8', 'border-width': 1.5, width: isCompactGraph ? 58 : 70, height: isCompactGraph ? 58 : 70, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'node', style: { label: 'data(label)', color: '#16233a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 13 : 15, 'font-weight': 700, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': '74px', 'background-color': '#f4f7fb', 'background-opacity': 1, 'border-color': '#6b98d8', 'border-width': 1.5, width: isCompactGraph ? 60 : 72, height: isCompactGraph ? 60 : 72, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
       { selector: 'node[era = "旧约背景"]', style: { 'background-color': '#eef7ef', 'border-color': '#5e9470' } },
       { selector: 'node[era = "耶稣时期"]', style: { 'background-color': '#fff1ee', 'border-color': '#df8178' } },
       { selector: 'node[era = "时代待审"]', style: { opacity: 0.72 } },
-      { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 5, width: isCompactGraph ? 82 : 90, height: isCompactGraph ? 82 : 90, 'font-size': isCompactGraph ? 16 : 20, 'underlay-opacity': 0 } },
+      { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 5, width: isCompactGraph ? 84 : 94, height: isCompactGraph ? 84 : 94, 'font-size': isCompactGraph ? 17 : 22, 'underlay-opacity': 0 } },
       { selector: 'node:selected', style: { 'border-color': '#245fae', 'border-width': 3 } },
       { selector: 'node.route-neighbor', style: { 'border-color': '#245fae', 'border-width': 3 } },
-      { selector: 'edge', style: { width: 2, 'curve-style': 'straight', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.92, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.65, label: isCompactGraph ? '' : 'data(label)', color: 'data(evidenceColor)', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 11, 'font-weight': 600, 'text-rotation': 'autorotate', 'text-background-color': '#fffefa', 'text-background-opacity': 0.9, 'text-background-padding': '3', 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'edge', style: { width: 2, 'curve-style': 'straight', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.92, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.65, label: isCompactGraph ? '' : 'data(label)', color: 'data(evidenceColor)', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 12, 'font-weight': 650, 'text-rotation': 'autorotate', 'text-background-color': '#fffefa', 'text-background-opacity': 0.9, 'text-background-padding': '3', 'overlay-opacity': 0, 'underlay-opacity': 0 } },
       { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.72 } },
       { selector: 'edge.is-hovered, edge:selected', style: { width: 4, 'line-opacity': 1, 'arrow-scale': 0.8, 'underlay-color': '#d9e7fb', 'underlay-opacity': 0.75, 'underlay-padding': 4, 'z-index': 20 } }
     ],

@@ -210,3 +210,31 @@ The selected option supplied the information architecture: searchable people ind
 ## Final result
 
 **passed**
+
+---
+
+# Design QA — Reference CSS Fidelity Pass
+
+## Scope
+
+- Refined the selected three-column research layout against `/var/folders/6x/d1g8hh216r57md7fjqfn1qw00000gn/T/codex-clipboard-91a1279d-9cbf-4169-a0ae-c83d5df5cffc.png`.
+- Limited changes to typography, spacing, control density, node labels, narrow-screen graph geometry, and the central canvas texture.
+- Added the generated text-free paper-grid asset at `web/public/assets/research-grid-paper.png`.
+
+## Visual evidence
+
+- Refined desktop capture: `/tmp/nt-people-reference-layout-qa/07-css-fidelity-final.png`.
+- Same-size comparison: `/tmp/nt-people-reference-layout-qa/08-css-reference-vs-final.png`.
+- Final 500 px responsive capture: `/tmp/nt-people-reference-layout-qa/11-narrow-final.png`.
+- Desktop typography now follows the reference's stronger title, denser filter labels, clearer person rows, heavier node labels, and more readable inspector hierarchy.
+- The compact graph radius was reduced so every displayed node remains above the evidence ribbon at narrow widths.
+
+## Validation evidence
+
+- Frontend Design Premium strict audit passed with zero findings.
+- Full repository validation, deterministic data checks, TypeScript, production build, person-era checks, and identity checks passed.
+- Current publication counts remain 364 people and 222 accepted relationships; editorial review state is unchanged.
+
+## Final result
+
+**passed**
