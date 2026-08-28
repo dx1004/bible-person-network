@@ -413,7 +413,8 @@ function renderGraph() {
   const radiusY = height * (isCompactGraph ? 0.2 : 0.36);
   positions.set(selectedPersonId, center);
   neighborIds.forEach((personId, index) => {
-    const angle = -Math.PI / 2 + (Math.PI * 2 * index) / Math.max(neighborIds.length, 1);
+    const startAngle = neighborIds.length <= 2 ? 0 : -Math.PI / 2;
+    const angle = startAngle + (Math.PI * 2 * index) / Math.max(neighborIds.length, 1);
     const stagger = 0.84 + ((index * 37) % 5) * 0.045;
     positions.set(personId, { x: center.x + Math.cos(angle) * radiusX * stagger, y: center.y + Math.sin(angle) * radiusY * stagger });
   });
@@ -435,12 +436,12 @@ function renderGraph() {
       { selector: 'node[era = "旧约背景"]', style: { 'background-color': '#eef7ef', 'border-color': '#5e9470' } },
       { selector: 'node[era = "耶稣时期"]', style: { 'background-color': '#fff1ee', 'border-color': '#df8178' } },
       { selector: 'node[era = "时代待审"]', style: { opacity: 0.72 } },
-      { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 5, width: isCompactGraph ? 84 : 94, height: isCompactGraph ? 84 : 94, 'font-size': isCompactGraph ? 18 : 23, 'underlay-opacity': 0 } },
+      { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 4, width: isCompactGraph ? 84 : 94, height: isCompactGraph ? 84 : 94, 'font-size': isCompactGraph ? 18 : 23, 'underlay-opacity': 0 } },
       { selector: 'node:selected', style: { 'border-color': '#245fae', 'border-width': 3 } },
       { selector: 'node.route-neighbor', style: { 'border-color': '#245fae', 'border-width': 3 } },
-      { selector: 'edge', style: { width: 2, 'curve-style': 'straight', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.92, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.65, label: isCompactGraph ? '' : 'data(label)', color: 'data(evidenceColor)', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 13, 'font-weight': 650, 'text-rotation': 'autorotate', 'text-background-color': '#fffefa', 'text-background-opacity': 0.9, 'text-background-padding': '3', 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'edge', style: { width: 1.6, 'curve-style': 'straight', 'line-color': 'data(evidenceColor)', 'line-opacity': 0.82, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.62, label: isCompactGraph ? '' : 'data(label)', color: 'data(evidenceColor)', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': 12, 'font-weight': 600, 'text-rotation': 'autorotate', 'text-background-color': '#fffefa', 'text-background-opacity': 0.82, 'text-background-padding': '2', 'overlay-opacity': 0, 'underlay-opacity': 0 } },
       { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.72 } },
-      { selector: 'edge.is-hovered, edge:selected', style: { width: 4, 'line-opacity': 1, 'arrow-scale': 0.8, 'underlay-color': '#d9e7fb', 'underlay-opacity': 0.75, 'underlay-padding': 4, 'z-index': 20 } }
+      { selector: 'edge.is-hovered, edge:selected', style: { width: 3.2, 'line-opacity': 1, 'arrow-scale': 0.72, 'underlay-color': '#d9e7fb', 'underlay-opacity': 0.45, 'underlay-padding': 3, 'z-index': 20 } }
     ],
     layout: { name: 'preset', fit: false, animate: false },
     minZoom: 0.25, maxZoom: 2.5, selectionType: 'single'

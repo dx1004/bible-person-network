@@ -53,6 +53,56 @@ The selected option supplied the information architecture: searchable people ind
 
 **passed**
 
+---
+
+# Design QA — UX/UI Detail Refinement
+
+## Evaluation result
+
+- Previous score: **68/100**.
+- Current score: **86/100**.
+- Visual hierarchy: **18/20** — the brand, global search, graph focus, and inspector read in a stable order at desktop and compact-desktop widths.
+- Typography: **18/20** — the live interface now uses a six-step 12/13/14/16/20/26 px scale and 400/500/600/700 weights; measured visible text has a 12 px minimum.
+- Spacing and control consistency: **17/20** — primary search is 48 px, standard controls are 42 px, and compact spacing remains consistent without collapsing touch targets.
+- Graph readability: **16/20** — normal links are thinner and quieter, selected links use restrained emphasis, labels obscure less of their connectors, and one- or two-neighbor layouts avoid the former vertical stack.
+- Responsive and accessible behavior: **17/20** — 1192 px gains a 672 px graph column with no horizontal overflow; 500 px uses the single-panel flow with no horizontal overflow and retains visible focus states.
+
+## Source and implementation comparison
+
+- Selected visual target: `/var/folders/6x/d1g8hh216r57md7fjqfn1qw00000gn/T/codex-clipboard-91a1279d-9cbf-4169-a0ae-c83d5df5cffc.png` (1487 × 1058).
+- Final implementation capture: `/tmp/nt-people-ux-audit/12-wide-final.png` (1487 × 1058).
+- Side-by-side comparison input: `/tmp/nt-people-ux-audit/13-reference-vs-final.jpg`.
+- Matching state: desktop research shell, Paul search, Paul selected, evidence layers visible, inspector and selected relationship visible. The live graph remains internally consistent around Paul instead of reproducing the reference mock's intentionally mixed data state.
+- The implementation matches the target's light archival tone, three-column proportions, restrained evidence colors, strong central focus, compact inspector, and sans/serif hierarchy while preserving the reviewed live data.
+
+## Responsive evidence
+
+- Compact desktop: `/tmp/nt-people-ux-audit/08-mid-refined.png` (1192 × 754), no horizontal overflow.
+- Mobile graph: `/tmp/nt-people-ux-audit/09-mobile-refined.png` (500 × 844), no horizontal overflow.
+- Mobile details: `/tmp/nt-people-ux-audit/10-mobile-details-refined.png` (500 × 844).
+- Visible-text measurement: minimum 12 px; no visible text below 12 px in the checked mobile state.
+
+## Severity review
+
+- P0: none.
+- P1: none.
+- P2: none.
+- P3 follow-up: the live graph is intentionally more data-driven and less diagrammatically staged than the visual mock; further aesthetic staging can be explored without changing information architecture.
+
+## Validation evidence
+
+- Full `npm run check` passed, including data validation, relationship-review checks, deterministic STEP regressions, TypeScript, production build, era checks, and identity checks.
+- Frontend Design Premium strict audit passed with zero findings.
+- `git diff --check` passed.
+- Published data remains 364 people and 222 accepted relationships; 83 assertions remain pending and 50 rejected assertions remain retained for audit.
+- `DESIGN.md` remains unchanged because adopting the already-rendered light trial as the canonical design standard requires a separate design approval gate.
+
+## Final result
+
+**passed**
+
+---
+
 # Design QA — Luminous Pilgrimage Redesign (Option 2)
 
 ## QA target
