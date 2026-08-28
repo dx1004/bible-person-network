@@ -40,18 +40,22 @@
     },
     {
       "source_id": "source:0006",
-      "provider": "Josephus, Antiquitates Judaicae (full-text scope, Whiston)",
+      "provider": "Josephus, Antiquities of the Jews, Whiston, Project Gutenberg eBook 2848",
       "license": "public_domain",
-      "url": "https://www.perseus.tufts.edu/",
+      "url": "https://www.gutenberg.org/ebooks/2848",
       "scope": "history",
+      "access_status": "locked_public_download",
+      "systematic_review_status": "not_started",
       "status": "pending"
     },
     {
       "source_id": "source:0007",
-      "provider": "Philo, trans. Yonge",
+      "provider": "Philo, trans. Yonge, Bohn 1854-55, four volumes",
       "license": "public_domain",
-      "url": "https://www.gutenberg.org/",
+      "url": "https://archive.org/details/worksphilojudaeu01philuoft",
       "scope": "history",
+      "access_status": "locked_public_download",
+      "systematic_review_status": "not_started",
       "status": "pending"
     },
     {
@@ -60,6 +64,8 @@
       "license": "proprietary_restricted",
       "url": "https://www.logos.com/product/1531/lexham-bible-dictionary",
       "scope": "bible",
+      "access_status": "member_catalog_unverified",
+      "systematic_review_status": "not_started",
       "status": "pending"
     },
     {
@@ -68,6 +74,8 @@
       "license": "proprietary_restricted",
       "url": "https://yalebooks.yale.edu/",
       "scope": "bible",
+      "access_status": "member_catalog_unverified",
+      "systematic_review_status": "not_started",
       "status": "pending"
     }
   ],

@@ -28,12 +28,12 @@
 旧约扩展与完整圣经发布目前处于前置阶段，新增来源仅登记为待审链路，不进入正式发布：
 
 - `source:0005` STEPBible TAHOT/TOTHT：旧约姓名覆盖与对齐已按 TIPNR 计划登记，但暂不作为公开图谱输入。
-- `source:0006` Josephus 全书引入为 pending：当前仅保留先前已限定位点。
-- `source:0007` Philo（Yonge 译本）：待法务与全文访问核验。
-- `source:0008` Lexham Bible Dictionary（2016）：受版权限制，当前仅记录书目与证据判断。
-- `source:0009` Anchor Yale Bible Dictionary（1992）：受版权限制，当前仅记录书目与证据判断。
+- `source:0006` Josephus 已锁定 Project Gutenberg eBook 2848 的 Whiston 译本。RDF 明示美国公版并确认译者；锁定全文记录 SHA-256 且位于 `.sources/`，不进入 Git。会动态变化的 RDF 只作为许可核验地址，不作为语料快照。全书人物与关系的系统审校仍未开始，因此来源状态继续为 pending。
+- `source:0007` Philo 已锁定 Bohn 1854–55 年四卷 Yonge 译本。Internet Archive 元数据标记 `NOT_IN_COPYRIGHT`；四卷 OCR 的 MD5 与上游一致并另存 SHA-256。OCR 只用于发现候选，接受定位前必须回查页图。系统审校仍未开始，因此来源状态继续为 pending。
+- `source:0008` Lexham Bible Dictionary（2016）受版权限制。2026-08-28 检查时 Scribd 在两个可用浏览器中均未登录，会员目录与精确版本访问尚未确认。Git 只允许保存条目定位与原创证据判断。
+- `source:0009` Anchor Yale Bible Dictionary（1992，六卷）受版权限制。2026-08-28 检查时 Scribd 在两个可用浏览器中均未登录，会员目录与精确六卷版本访问尚未确认。Git 只允许保存卷页／条目定位与原创证据判断。
 
 当前可公开关系数据仍为 NT 主体状态，旧约仅保留 2720 条候选及待审决策；`source` 与 `manifest` 中的 pending 状态即为门控原因。
- Logos 试用未开启，本阶段不基于 Logos 截图或受限订阅材料补全正式关系。
+ Logos 试用未开启，本阶段不基于 Logos 截图或受限订阅材料补全正式关系。四套资料的访问、许可、文件锁定及系统审校状态见 `editorial/source-access-review.jsonl`；`npm run validate:source-access-review` 校验版本化契约，`npm run verify:historical-sources` 额外核对本地公版文件。
 
 - `source:0005`（STEPBible TAHOT/TOTHT）: 已完成 8 个源文件哈希/行数/命中摘要的独立覆盖审计（`editorial/tahot-totht-coverage-audit-report.json`），并保持审计与发布分离。

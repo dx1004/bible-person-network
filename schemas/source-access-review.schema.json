@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Historical and reference source access review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_id",
+    "edition_lock",
+    "provider",
+    "license_status",
+    "access_status",
+    "systematic_review_status",
+    "publication_mode",
+    "full_text_in_git",
+    "catalog_status",
+    "files",
+    "review_notes",
+    "checked_at"
+  ],
+  "properties": {
+    "source_id": { "type": "string", "enum": ["source:0006", "source:0007", "source:0008", "source:0009"] },
+    "edition_lock": { "type": "string", "minLength": 1 },
+    "provider": { "type": "string", "minLength": 1 },
+    "license_status": {
+      "type": "string",
+      "enum": ["verified_public_domain", "proprietary_restricted"]
+    },
+    "license_evidence": { "type": "string", "format": "uri" },
+    "access_status": {
+      "type": "string",
+      "enum": ["locked_public_download", "member_catalog_unverified", "member_access_verified"]
+    },
+    "systematic_review_status": {
+      "type": "string",
+      "enum": ["not_started", "in_progress", "completed"]
+    },
+    "publication_mode": {
+      "type": "string",
+      "enum": ["locator_and_original_summary_only"]
+    },
+    "full_text_in_git": { "const": false },
+    "catalog_status": {
+      "type": "string",
+      "enum": ["exact_edition_locked", "awaiting_authenticated_catalog_check"]
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["local_path", "url", "sha256", "bytes", "line_count"],
+        "properties": {
+          "local_path": { "type": "string", "pattern": "^\\.sources/[A-Za-z0-9._/-]+$" },
+          "url": { "type": "string", "format": "uri" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "bytes": { "type": "integer", "minimum": 1 },
+          "line_count": { "type": "integer", "minimum": 1 },
+          "upstream_md5": { "type": "string", "pattern": "^[a-f0-9]{32}$" }
+        }
+      }
+    },
+    "review_notes": { "type": "string", "minLength": 1 },
+    "checked_at": { "type": "string", "format": "date-time" }
+  }
+}
