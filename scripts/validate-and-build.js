@@ -39,6 +39,27 @@ function readJsonl(filePath) {
   });
 }
 
+function inferTestamentFromPassage(passage = '') {
+  const normalized = String(passage).replace(/^\s*STEP:/i, '').trim();
+  const match = normalized.match(/^([1-3]?[A-Za-z]{2,4})\s+\d/);
+  if (!match) return '';
+  const book = match[1].toUpperCase();
+  const ntBooks = new Set([
+    'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', '1CO', '2CO', 'GAL', 'EPH', 'COL',
+    'PHM', 'PHP', 'THA', '1TH', '2TH', '1TI', '2TI', 'TIT', 'HEB',
+    'JAS', '1PE', '2PE', '1JN', '2JN', '3JN', 'JUD', 'REV'
+  ]);
+  const otBooks = new Set([
+    'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', '1SA', '2SA', '1KI', '2KI',
+    '1CH', '2CH', 'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER',
+    'LAM', 'EZE', 'DAN', 'HOS', 'JOL', 'AMO', 'OBA', 'JON', 'MIC', 'NAH', 'HAB', 'ZEP',
+    'HAG', 'ZEC', 'MAL'
+  ]);
+  if (ntBooks.has(book)) return 'nt';
+  if (otBooks.has(book)) return 'ot';
+  return '';
+}
+
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
 }
@@ -280,15 +301,25 @@ function main() {
     first_evidence: r.evidence[0]?.passage || ''
   })), ['assertion_id', 'subject_person_id', 'object_person_id', 'relation_type', 'relation_subtype', 'direction', 'status', 'confidence', 'editorial_status', 'first_evidence']);
 
+  const personMentionCounts = new Map();
   const evidenceRows = [];
-  const allPassages = new Set();
+  const allPassages = new Map();
   for (const m of mentions) {
-    if (m.passage) allPassages.add(m.passage);
+    const testimony = m.testament || inferTestamentFromPassage(m.passage);
+    if (m.passage) allPassages.set(m.passage, testimony);
+
+    if (m.status === 'accepted') {
+      const existing = personMentionCounts.get(m.person_id) || { nt: 0, ot: 0 };
+      if (testimony === 'nt') existing.nt += 1;
+      if (testimony === 'ot') existing.ot += 1;
+      personMentionCounts.set(m.person_id, existing);
+    }
   }
   for (const a of assertions) {
     for (const e of a.evidence || []) {
       if (!e || !e.passage) continue;
-      allPassages.add(e.passage);
+      const evidenceTestament = inferTestamentFromPassage(e.passage);
+      if (!allPassages.has(e.passage)) allPassages.set(e.passage, evidenceTestament);
       evidenceRows.push({
         assertion_id: a.assertion_id,
         passage: e.passage,
@@ -306,8 +337,33 @@ function main() {
     fs.unlinkSync(legacyRelationEdges);
   }
   fs.writeFileSync(path.join(NEO4J_DIR, 'person_nodes.csv'), [
-    'person_id,canonical_chinese,canonical_greek,latinized,sex,status,identity_group',
-    ...people.map((p) => [p.person_id, p.canonical_chinese, p.canonical_greek || '', p.latinized || '', p.sex || '', p.status, p.identity_group || ''].map(csvValue).join(','))
+    'person_id,canonical_chinese,canonical_greek,latinized,sex,status,identity_group,testament,nt_ref_count,ot_ref_count,bible_ref_count',
+    ...people.map((p) => {
+      const mentionCounts = personMentionCounts.get(p.person_id) || { nt: 0, ot: 0 };
+      const ntRefCount = mentionCounts.nt;
+      const otRefCount = mentionCounts.ot;
+      const bibleRefCount = ntRefCount + otRefCount;
+      const testaments = [
+        ...new Set([
+          ntRefCount ? 'nt' : null,
+          otRefCount ? 'ot' : null
+        ].filter(Boolean))
+      ];
+
+      return [
+        p.person_id,
+        p.canonical_chinese,
+        p.canonical_greek || '',
+        p.latinized || '',
+        p.sex || '',
+        p.status,
+        p.identity_group || '',
+        testaments.join(','),
+        ntRefCount,
+        otRefCount,
+        bibleRefCount
+      ].map(csvValue).join(',');
+    })
   ].join('\n'));
   fs.writeFileSync(path.join(NEO4J_DIR, 'name_nodes.csv'), [
     'name_id,person_id,name_text,language,source_scope,status',
@@ -333,8 +389,10 @@ function main() {
     ].map(csvValue).join(','))
   ].join('\n'));
   fs.writeFileSync(path.join(NEO4J_DIR, 'passage_nodes.csv'), [
-    'passage',
-    ...Array.from(allPassages).sort().map((passage) => [passage].map(csvValue).join(','))
+    'passage,testament',
+    ...Array.from(allPassages.entries())
+      .sort((left, right) => left[0].localeCompare(right[0]))
+      .map(([passage, testament]) => [passage, testament || ''].map(csvValue).join(','))
   ].join('\n'));
   fs.rmSync(path.join(NEO4J_DIR, 'mention_nodes.csv'), { force: true });
   const mentionEdges = mentions.map((m) => ({
@@ -364,12 +422,12 @@ function main() {
     'CREATE CONSTRAINT assertion_id IF NOT EXISTS FOR (a:Assertion) REQUIRE a.assertion_id IS UNIQUE;',
     'CREATE CONSTRAINT passage_id IF NOT EXISTS FOR (p:Passage) REQUIRE p.passage IS UNIQUE;',
     'CREATE CONSTRAINT identity_option_id IF NOT EXISTS FOR (i:IdentityOption) REQUIRE i.option_id IS UNIQUE;',
-    'LOAD CSV WITH HEADERS FROM "file:///person_nodes.csv" AS row MERGE (p:Person {person_id: row.person_id}) SET p += row;',
+    'LOAD CSV WITH HEADERS FROM "file:///person_nodes.csv" AS row MERGE (p:Person {person_id: row.person_id}) SET p += row, p.nt_ref_count = toInteger(row.nt_ref_count), p.ot_ref_count = toInteger(row.ot_ref_count), p.bible_ref_count = toInteger(row.bible_ref_count), p.testament = row.testament',
     'LOAD CSV WITH HEADERS FROM "file:///name_nodes.csv" AS row MATCH (p:Person {person_id: row.person_id}) MERGE (n:NameVariant {name_id: row.name_id}) SET n += row MERGE (p)-[:HAS_NAME]->(n);',
     'LOAD CSV WITH HEADERS FROM "file:///evidence_nodes.csv" AS row MERGE (s:Source {source_id: row.source_id}) SET s += row;',
     'LOAD CSV WITH HEADERS FROM "file:///assertion_nodes.csv" AS row MERGE (a:Assertion {assertion_id: row.assertion_id}) SET a += row;',
     'LOAD CSV WITH HEADERS FROM "file:///identity_option_nodes.csv" AS row MATCH (p:Person {person_id: row.person_id}) MERGE (i:IdentityOption {option_id: row.option_id}) SET i.identity_key = row.identity_key, i.status = row.status, i.identity_scope = row.identity_scope, i.merge_group_id = CASE row.merge_group_id WHEN "" THEN null ELSE row.merge_group_id END, i.merge_target_person_id = CASE row.merge_target_person_id WHEN "" THEN null ELSE row.merge_target_person_id END, i.display_label = CASE row.display_label WHEN "" THEN null ELSE row.display_label END, i.rationale = row.rationale, i.editor_note = row.editor_note MERGE (p)-[:HAS_IDENTITY_OPTION]->(i);',
-    'LOAD CSV WITH HEADERS FROM "file:///passage_nodes.csv" AS row MERGE (p:Passage {passage: row.passage}) SET p.passage = row.passage;',
+    'LOAD CSV WITH HEADERS FROM "file:///passage_nodes.csv" AS row MERGE (p:Passage {passage: row.passage}) SET p.passage = row.passage, p.testament = row.testament',
     'LOAD CSV WITH HEADERS FROM "file:///mention_edges.csv" AS row MATCH (person:Person {person_id: row.person_id}), (psg:Passage {passage: row.passage}) MERGE (person)-[r:MENTIONED_IN]->(psg) SET r.mention_id = row.mention_id, r.source_id = row.source_id, r.status = row.status;',
     'LOAD CSV WITH HEADERS FROM "file:///assertion_nodes.csv" AS row MATCH (s:Person {person_id: row.subject_person_id}), (o:Person {person_id: row.object_person_id}), (a:Assertion {assertion_id: row.assertion_id}) MERGE (a)-[:SUBJECT]->(s) MERGE (a)-[:OBJECT]->(o);',
     'LOAD CSV WITH HEADERS FROM "file:///assertion_evidence.csv" AS row MATCH (a:Assertion {assertion_id: row.assertion_id}), (src:Source {source_id: row.source_id}), (psg:Passage {passage: row.passage}) MERGE (a)-[r1:SUPPORTED_BY]->(src) SET r1.evidence_level = row.evidence_level, r1.certainty = CASE row.certainty WHEN \"\" THEN null ELSE toFloat(row.certainty) END, r1.note = row.note MERGE (a)-[r2:SUPPORTED_BY]->(psg) SET r2.evidence_level = row.evidence_level, r2.certainty = CASE row.certainty WHEN \"\" THEN null ELSE toFloat(row.certainty) END, r2.note = row.note;'

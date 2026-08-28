@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { classifyPersonEra, PERSON_ERAS } from './person-era.mjs';
@@ -21,23 +20,24 @@ const erasByPerson = new Map();
 const counts = Object.fromEntries(PERSON_ERAS.map((era) => [era, 0]));
 for (const person of people) {
   const era = classifyPersonEra(person, [...(booksByPerson.get(person.person_id) || [])]);
-  if (!PERSON_ERAS.includes(era)) throw new Error(`${person.person_id} has invalid era: ${era}`);
+  if (!PERSON_ERAS.includes(era)) {
+    throw new Error(`${person.person_id} invalid era: ${era}`);
+  }
   erasByPerson.set(person.person_id, era);
   counts[era] += 1;
 }
 
-for (const [personId, expected] of [
-  ['nt-people-0242', '旧约背景'],
-  ['nt-people-0156', '耶稣时期'],
-  ['nt-people-0266', '使徒时期'],
-  ['nt-people-0374', '使徒时期']
-]) {
+const checkList = [
+  ['person-000242', '旧约背景'],
+  ['person-000156', '耶稣时期'],
+  ['person-000266', '使徒时期'],
+  ['person-000374', '使徒时期'],
+];
+for (const [personId, expected] of checkList) {
   const actual = erasByPerson.get(personId);
-  if (actual !== expected) throw new Error(`${personId} era mismatch: ${actual} != ${expected}`);
-}
-
-if (!counts['旧约背景'] || !counts['耶稣时期'] || !counts['使徒时期']) {
-  throw new Error(`required era bucket is empty: ${JSON.stringify(counts)}`);
+  if (actual !== expected) {
+    throw new Error(`${personId} era mismatch: ${JSON.stringify(counts)}`);
+  }
 }
 
 console.log(`[person-era-check] ${JSON.stringify(counts)}`);

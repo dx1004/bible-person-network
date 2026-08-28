@@ -24,7 +24,13 @@
   ],
   "properties": {
     "candidate_id": { "type": "string", "pattern": "^cnc-\\d{4}$" },
-    "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "person_id": {
+      "type": "string",
+      "anyOf": [
+        { "pattern": "^person-\\d{6}$" },
+        { "pattern": "^nt-people-\\d{4}$" }
+      ]
+    },
     "latinized": { "type": "string", "minLength": 1 },
     "candidate_chinese": { "type": "string", "minLength": 1 },
     "supporting_passages": {

@@ -20,12 +20,17 @@ const REVIEW_PATH = path.join(EDITORIAL_DIR, 'relationship-review.jsonl');
 const SCHEMA_PATH = path.join(SCHEMAS_DIR, 'relationship-review.schema.json');
 const MANIFEST_PATH = path.join(DATA_DIR, 'manifest.json');
 
-const NT_BOOKS = new Set([
+const BIBLE_BOOKS = new Set([
   'MAT', 'MRK', 'LUK', 'JHN', 'ACT',
   'ROM', '1CO', '2CO', 'GAL', 'EPH', 'PHP', 'COL',
   '1TH', '2TH', '1TI', '2TI', 'TIT', 'PHM',
   'HEB', 'JAS', '1PE', '2PE', '1JN', '2JN', '3JN',
-  'JUD', 'REV'
+  'JUD', 'REV',
+  'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT',
+  '1SA', '2SA', '1KI', '2KI', '1CH', '2CH', 'EZR', 'NEH',
+  'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER',
+  'LAM', 'EZK', 'DAN', 'HOS', 'JOL', 'AMO', 'OBA', 'JON',
+  'MIC', 'NAM', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL'
 ]);
 
 function parseArgs() {
@@ -67,7 +72,7 @@ function parseLocator(passage) {
   const match = body.match(/^([1-3]?[A-Z]{2,4})\s+(\d+:\d+(?:-\d+)?)$/);
   if (!match) return null;
   const book = match[1];
-  if (!NT_BOOKS.has(book)) return null;
+  if (!BIBLE_BOOKS.has(book)) return null;
   return `${book} ${match[2]}`;
 }
 
@@ -76,7 +81,7 @@ function validateNtLocatorExact(passage) {
   if (/^\s*STEP:/i.test(passage)) return false;
   const match = passage.trim().match(/^([1-3]?[A-Z]{2,4})\s+(\d+:\d+(?:-\d+)?)$/);
   if (!match) return false;
-  if (!NT_BOOKS.has(match[1])) return false;
+  if (!BIBLE_BOOKS.has(match[1])) return false;
   return `${match[1]} ${match[2]}`;
 }
 
@@ -163,7 +168,7 @@ function cleanEvidenceRefs(rawRefs, sourceSet) {
       throw new Error(`Evidence ref source_id invalid: ${ref.source_id}`);
     }
     if (!ref.passage) throw new Error(`Evidence ref missing passage`);
-    if (!['nt_text', 'ancient_text', 'reference', 'modern_reference', 'editorial'].includes(ref.evidence_level)) {
+    if (!['nt_text', 'ot_text', 'ancient_text', 'reference', 'modern_reference', 'editorial'].includes(ref.evidence_level)) {
       throw new Error(`Invalid evidence level ${ref.evidence_level}`);
     }
     if (Number.isNaN(ref.certainty) || ref.certainty < 0 || ref.certainty > 1) {
@@ -313,7 +318,7 @@ function validateDecision(name, decision, sourceSet) {
     return d;
   }
 
-  if (!decision_relation_type || !['kinship', 'teacher_student', 'collegial', 'commission', 'host', 'political', 'legal', 'hostile'].includes(decision_relation_type)) {
+  if (!decision_relation_type || !['kinship', 'teacher_student', 'collegial', 'commission', 'host', 'political', 'legal', 'hostile', 'succession', 'alliance', 'military', 'prophetic_confrontation', 'covenant'].includes(decision_relation_type)) {
     throw new Error(`${name}: accepted decision_relation_type invalid`);
   }
   if (!decision_direction || !['directed', 'undirected'].includes(decision_direction)) {

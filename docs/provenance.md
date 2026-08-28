@@ -22,3 +22,18 @@
 
 本目录中的 `data/*.jsonl`、`schemas/*.jsonl`、`scripts/*`、`neo4j/*` 全部为 Git 版本对象。`npm run fetch:sources` 会取得清单中锁定的两个 Git 提交；随后 `npm run ingest:locked` 可重新抽取候选资料。Neo4j、CSV、JSON 与网页可由版本化数据从空库重建。
 `data/manifest.json` 中保留了来源快照与许可证版本号，便于复核与溯源。`npm run fetch:sources` 会按该哈希下载并校验 `CUV` 压缩包，解压到 `.sources/cmn-cu89s-usfm`。
+
+## 扩展与待审状态补充
+
+旧约扩展与完整圣经发布目前处于前置阶段，新增来源仅登记为待审链路，不进入正式发布：
+
+- `source:0005` STEPBible TAHOT/TOTHT：旧约姓名覆盖与对齐已按 TIPNR 计划登记，但暂不作为公开图谱输入。
+- `source:0006` Josephus 全书引入为 pending：当前仅保留先前已限定位点。
+- `source:0007` Philo（Yonge 译本）：待法务与全文访问核验。
+- `source:0008` Lexham Bible Dictionary（2016）：受版权限制，当前仅记录书目与证据判断。
+- `source:0009` Anchor Yale Bible Dictionary（1992）：受版权限制，当前仅记录书目与证据判断。
+
+当前可公开关系数据仍为 NT 主体状态，旧约仅保留 2720 条候选及待审决策；`source` 与 `manifest` 中的 pending 状态即为门控原因。
+ Logos 试用未开启，本阶段不基于 Logos 截图或受限订阅材料补全正式关系。
+
+- `source:0005`（STEPBible TAHOT/TOTHT）: 已完成 8 个源文件哈希/行数/命中摘要的独立覆盖审计（`editorial/tahot-totht-coverage-audit-report.json`），并保持审计与发布分离。

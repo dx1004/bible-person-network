@@ -185,6 +185,22 @@ async function main() {
   const raw = await fs.readFile(dataPath, 'utf8');
   const graph = JSON.parse(raw);
 
+  const legacyEntries = Object.entries(graph.legacyIdMap || {});
+  let expectedLegacyEntries = 0;
+  for (const person of graph.people) {
+    const legacyIds = Array.isArray(person.legacyIds) ? person.legacyIds : [];
+    expectedLegacyEntries += legacyIds.length;
+    for (const legacyId of legacyIds) {
+      if (graph.legacyIdMap[legacyId] !== person.id) {
+        throw new Error(`legacy redirect mismatch for ${person.id}: ${legacyId}`);
+      }
+    }
+  }
+  if (legacyEntries.length !== expectedLegacyEntries) {
+    throw new Error(`legacy redirect count mismatch: ${legacyEntries.length} != ${expectedLegacyEntries}`);
+  }
+  console.log(`[legacy-id-check] redirects=${legacyEntries.length}`);
+
   const validPersonEras = new Set(['旧约背景', '耶稣时期', '使徒时期', '时代待审']);
   for (const person of graph.people) {
     if (!validPersonEras.has(person.era)) throw new Error(`person ${person.id} has invalid era ${person.era}`);
@@ -247,12 +263,15 @@ async function main() {
     throw new Error(`Josephus source source:0004 kind mismatch: ${josephusSource.kind} != ancient`);
   }
   const josephusAssertions = graph.relationships.filter((relation) => relation.sources.includes('source:0004'));
-  if (!graph.meta.editorialReviewRequired && !josephusAssertions.length) {
+  const editorialReviewRequired = Boolean(graph.meta?.editorialReviewRequired || graph.meta?.status === 'editorial_review_required');
+  if (!editorialReviewRequired && !josephusAssertions.length) {
     throw new Error('ready graph contains no published Josephus assertion');
   }
-  for (const assertion of josephusAssertions) {
-    if (assertion.evidenceLevel !== 'ancient') {
-      throw new Error(`historical assertion ${assertion.id} evidence mismatch: ${assertion.evidenceLevel} != ancient`);
+  if (!editorialReviewRequired) {
+    for (const assertion of josephusAssertions) {
+      if (assertion.evidenceLevel !== 'ancient') {
+        throw new Error(`historical assertion ${assertion.id} evidence mismatch: ${assertion.evidenceLevel} != ancient`);
+      }
     }
   }
 

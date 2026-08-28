@@ -5,13 +5,23 @@
   "additionalProperties": false,
   "required": ["person_id", "canonical_chinese", "status", "source_decisions", "created_at", "updated_at"],
   "properties": {
-    "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "person_id": {
+      "type": "string",
+      "anyOf": [
+        { "pattern": "^nt-people-\\d{4}$" },
+        { "pattern": "^person-\\d{6}$" }
+      ]
+    },
     "canonical_chinese": { "type": ["string", "null"] },
     "canonical_greek": { "type": ["string", "null"], "minLength": 1 },
+    "canonical_hebrew": { "type": ["string", "null"], "minLength": 1 },
+    "canonical_aramaic": { "type": ["string", "null"], "minLength": 1 },
     "latinized": { "type": "string", "minLength": 1 },
     "sex": { "type": "string", "enum": ["male", "female", "mixed", "unknown"] },
     "status": { "type": "string", "enum": ["provisional", "accepted", "pending", "rejected"] },
     "identity_group": { "type": ["string", "null"], "pattern": "^nt-idgrp-\\d{4}$" },
+    "legacy_ids": { "type": "array", "items": { "type": "string" } },
+    "testaments": { "type": "array", "items": { "type": "string", "enum": ["nt", "ot", "bible"] } },
     "editor_note": { "type": "string" },
     "review_status": {
       "type": "object",
@@ -26,6 +36,8 @@
       "items": { "type": "string", "pattern": "^source:\\d{4}$" }
     },
     "nt_ref_count": { "type": "number", "minimum": 0 },
+    "ot_ref_count": { "type": "number", "minimum": 0 },
+    "bible_ref_count": { "type": "number", "minimum": 0 },
     "source_snapshot": { "type": "string" },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }

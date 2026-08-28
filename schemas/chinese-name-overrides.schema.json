@@ -5,7 +5,13 @@
   "additionalProperties": false,
   "required": ["person_id", "candidate_chinese", "source_passage", "canonical_passage", "editor_note"],
   "properties": {
-    "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "person_id": {
+      "type": "string",
+      "anyOf": [
+        { "pattern": "^person-\\d{6}$" },
+        { "pattern": "^nt-people-\\d{4}$" }
+      ]
+    },
     "candidate_chinese": { "type": "string", "minLength": 1 },
     "source_passage": { "type": "string", "pattern": "^[1-3]?[A-Z]{2,4} \\d{1,3}:\\d{1,3}$" },
     "canonical_passage": { "type": "string", "pattern": "^[1-3]?[A-Z]{2,4} \\d{1,3}:\\d{1,3}$" },

@@ -12,7 +12,34 @@
     "language": { "type": "string", "minLength": 1 },
     "url": { "type": "string", "format": "uri" },
     "status": { "type": "string", "enum": ["active", "deprecated", "pending"] },
-    "scope": { "type": "string", "enum": ["nt", "nt+history", "reference"] },
+    "scope": { "type": "string", "enum": ["nt", "ot", "bible", "history", "nt+history", "reference"] },
+    "access_gate": { "type": "string", "minLength": 1 },
+    "version_sha": { "type": "string", "minLength": 1 },
+    "review_notes": { "type": "string" },
+    "file_hashes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_path",
+          "sha256",
+          "bytes",
+          "line_count",
+          "data_line_count",
+          "verse_reference_count"
+        ],
+        "properties": {
+          "source_path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "minLength": 64 },
+          "bytes": { "type": "number", "minimum": 1 },
+          "line_count": { "type": "number", "minimum": 1 },
+          "data_line_count": { "type": "number", "minimum": 0 },
+          "verse_reference_count": { "type": "number", "minimum": 0 },
+          "books_covered": { "type": "array", "items": { "type": "string", "pattern": "^[A-Z]{3,4}$" } }
+        },
+        "additionalProperties": false
+      }
+    },
     "notes": { "type": "string" },
     "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }

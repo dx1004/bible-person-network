@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Old Testament candidate rows from STEP TIPNR lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "candidate_id",
+    "step_identity_key",
+    "source_id",
+    "source_file",
+    "candidate_status",
+    "candidate_decision",
+    "canonical_name",
+    "latinized",
+    "normalized_unified_name",
+    "sex",
+    "step_unified_raw",
+    "raw_fields",
+    "relationships_raw",
+    "names",
+    "ot_refs",
+    "ot_ref_count",
+    "nt_ref_count",
+    "created_at",
+    "source_snapshot"
+  ],
+  "properties": {
+    "candidate_id": { "type": "string", "pattern": "^otc-\\d{4}$" },
+    "step_identity_key": { "type": "string", "minLength": 1 },
+    "source_id": { "type": "string", "enum": ["source:0002"] },
+    "source_file": { "type": "string", "minLength": 1 },
+    "source_snapshot": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$" },
+    "candidate_status": { "type": "string", "enum": ["pending"] },
+    "candidate_decision": { "type": "string", "enum": ["pending", "accepted", "excluded"] },
+    "canonical_name": { "type": "string", "minLength": 1 },
+    "latinized": { "type": "string", "minLength": 1 },
+    "normalized_unified_name": { "type": "string", "minLength": 1 },
+    "sex": { "type": "string", "enum": ["male", "female", "unknown"] },
+    "step_unified_raw": { "type": "string", "minLength": 1 },
+    "raw_fields": {
+      "type": "object",
+      "required": ["description", "tribe", "summary", "parents_raw", "siblings_raw", "partners_raw", "offspring_raw"],
+      "properties": {
+        "description": { "type": "string" },
+        "tribe": { "type": "string" },
+        "summary": { "type": "string" },
+        "parents_raw": { "type": "string" },
+        "siblings_raw": { "type": "string" },
+        "partners_raw": { "type": "string" },
+        "offspring_raw": { "type": "string" }
+      }
+    },
+    "relationships_raw": {
+      "type": "object",
+      "required": ["parents", "siblings", "partners", "offspring"],
+      "additionalProperties": false,
+      "properties": {
+        "parents": { "type": "array", "items": { "$ref": "#/definitions/relationship-item" } },
+        "siblings": { "type": "array", "items": { "$ref": "#/definitions/relationship-item" } },
+        "partners": { "type": "array", "items": { "$ref": "#/definitions/relationship-item" } },
+        "offspring": { "type": "array", "items": { "$ref": "#/definitions/relationship-item" } }
+      }
+    },
+    "names": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name_text", "raw_name", "significance", "language", "source_scope", "status", "refs"],
+        "properties": {
+          "name_text": { "type": "string", "minLength": 1 },
+          "raw_name": { "type": "string", "minLength": 1 },
+          "significance": { "type": "string", "minLength": 1 },
+          "language": { "type": "string", "enum": ["en", "grc", "hbo"] },
+          "source_scope": { "type": "string", "enum": ["canonical", "alias", "variant"] },
+          "status": { "type": "string", "enum": ["accepted", "pending"] },
+          "refs": { "type": "array", "items": { "type": "string", "pattern": "^[1-3]?[A-Z]{2,4} \\d{1,3}:\\d{1,3}$" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "ot_refs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(GEN|EXO|LEV|NUM|DEU|JOS|JDG|RUT|1SA|2SA|1KI|2KI|1CH|2CH|EZR|NEH|EST|JOB|PSA|PRO|ECC|SNG|ISA|JER|LAM|EZE|DAN|HOS|JOL|AMO|OBA|JON|MIC|NAH|HAB|ZEP|HAG|ZEC|MAL) \\d{1,3}:\\d{1,3}$" }
+    },
+    "ot_ref_count": { "type": "integer", "minimum": 1 },
+    "nt_ref_count": { "type": "integer", "minimum": 0 },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "source_norm": { "type": "string", "minLength": 1 },
+        "has_nt_refs": { "type": "boolean" }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "editor_note": { "type": "string" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "definitions": {
+    "relationship-item": {
+      "type": "object",
+      "required": ["raw", "uncertain", "refs"],
+      "properties": {
+        "key": { "type": "string" },
+        "raw": { "type": "string", "minLength": 1 },
+        "uncertain": { "type": "boolean" },
+        "refs": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[1-3]?[A-Z]{2,4} \\d{1,3}:\\d{1,3}$" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

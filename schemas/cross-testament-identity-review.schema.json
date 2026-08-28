@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cross-testament identity review snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_id",
+    "candidate_id",
+    "step_identity_key",
+    "candidate_canonical_name",
+    "nt_ref_count",
+    "step_identity_matches",
+    "round1",
+    "round2",
+    "final_decision",
+    "source_id",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^ctir-\\d{4}$" },
+    "candidate_id": { "type": "string", "pattern": "^otc-\\d{4}$" },
+    "step_identity_key": { "type": "string", "minLength": 1 },
+    "candidate_canonical_name": { "type": "string", "minLength": 1 },
+    "nt_ref_count": { "type": "integer", "minimum": 1 },
+    "step_identity_matches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "person_id",
+          "identity_key",
+          "identity_scope",
+          "status"
+        ],
+        "properties": {
+          "person_id": {
+            "type": "string",
+            "anyOf": [
+              { "pattern": "^nt-people-\\d{4}$" },
+              { "pattern": "^person-\\d{6}$" }
+            ]
+          },
+          "identity_key": { "type": "string", "minLength": 1 },
+          "identity_scope": { "type": "string", "enum": ["default", "conservative", "common_tradition", "otnt_bridge"] },
+          "status": { "type": "string", "enum": ["independent", "merged", "linked", "disputed"] },
+          "identity_note": { "type": "string" }
+        }
+      },
+      "default": []
+    },
+    "round1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision_action",
+        "target_person_id",
+        "canonical_chinese",
+        "reviewer",
+        "decision_note",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "decision_action": { "type": ["string", "null"], "enum": [null, "create_new", "merge_existing"] },
+        "target_person_id": {
+          "type": ["string", "null"],
+          "anyOf": [
+            { "pattern": "^nt-people-\\d{4}$" },
+            { "pattern": "^person-\\d{6}$" }
+          ]
+        },
+        "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "round2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision_action",
+        "target_person_id",
+        "canonical_chinese",
+        "reviewer",
+        "decision_note",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "decision_action": { "type": ["string", "null"], "enum": [null, "create_new", "merge_existing"] },
+        "target_person_id": {
+          "type": ["string", "null"],
+          "anyOf": [
+            { "pattern": "^nt-people-\\d{4}$" },
+            { "pattern": "^person-\\d{6}$" }
+          ]
+        },
+        "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "final_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision_action",
+        "target_person_id",
+        "canonical_chinese",
+        "reviewer",
+        "decision_note",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "decision_action": { "type": ["string", "null"], "enum": [null, "create_new", "merge_existing"] },
+        "target_person_id": {
+          "type": ["string", "null"],
+          "anyOf": [
+            { "pattern": "^nt-people-\\d{4}$" },
+            { "pattern": "^person-\\d{6}$" }
+          ]
+        },
+        "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "source_id": { "type": "string", "enum": ["source:0002"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "notes": { "type": "string" }
+  }
+}

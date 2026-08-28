@@ -2,7 +2,7 @@ import './style-reference.css';
 import './phosphor.css';
 import cytoscape from 'cytoscape';
 
-type EvidenceLevel = 'nt_text' | 'ancient' | 'modern';
+type EvidenceLevel = 'nt_text' | 'ot_text' | 'ancient' | 'modern';
 type IdentityPreset = 'conservative' | 'traditional' | 'custom';
 type MobilePanel = 'people' | 'graph' | 'details';
 
@@ -22,11 +22,14 @@ type MentionLocator = { passage: string; location?: string; sourceId: string };
 
 type Person = {
   id: string;
+  legacyIds?: string[];
   nameZh: string;
   nameLat: string;
   aliases: string[];
   era: string;
   books: string[];
+  testaments?: Array<'nt' | 'ot'>;
+  testamentCounts?: { nt: number; ot: number };
   mentions: MentionLocator[];
   identityOptions: IdentityOption[];
   selectedPresetDefault?: 'conservative' | 'traditional';
@@ -44,9 +47,11 @@ type Relationship = {
   description: string;
   certainty: 'high' | 'medium' | 'low';
   rawEvidenceLevel?: string;
+  evidenceLevels?: EvidenceLevel[];
   evidenceLevel: EvidenceLevel;
   book: string;
   books: string[];
+  testaments?: Array<'nt' | 'ot'>;
   era: string;
   sources: string[];
   passages: string[];
@@ -64,6 +69,11 @@ type TopicPreset = {
   personIncludes?: string[];
 };
 type GraphData = {
+  migration?: {
+    sourceIdFormat?: string;
+    outputIdFormat?: string;
+    preservedLegacyIds?: boolean;
+  };
   meta: {
     version: string;
     generatedAt: string;
@@ -77,6 +87,7 @@ type GraphData = {
   relationships: Relationship[];
   sources: Source[];
   topicPresets: TopicPreset[];
+  legacyIdMap?: Record<string, string>;
 };
 type FilterState = {
   search: string;
@@ -86,6 +97,7 @@ type FilterState = {
   evidences: Set<EvidenceLevel>;
   personIncludes: Set<string>;
   topic: string;
+  scope: 'nt' | 'ot' | 'bible';
 };
 type VisibleModel = {
   people: Person[];
@@ -96,12 +108,18 @@ type VisibleModel = {
 
 const GRAPH_EDGE_LIMIT = 12;
 const SEARCH_RESULT_LIMIT = 80;
-const ALL_EVIDENCE: EvidenceLevel[] = ['nt_text', 'ancient', 'modern'];
+const ALL_EVIDENCE: EvidenceLevel[] = ['nt_text', 'ot_text', 'ancient', 'modern'];
 const evidenceLabel: Record<EvidenceLevel, string> = {
-  nt_text: '新约经文', ancient: '古代原始史料', modern: '现代权威工具书'
+  nt_text: '新约经文',
+  ot_text: '旧约经文',
+  ancient: '古代原始史料',
+  modern: '现代权威工具书'
 };
 const evidenceColor: Record<EvidenceLevel, string> = {
-  nt_text: '#3478d4', ancient: '#2f7f49', modern: '#df6159'
+  nt_text: '#3478d4',
+  ot_text: '#8b62d9',
+  ancient: '#2f7f49',
+  modern: '#df6159'
 };
 const certaintyLabel = { high: '高', medium: '中', low: '低' } as const;
 
@@ -112,7 +130,7 @@ appRoot.innerHTML = `
   <div class="app-shell" data-mobile-panel="graph" data-drawer="none" aria-busy="true">
     <header class="topbar">
       <div class="brand-block">
-        <div><h1>新约人物关系网</h1><p>人物、关系与出处的可核查图谱</p></div>
+        <div><h1>圣经人物关系网</h1><p>人物、关系与出处的可核查图谱</p></div>
       </div>
       <div class="global-search">
         <label class="sr-only" for="search">搜索人物中文名、别名、希腊文或拉丁转写</label>
@@ -123,6 +141,7 @@ appRoot.innerHTML = `
       </div>
       <div class="top-controls">
         <label class="compact-field" for="topic-select"><span>专题视图</span><select id="topic-select"></select></label>
+        <label class="compact-field" for="scope-select"><span>范围</span><select id="scope-select"><option value="nt">新约</option><option value="ot">旧约</option><option value="bible">全圣经</option></select></label>
         <label class="compact-field" for="identity-preset"><span>身份预设</span><select id="identity-preset">
           <option value="conservative">全部保守</option><option value="traditional">常见传统</option><option value="custom" disabled>逐项自定义</option>
         </select></label>
@@ -131,7 +150,7 @@ appRoot.innerHTML = `
           <div class="dataset-stat"><strong id="relations-total">—</strong><span>关系</span></div>
         </div>
         <button id="header-fit" class="header-action" type="button" data-onclick="direct"><i class="ph ph-layout" aria-hidden="true"></i><span>视图</span></button>
-        <a class="header-action" href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer"><i class="ph ph-book-open" aria-hidden="true"></i><span>帮助</span></a>
+      <a class="header-action" href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer"><i class="ph ph-book-open" aria-hidden="true"></i><span>帮助</span></a>
       </div>
     </header>
     <div id="review-warning" class="review-warning reading-surface" role="status" hidden>
@@ -179,7 +198,7 @@ appRoot.innerHTML = `
           </div>
         </div>
         <div class="graph-footer reading-surface" tabindex="-1" aria-live="polite">
-          <div class="legend-block"><strong>关系线与证据图例</strong><span class="legend-line evidence-nt_text">新约经文</span><span class="legend-line evidence-ancient">古代原始史料</span><span class="legend-line evidence-modern">现代权威工具书</span></div>
+          <div class="legend-block"><strong>关系线与证据图例</strong><span class="legend-line evidence-nt_text">新约经文</span><span class="legend-line evidence-ot_text">旧约经文</span><span class="legend-line evidence-ancient">古代原始史料</span><span class="legend-line evidence-modern">现代权威工具书</span></div>
           <div class="ribbon-heading"><span>当前选择</span><strong id="evidence-ribbon-title">选择一条关系线查看出处</strong><small id="evidence-ribbon-meta">人物关系及出处会显示在这里。</small></div>
           <p id="graph-status">正在载入关系图…</p>
           <button type="button" class="ribbon-action" data-onclick="delegated" data-drawer-target="details">查看完整资料 <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
@@ -197,7 +216,7 @@ appRoot.innerHTML = `
       </div>
       <nav class="site-footer-links" aria-label="资料与联系方式">
         <a class="site-footer-link" href="mailto:xunalinxu1004@coudx.com"><i class="ph ph-envelope-simple" aria-hidden="true"></i><span>联系：xunalinxu1004@coudx.com</span></a>
-        <a class="site-footer-link" href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer">资料与代码 <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>
+      <a class="site-footer-link" href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer">资料与代码 <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>
       </nav>
     </footer>
   </div>`;
@@ -208,6 +227,7 @@ const peopleSearchInput = document.getElementById('people-search') as HTMLInputE
 const clearSearchButton = document.getElementById('clear-search') as HTMLButtonElement;
 const topicSelect = document.getElementById('topic-select') as HTMLSelectElement;
 const identityPresetSelect = document.getElementById('identity-preset') as HTMLSelectElement;
+const scopeSelect = document.getElementById('scope-select') as HTMLSelectElement;
 const topicShortcuts = document.getElementById('topic-shortcuts')!;
 const peopleList = document.getElementById('people-list')!;
 const peopleEmpty = document.getElementById('people-empty') as HTMLDivElement;
@@ -243,7 +263,7 @@ let identityPreset: IdentityPreset = 'conservative';
 let mobilePanel: MobilePanel = 'graph';
 let searchTimer: number | undefined;
 let isComposing = false;
-const filters: FilterState = { search: '', books: new Set(), relations: new Set(), eras: new Set(), evidences: new Set(ALL_EVIDENCE), personIncludes: new Set(), topic: 'all' };
+const filters: FilterState = { search: '', books: new Set(), relations: new Set(), eras: new Set(), evidences: new Set(ALL_EVIDENCE), personIncludes: new Set(), topic: 'all', scope: 'bible' };
 const identitySelection: Record<string, string> = {};
 const originalPersonById = new Map<string, Person>();
 const sourceById = new Map<string, Source>();
@@ -254,6 +274,25 @@ function escapeHtml(value: unknown) {
 }
 function normalize(value: unknown) { return String(value ?? '').normalize('NFKC').toLocaleLowerCase('zh-Hans').trim(); }
 function unique<T>(items: T[]) { return [...new Set(items)]; }
+function passageTestament(passage = '') {
+  const book = String(passage || '').trim().toUpperCase().replace(/^STEP:/i, '').split(/\s+/)[0] || '';
+  const ntSet = new Set(['LUK', 'ACT', 'MAT', 'MRK', 'JHN', 'ROM', '1CO', '2CO', 'GAL', 'EPH', 'COL', 'PHP', 'THA', '1TH', '2TH', '1TI', '2TI', 'TIT', 'PHM', 'HEB', 'JAS', '1PE', '2PE', '1JN', '2JN', '3JN', 'JUD', 'REV']);
+  if (ntSet.has(book)) return 'nt';
+  if (!book || book === '新约') return 'nt';
+  return 'ot';
+}
+function testamentSetFromBooks(books: string[] = []) {
+  return unique(books.map((book) => passageTestament(`${book} 1:1`)));
+}
+function personTestaments(person: Person) {
+  if (person.testaments?.length) return new Set(person.testaments);
+  return new Set(testamentSetFromBooks(person.books));
+}
+function relationTestaments(relationship: Relationship) {
+  if (relationship.testaments?.length) return new Set(relationship.testaments);
+  const inferred = unique(relationship.passages.map((passage) => passageTestament(passage)));
+  return new Set((inferred.length ? inferred : passageTestament(relationship.book) ? [passageTestament(relationship.book)] : []));
+}
 function isTraditionalOption(option: IdentityOption) {
   const status = normalize(option.statusRaw); const scope = normalize(option.scope); const preset = normalize(option.preset);
   return preset === 'traditional' || status === 'traditional' || status === 'disputed' || scope === 'common_tradition' || scope === 'common-tradition';
@@ -263,6 +302,11 @@ function isConservativeOption(option: IdentityOption) {
   return preset === 'conservative' || status === 'independent' || status === 'conservative' || status === 'confirmed' || scope === 'default' || scope === 'conservative';
 }
 function isMergeTraditionalOption(option: IdentityOption) { return Boolean(option.mergeGroupId && option.mergeTargetPersonId && isTraditionalOption(option)); }
+function resolvePersonId(personId: string) {
+  const raw = String(personId || '').trim();
+  if (!raw) return '';
+  return (data?.legacyIdMap?.[raw] || raw);
+}
 function pickIdentityForPreset(person: Person, preset: Exclude<IdentityPreset, 'custom'>) {
   if (!person.identityOptions.length) return undefined;
   const explicit = person.identityOptions.find((option) => normalize(option.preset) === preset);
@@ -323,7 +367,12 @@ function relationMatchesFilters(relationship: Relationship, mappedPersonIncludes
     const toEra = personMap.get(relationship.toPerson)?.era;
     if (!filters.eras.has(fromEra || '') && !filters.eras.has(toEra || '')) return false;
   }
-  if (!filters.evidences.has(relationship.evidenceLevel)) return false;
+  const evidenceLevels = relationship.evidenceLevels?.length ? relationship.evidenceLevels : [relationship.evidenceLevel];
+  if (!evidenceLevels.some((level) => filters.evidences.has(level))) return false;
+  if (filters.scope !== 'bible') {
+    const relationshipScopes = relationTestaments(relationship);
+    if (!relationshipScopes.has(filters.scope)) return false;
+  }
   if (mappedPersonIncludes.size && (!mappedPersonIncludes.has(relationship.fromPerson) || !mappedPersonIncludes.has(relationship.toPerson))) return false;
   return true;
 }
@@ -352,6 +401,12 @@ function buildVisibleModel(): VisibleModel {
   const relationships = data.relationships.filter(relationActiveForIdentity).map((relationship) => ({ ...relationship, fromPerson: mergedTo.get(relationship.fromPerson) || relationship.fromPerson, toPerson: mergedTo.get(relationship.toPerson) || relationship.toPerson })).filter((relationship) => relationship.fromPerson !== relationship.toPerson).filter((relationship) => relationMatchesFilters(relationship, mappedPersonIncludes, personMap));
   const relationshipNarrowed = filters.books.size > 0 || filters.relations.size > 0 || filters.evidences.size < ALL_EVIDENCE.length;
   let people = [...personMap.values()];
+  if (filters.scope !== 'bible') {
+    people = people.filter((person) => {
+      const personScopes = personTestaments(person);
+      return filters.scope === 'nt' ? personScopes.has('nt') : filters.scope === 'ot' ? personScopes.has('ot') : true;
+    });
+  }
   if (filters.eras.size) people = people.filter((person) => filters.eras.has(person.era));
   if (relationshipNarrowed || mappedPersonIncludes.size) { const connected = new Set<string>(); relationships.forEach((relationship) => { connected.add(relationship.fromPerson); connected.add(relationship.toPerson); }); people = people.filter((person) => connected.has(person.id) || person.id === selectedPersonId); }
   people.sort((a, b) => a.nameZh.localeCompare(b.nameZh, 'zh-Hans'));
@@ -412,7 +467,7 @@ function renderPeopleList() {
   peopleList.innerHTML = shown.map((person) => { const relationCount = currentModel?.relationships.filter((relationship) => relationship.fromPerson === person.id || relationship.toPerson === person.id).length || 0; const aliasPreview = person.aliases.slice(0, 3).join(' · ') || person.nameLat; return `<button type="button" data-onclick="delegated" class="person-row" data-person-id="${escapeHtml(person.id)}" aria-pressed="${person.id === selectedPersonId}"><i class="ph ph-user-circle person-icon" aria-hidden="true"></i><span class="person-row-copy"><span class="person-name-line"><strong>${escapeHtml(person.nameZh)}</strong><span class="era-badge">${escapeHtml(person.era)}</span></span><small>${escapeHtml(aliasPreview)}</small></span><span class="relation-count" aria-label="${relationCount} 条当前关系">${relationCount}</span></button>`; }).join('');
   if (matches.length > SEARCH_RESULT_LIMIT) peopleList.insertAdjacentHTML('beforeend', `<p class="list-limit-note">另有 ${matches.length - SEARCH_RESULT_LIMIT} 项；继续输入可缩小范围。</p>`);
 }
-function relationshipPriority(relationship: Relationship) { return ({ nt_text: 30, ancient: 20, modern: 10 }[relationship.evidenceLevel]) + ({ high: 3, medium: 2, low: 1 }[relationship.certainty]); }
+function relationshipPriority(relationship: Relationship) { return ({ nt_text: 30, ot_text: 28, ancient: 20, modern: 10 }[relationship.evidenceLevel]) + ({ high: 3, medium: 2, low: 1 }[relationship.certainty]); }
 function focusRelationships(model: VisibleModel) { return model.relationships.filter((relationship) => relationship.fromPerson === selectedPersonId || relationship.toPerson === selectedPersonId).sort((a, b) => relationshipPriority(b) - relationshipPriority(a) || a.type.localeCompare(b.type, 'zh-Hans')); }
 
 function renderGraph() {
@@ -478,11 +533,9 @@ function renderGraph() {
     elements: [
       ...nodes.map((person) => ({ group: 'nodes' as const, data: { id: person.id, label: person.nameZh, era: person.era, isFocus: person.id === selectedPersonId ? 1 : 0 }, position: positions.get(person.id) })),
       ...displayedRelationships.map((relationship) => {
-        const otherId = relationship.fromPerson === selectedPersonId ? relationship.toPerson : relationship.fromPerson;
-        const pointsAwayFromFocus = relationship.fromPerson === selectedPersonId;
-        const targetArrow = relationship.direction === 'undirected' ? 'none' : relationship.direction === 'bidirectional' || pointsAwayFromFocus ? 'triangle' : 'none';
-        const sourceArrow = relationship.direction === 'bidirectional' || (!pointsAwayFromFocus && relationship.direction !== 'undirected') ? 'triangle' : 'none';
-        return { group: 'edges' as const, data: { id: relationship.id, source: selectedPersonId, target: otherId, label: relationship.type, passage: relationship.passages[0] || '', direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], sourceArrow, targetArrow } };
+        const sourceArrow = relationship.direction === 'incoming' || relationship.direction === 'bidirectional' ? 'triangle' : 'none';
+        const targetArrow = relationship.direction === 'incoming' || relationship.direction === 'undirected' ? 'none' : 'triangle';
+        return { group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, passage: relationship.passages[0] || '', direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], sourceArrow, targetArrow } };
       })
     ],
     style: [
@@ -515,7 +568,11 @@ function sourceLink(sourceId: string) {
   const source = sourceById.get(sourceId); if (!source) return `<span>${escapeHtml(sourceId)}</span>`; if (!source.url) return `<span>${escapeHtml(source.label)}</span>`;
   return `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.label)} <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>`;
 }
-function relationshipDirection(relationship: Relationship, personId: string) { if (relationship.direction === 'undirected' || relationship.direction === 'bidirectional') return '双向／无方向'; return relationship.fromPerson === personId ? '由此人物指向' : '指向此人物'; }
+function relationshipDirection(relationship: Relationship, personId: string) {
+  if (relationship.direction === 'undirected' || relationship.direction === 'bidirectional') return '双向／无方向';
+  if (relationship.direction === 'incoming') return relationship.fromPerson === personId ? '指向此人物' : '由此人物指向';
+  return relationship.fromPerson === personId ? '由此人物指向' : '指向此人物';
+}
 function renderInspector() {
   if (!currentModel) return; const person = currentModel.personMap.get(selectedPersonId) || originalPersonById.get(selectedPersonId);
   if (!person) { inspectorContent.innerHTML = '<div class="empty-state"><strong>请选择人物</strong><p>可从左侧索引或图中节点进入。</p></div>'; return; }
@@ -539,12 +596,25 @@ function renderInspector() {
     const otherId = relationship.fromPerson === person.id ? relationship.toPerson : relationship.fromPerson; const other = currentModel?.personMap.get(otherId) || originalPersonById.get(otherId);
     return `<button type="button" data-onclick="delegated" class="relation-row evidence-border-${relationship.evidenceLevel}" data-relation-id="${escapeHtml(relationship.id)}" aria-pressed="${relationship.id === selectedRelationId}"><span class="relation-row-main"><strong>${escapeHtml(other?.nameZh || otherId)}</strong><small>${escapeHtml(relationship.type)} · ${escapeHtml(relationshipDirection(relationship, person.id))}</small></span><span class="relation-row-meta"><span>${escapeHtml(evidenceLabel[relationship.evidenceLevel])}</span><span>${relationship.passages.length} 处</span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`;
   }).join('');
-  const mentionRows = person.mentions.slice(0, 24).map((mention) => `<li><code>${escapeHtml(mention.passage)}</code><span>${sourceLink(mention.sourceId)}</span></li>`).join(''); const moreMentions = Math.max(0, person.mentions.length - 24);
+  const scopedMentions = person.mentions.filter((mention) => {
+    if (filters.scope === 'bible') return true;
+    return passageTestament(mention.passage) === filters.scope;
+  });
+  const mentionRows = scopedMentions.slice(0, 24).map((mention) => `<li><code>${escapeHtml(mention.passage)}</code><span>${sourceLink(mention.sourceId)}</span></li>`).join('');
+  const moreMentions = Math.max(0, scopedMentions.length - 24);
+  const mentionScopeTitle = filters.scope === 'ot' ? '旧约' : filters.scope === 'nt' ? '新约' : '全书';
+  const hasNT = (person.testamentCounts?.nt || 0) > 0;
+  const hasOT = (person.testamentCounts?.ot || 0) > 0;
+  const scopeSwitcher = filters.scope === 'nt'
+    ? (hasNT && hasOT ? '<div class="alias-line"><button type="button" class="secondary-button" data-go-scope="ot">查看其旧约出处</button></div>' : '')
+    : filters.scope === 'ot'
+      ? (hasNT && hasOT ? '<div class="alias-line"><button type="button" class="secondary-button" data-go-scope="nt">查看其新约出处</button></div>' : '')
+      : '';
   inspectorContent.innerHTML = `
     <section class="person-summary"><div class="person-title-row"><i class="ph ph-user-circle large-person-icon" aria-hidden="true"></i><div><p class="eyebrow">选中人物</p><h3>${escapeHtml(person.nameZh)}</h3><p>${escapeHtml(person.nameLat || '')}</p></div></div><div class="person-era-line"><span class="era-badge prominent">${escapeHtml(person.era)}</span>${person.era === '旧约背景' ? '<span>此人物生活在旧约时期，但因被新约点名而收录。</span>' : ''}</div><div class="alias-line">${person.aliases.slice(0, 8).map((alias) => `<span>${escapeHtml(alias)}</span>`).join('')}</div><label class="identity-field" for="person-identity"><span>身份选项</span><select id="person-identity" ${identityPerson.identityOptions.length < 2 ? 'disabled' : ''}>${identityPerson.identityOptions.map((option) => `<option value="${escapeHtml(option.id)}" ${option.id === selectedIdentity?.id ? 'selected' : ''}>${escapeHtml(option.label)} · ${escapeHtml(option.status)}</option>`).join('')}</select></label>${person.notes ? `<p class="editor-note"><i class="ph ph-info" aria-hidden="true"></i>${escapeHtml(person.notes)}</p>` : ''}</section>
     <section class="inspector-section"><div class="section-heading"><h3>关系总览</h3><span>${relationships.length}</span></div><div class="relation-list">${relationRows || '<div class="empty-state compact"><strong>无匹配关系</strong><p>可调整专题或证据层。</p></div>'}</div></section>
     ${selectedRelationshipHtml}
-    <details class="mention-details"><summary>新约出现位置 <span>${person.mentions.length}</span></summary><ul class="mention-list">${mentionRows}</ul>${moreMentions ? `<p class="list-limit-note">另有 ${moreMentions} 处；完整位置保存在公开数据文件中。</p>` : ''}</details>`;
+    <details class="mention-details"><summary>${mentionScopeTitle}出现位置 <span>${scopedMentions.length}</span></summary><ul class="mention-list">${mentionRows}</ul>${moreMentions ? `<p class="list-limit-note">另有 ${moreMentions} 处；完整位置保存在公开数据文件中。</p>` : ''}</details>${scopeSwitcher}`;
   const identitySelect = document.getElementById('person-identity') as HTMLSelectElement | null; if (identitySelect) identitySelect.onchange = () => applyPersonIdentity(person.id, identitySelect.value);
 }
 function renderCountsAndMeta() {
@@ -558,7 +628,10 @@ function renderDataViews() {
   renderTopicControls(); renderAdvancedFilters(); renderPeopleList(); renderGraph(); renderInspector(); syncEvidenceControls(); syncUrlState();
 }
 function selectPerson(personId: string, switchPanel = false) {
-  if (!currentModel) return; const mapped = currentModel.mergedTo.get(personId) || personId; if (!currentModel.personMap.has(mapped) && !originalPersonById.has(mapped)) return;
+  if (!currentModel) return;
+  const resolved = resolvePersonId(personId);
+  const mapped = currentModel.mergedTo.get(resolved) || resolved;
+  if (!currentModel.personMap.has(mapped) && !originalPersonById.has(mapped)) return;
   selectedPersonId = mapped; selectedRelationId = focusRelationships(currentModel)[0]?.id || ''; renderPeopleList(); renderGraph(); renderInspector(); syncUrlState(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('graph', true); else if (switchPanel) setDrawer('none');
 }
 function selectRelationship(relationshipId: string, switchPanel = false) { selectedRelationId = relationshipId; cy?.elements().unselect(); cy?.nodes().removeClass('route-neighbor'); const edge = cy?.$id(relationshipId); edge?.select(); edge?.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor'); renderInspector(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('details', true); }
@@ -583,14 +656,28 @@ function setDrawer(drawer: 'none' | 'people' | 'filters' | 'details', focusDrawe
 function syncUrlState() {
   const url = new URL(window.location.href); const set = (key: string, value: string, defaultValue = '') => value && value !== defaultValue ? url.searchParams.set(key, value) : url.searchParams.delete(key);
   const evidenceValue = filters.evidences.size ? [...filters.evidences].sort().join(',') : 'none';
-  set('q', filters.search); set('topic', filters.topic, 'all'); set('identity', identityPreset, 'conservative'); set('person', selectedPersonId); set('evidence', evidenceValue, [...ALL_EVIDENCE].sort().join(',')); set('eras', [...filters.eras].sort().join(',')); set('books', [...filters.books].sort().join(',')); set('types', [...filters.relations].sort().join(',')); window.history.replaceState(null, '', url);
+  set('q', filters.search);
+  set('topic', filters.topic, 'all');
+  set('identity', identityPreset, 'conservative');
+  set('person', selectedPersonId);
+  set('scope', filters.scope, 'bible');
+  set('evidence', evidenceValue, [...ALL_EVIDENCE].sort().join(','));
+  set('eras', [...filters.eras].sort().join(','));
+  set('books', [...filters.books].sort().join(','));
+  set('types', [...filters.relations].sort().join(','));
+  window.history.replaceState(null, '', url);
 }
 function loadUrlState() {
   if (!data) return; const params = new URLSearchParams(window.location.search); const initialTopic = params.get('topic') || 'all'; applyTopic(data.topicPresets.some((topic) => topic.id === initialTopic) ? initialTopic : 'all', false);
   filters.search = params.get('q') || ''; searchInput.value = filters.search; peopleSearchInput.value = filters.search; clearSearchButton.hidden = !filters.search;
   const rawEvidence = params.get('evidence'); const evidence = rawEvidence?.split(',').filter((value): value is EvidenceLevel => ALL_EVIDENCE.includes(value as EvidenceLevel)); if (rawEvidence === 'none') filters.evidences = new Set(); else if (evidence?.length) filters.evidences = new Set(evidence);
+  const rawScope = params.get('scope');
+  filters.scope = rawScope === 'nt' || rawScope === 'ot' || rawScope === 'bible' ? rawScope : 'bible';
+  scopeSelect.value = filters.scope;
   const eras = params.get('eras')?.split(',').filter(Boolean); const books = params.get('books')?.split(',').filter(Boolean); const types = params.get('types')?.split(',').filter(Boolean); if (eras?.length || books?.length || types?.length) { filters.eras = new Set(eras || []); filters.books = new Set(books || []); filters.relations = new Set(types || []); markFiltersCustom(); }
-  const preset = params.get('identity'); setIdentityPreset(preset === 'traditional' ? 'traditional' : 'conservative', false); selectedPersonId = params.get('person') || data.people.find((person) => person.nameZh === '保罗')?.id || data.people[0]?.id || '';
+  const preset = params.get('identity'); setIdentityPreset(preset === 'traditional' ? 'traditional' : 'conservative', false);
+  const requestedPerson = params.get('person');
+  selectedPersonId = resolvePersonId(requestedPerson || '') || data.people.find((person) => person.nameZh === '保罗')?.id || data.people[0]?.id || '';
 }
 function renderLoadError(message: string) {
   shell.setAttribute('aria-busy', 'false'); inspectorContent.innerHTML = `<div class="error-state" role="alert"><i class="ph ph-warning-circle" aria-hidden="true"></i><strong>资料载入失败</strong><p>${escapeHtml(message)}</p><button id="retry-load" class="primary-button" type="button" data-onclick="direct">重新载入</button></div>`; document.getElementById('retry-load')?.addEventListener('click', () => void loadGraphData());
@@ -611,12 +698,31 @@ peopleSearchInput.addEventListener('input', () => { if (isComposing) return; win
 clearSearchButton.addEventListener('click', () => { searchInput.value = ''; updateSearch(''); searchInput.focus(); });
 topicSelect.addEventListener('change', () => { if (topicSelect.value !== 'custom') applyTopic(topicSelect.value); });
 identityPresetSelect.addEventListener('change', () => { if (identityPresetSelect.value === 'conservative' || identityPresetSelect.value === 'traditional') setIdentityPreset(identityPresetSelect.value); });
+scopeSelect.addEventListener('change', () => {
+  if (scopeSelect.value === 'nt' || scopeSelect.value === 'ot' || scopeSelect.value === 'bible') {
+    filters.scope = scopeSelect.value;
+    markFiltersCustom();
+    renderDataViews();
+  }
+});
 topicShortcuts.addEventListener('click', (event) => { const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-topic]'); if (button?.dataset.topic) applyTopic(button.dataset.topic); });
 peopleList.addEventListener('click', (event) => { const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-person-id]'); if (button?.dataset.personId) selectPerson(button.dataset.personId, true); });
 peopleList.addEventListener('keydown', (event) => {
   if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return; const buttons = [...peopleList.querySelectorAll<HTMLButtonElement>('[data-person-id]')]; const current = buttons.indexOf(document.activeElement as HTMLButtonElement); const next = event.key === 'ArrowDown' ? Math.min(buttons.length - 1, current + 1) : Math.max(0, current - 1); if (buttons[next]) { event.preventDefault(); buttons[next].focus(); }
 });
-inspectorContent.addEventListener('click', (event) => { const relationButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-relation-id]'); const personButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-go-person]'); if (relationButton?.dataset.relationId) selectRelationship(relationButton.dataset.relationId); if (personButton?.dataset.goPerson) selectPerson(personButton.dataset.goPerson); });
+inspectorContent.addEventListener('click', (event) => {
+  const relationButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-relation-id]');
+  const personButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-go-person]');
+  const scopeButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-go-scope]');
+  if (relationButton?.dataset.relationId) selectRelationship(relationButton.dataset.relationId);
+  if (personButton?.dataset.goPerson) selectPerson(personButton.dataset.goPerson);
+  if (scopeButton?.dataset.goScope === 'nt' || scopeButton?.dataset.goScope === 'ot') {
+    filters.scope = scopeButton.dataset.goScope;
+    scopeSelect.value = filters.scope;
+    markFiltersCustom();
+    renderDataViews();
+  }
+});
 document.querySelector('.evidence-controls')?.addEventListener('change', (event) => { const input = (event.target as HTMLElement).closest<HTMLInputElement>('input[type="checkbox"]'); if (!input) return; const level = input.value as EvidenceLevel; if (input.checked) filters.evidences.add(level); else filters.evidences.delete(level); markFiltersCustom(); renderDataViews(); });
 document.querySelector('.advanced-filters')?.addEventListener('change', (event) => { const input = (event.target as HTMLElement).closest<HTMLInputElement>('input[data-filter-kind]'); if (!input) return; const targetSet = input.dataset.filterKind === 'book' ? filters.books : input.dataset.filterKind === 'era' ? filters.eras : filters.relations; if (input.checked) targetSet.add(input.value); else targetSet.delete(input.value); markFiltersCustom(); renderDataViews(); });
 document.getElementById('clear-eras')?.addEventListener('click', () => { filters.eras.clear(); markFiltersCustom(); renderDataViews(); });

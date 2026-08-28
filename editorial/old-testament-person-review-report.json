@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-08-26T00:00:00Z",
+  "review_rows": 2720,
+  "candidate_rows": 2720,
+  "source_id": "source:0002",
+  "report_path": "editorial/old-testament-person-review-report.json",
+  "output_path": "editorial/old-testament-person-review.jsonl",
+  "pending": 2720
+}

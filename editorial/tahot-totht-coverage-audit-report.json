@@ -1,0 +1,135 @@
+{
+  "audit_version": "1.0",
+  "generated_at": "2026-08-26T00:00:00Z",
+  "manifest_created_at": "2026-08-26T00:00:00Z",
+  "scope": "independent",
+  "source_id": "source:0005",
+  "status_pending": "coverage audit only, not acceptance",
+  "source_file_count": 8,
+  "candidate_total": 2720,
+  "status_summary": {
+    "covered": 2690,
+    "ambiguous": 14,
+    "unmatched": 16
+  },
+  "books": {
+    "total_expected": 39,
+    "covered": [
+      "1CH",
+      "1KI",
+      "1SA",
+      "2CH",
+      "2KI",
+      "2SA",
+      "AMO",
+      "DAN",
+      "DEU",
+      "ECC",
+      "EST",
+      "EXO",
+      "EZE",
+      "EZR",
+      "GEN",
+      "HAB",
+      "HAG",
+      "HOS",
+      "ISA",
+      "JDG",
+      "JER",
+      "JOB",
+      "JOL",
+      "JON",
+      "JOS",
+      "LAM",
+      "LEV",
+      "MAL",
+      "MIC",
+      "NAH",
+      "NEH",
+      "NUM",
+      "OBA",
+      "PRO",
+      "PSA",
+      "RUT",
+      "SNG",
+      "ZEC",
+      "ZEP"
+    ],
+    "covered_count": 39
+  },
+  "source_files": [
+    {
+      "source_path": ".sources/stepbible-data/Translators Amalgamated OT+NT/TAHOT Gen-Deu - Translators Amalgamated Hebrew OT - STEPBible.org CC BY.txt",
+      "source_kind": "tahot",
+      "sha256": "e9b8546ee48fe0bfc57c3b70f5f40e98d96580e803526d19026224e31753368b",
+      "bytes": 18190455,
+      "line_count": 140042,
+      "data_line_count": 90656,
+      "verse_reference_count": 5860
+    },
+    {
+      "source_path": ".sources/stepbible-data/Translators Amalgamated OT+NT/TAHOT Jos-Est - Translators Amalgamated Hebrew OT - STEPBible.org CC BY.txt",
+      "source_kind": "tahot",
+      "sha256": "195fee1dc3653bab33701f170734eb894ed647c10cd08cc61749375fe8b73775",
+      "bytes": 24500317,
+      "line_count": 183815,
+      "data_line_count": 121491,
+      "verse_reference_count": 7265
+    },
+    {
+      "source_path": ".sources/stepbible-data/Translators Amalgamated OT+NT/TAHOT Job-Sng - Translators Amalgamated Hebrew OT - STEPBible.org CC BY.txt",
+      "source_kind": "tahot",
+      "sha256": "84e118a97e5725e3847cdfdd593873513021c790c63cc91a0d41fca2b5db2ed5",
+      "bytes": 9540133,
+      "line_count": 76191,
+      "data_line_count": 44838,
+      "verse_reference_count": 5004
+    },
+    {
+      "source_path": ".sources/stepbible-data/Translators Amalgamated OT+NT/TAHOT Isa-Mal - Translators Amalgamated Hebrew OT - STEPBible.org CC BY.txt",
+      "source_kind": "tahot",
+      "sha256": "f3ded203d2a74d6368932c97ae550d1d0754b271af491dc0dedf36fe3ba0bcc5",
+      "bytes": 17977518,
+      "line_count": 137445,
+      "data_line_count": 90039,
+      "verse_reference_count": 5760
+    },
+    {
+      "source_path": ".sources/stepbible-data/Translators Amalgamated OT+NT/OLD format TOTHT/TOTHT Gen-Deu - Translators OT Hebrew Tagged text - STEPBible.org CC BY.txt",
+      "source_kind": "totht",
+      "sha256": "d9b3f2d2a40d0237ec05c9556d974c163e76d1a6de1bd7ab2b61349b18a69d24",
+      "bytes": 16463727,
+      "line_count": 140023,
+      "data_line_count": 90653,
+      "verse_reference_count": 5861
+    },
+    {
+      "source_path": ".sources/stepbible-data/Translators Amalgamated OT+NT/OLD format TOTHT/TOTHT Jos-Est - Translators OT Hebrew Tagged text - STEPBible.org CC BY.txt",
+      "source_kind": "totht",
+      "sha256": "9d8386c2786a970d96667f807415076bc581e1caf4328224d698628d72b2f017",
+      "bytes": 22179317,
+      "line_count": 183808,
+      "data_line_count": 121480,
+      "verse_reference_count": 7269
+    },
+    {
+      "source_path": ".sources/stepbible-data/Translators Amalgamated OT+NT/OLD format TOTHT/TOTHT Job-Sng - Translators OT Hebrew Tagged text - STEPBible.org CC BY.txt",
+      "source_kind": "totht",
+      "sha256": "2b88a766774723cc4a898aabb6ba53eaecd83afbe874d5ca346514976b4ac589",
+      "bytes": 8691594,
+      "line_count": 75840,
+      "data_line_count": 44785,
+      "verse_reference_count": 4955
+    },
+    {
+      "source_path": ".sources/stepbible-data/Translators Amalgamated OT+NT/OLD format TOTHT/TOTHT Isa-Mal - Translators OT Hebrew Tagged text - STEPBible.org CC BY.txt",
+      "source_kind": "totht",
+      "sha256": "7e0325cafe0291bb19e73950b6341fad317b0ff5eab5ccac7fba7b8516a4736c",
+      "bytes": 16310651,
+      "line_count": 137411,
+      "data_line_count": 90017,
+      "verse_reference_count": 5760
+    }
+  ],
+  "note": "独立覆盖审计：不产生任何发布人物或关系的可见变更。"
+}

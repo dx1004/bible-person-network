@@ -16,12 +16,17 @@ const SOURCES_PATH = path.join(DATA_DIR, 'sources.jsonl');
 const REVIEW_PATH = path.join(EDITORIAL_DIR, 'relationship-review.jsonl');
 const OUTPUT_PATH = ASSERTIONS_PATH;
 
-const NT_BOOKS = new Set([
+const BIBLE_BOOKS = new Set([
   'MAT', 'MRK', 'LUK', 'JHN', 'ACT',
   'ROM', '1CO', '2CO', 'GAL', 'EPH', 'PHP', 'COL',
   '1TH', '2TH', '1TI', '2TI', 'TIT', 'PHM',
   'HEB', 'JAS', '1PE', '2PE', '1JN', '2JN', '3JN',
-  'JUD', 'REV'
+  'JUD', 'REV',
+  'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT',
+  '1SA', '2SA', '1KI', '2KI', '1CH', '2CH', 'EZR', 'NEH',
+  'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER',
+  'LAM', 'EZK', 'DAN', 'HOS', 'JOL', 'AMO', 'OBA', 'JON',
+  'MIC', 'NAM', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL'
 ]);
 
 function parseArgs() {
@@ -80,7 +85,7 @@ function parseArgsDecisionRefs(rawRefs, sourceSet) {
       throw new Error(`Evidence ref source_id not found: ${ref.source_id}`);
     }
     if (!ref.passage) throw new Error('Decision evidence reference missing passage');
-    if (!['nt_text', 'ancient_text', 'reference', 'modern_reference', 'editorial'].includes(ref.evidence_level)) {
+    if (!['nt_text', 'ot_text', 'ancient_text', 'reference', 'modern_reference', 'editorial'].includes(ref.evidence_level)) {
       throw new Error(`Invalid evidence_level ${ref.evidence_level}`);
     }
     if (Number.isNaN(ref.certainty) || ref.certainty < 0 || ref.certainty > 1) {
@@ -116,7 +121,7 @@ function normalizeNtLocator(passage) {
   if (/^\s*STEP:/i.test(passage)) return false;
   const match = passage.trim().match(/^([1-3]?[A-Z]{2,4})\s+(\d+:\d+(?:-\d+)?)$/);
   if (!match) return false;
-  if (!NT_BOOKS.has(match[1])) return false;
+  if (!BIBLE_BOOKS.has(match[1])) return false;
   return `${match[1]} ${match[2]}`;
 }
 
@@ -147,7 +152,7 @@ function validateDecision(name, decision, sourceSet) {
     return { ...d, decision_evidence_refs: refs };
   }
 
-  if (!d.decision_relation_type || !['kinship', 'teacher_student', 'collegial', 'commission', 'host', 'political', 'legal', 'hostile'].includes(d.decision_relation_type)) {
+  if (!d.decision_relation_type || !['kinship', 'teacher_student', 'collegial', 'commission', 'host', 'political', 'legal', 'hostile', 'succession', 'alliance', 'military', 'prophetic_confrontation', 'covenant'].includes(d.decision_relation_type)) {
     throw new Error(`${name}: accepted decision_relation_type invalid`);
   }
   if (!d.decision_direction || !['directed', 'undirected'].includes(d.decision_direction)) {

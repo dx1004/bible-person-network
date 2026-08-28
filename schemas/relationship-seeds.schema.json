@@ -3,28 +3,17 @@
   "title": "Explicit relationship seeds",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "seed_id",
-    "subject_person_id",
-    "object_person_id",
-    "relation_type",
-    "direction",
-    "source_id",
-    "evidence"
-  ],
+  "required": ["seed_id", "subject_person_id", "object_person_id", "relation_type", "direction", "source_id", "evidence"],
   "properties": {
     "seed_id": { "type": "string", "pattern": "^seed-rs-\\d{4}$" },
-    "subject_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
-    "object_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "subject_person_id": { "type": "string", "anyOf": [{ "pattern": "^nt-people-\\d{4}$" }, { "pattern": "^person-\\d{6}$" }] },
+    "object_person_id": { "type": "string", "anyOf": [{ "pattern": "^nt-people-\\d{4}$" }, { "pattern": "^person-\\d{6}$" }] },
     "relation_type": {
       "type": "string",
-      "enum": ["teacher_student", "collegial", "commission", "host", "political", "legal", "hostile"]
+      "enum": ["kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile", "succession", "alliance", "military", "prophetic_confrontation", "covenant"]
     },
     "direction": { "type": "string", "enum": ["directed", "undirected"] },
-    "relation_subtype": {
-      "type": ["null", "string"],
-      "enum": ["parent", "child", "sibling", "partner", null]
-    },
+    "relation_subtype": { "type": ["null", "string"], "enum": [null, "parent", "child", "sibling", "partner"] },
     "source_id": { "type": "string", "enum": ["source:0001", "source:0004"] },
     "evidence": {
       "type": "array",
@@ -36,17 +25,13 @@
         "required": ["source_id", "passage", "evidence_level", "note", "certainty"],
         "properties": {
           "source_id": { "type": "string", "enum": ["source:0001", "source:0004"] },
-          "passage": {
-            "type": "string",
-            "pattern": "^(?:(?:MAT|MRK|LUK|JHN|ACT|ROM|1CO|2CO|GAL|EPH|PHP|COL|1TH|2TH|1TI|2TI|TIT|PHM|HEB|JAS|1PE|2PE|1JN|2JN|3JN|JUD|REV) \\d+:\\d+(?:-\\d+)?|Josephus, Antiquities 18\\.116-119)$"
-          },
-          "evidence_level": { "type": "string", "enum": ["nt_text", "ancient_text"] },
+          "passage": { "type": "string" },
+          "evidence_level": { "type": "string", "enum": ["nt_text", "ot_text", "ancient_text", "reference", "modern_reference", "editorial"] },
           "note": { "type": "string" },
           "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
         }
       }
     },
-    "created_at": { "type": "string", "format": "date-time" },
     "updated_at": { "type": "string", "format": "date-time" }
   }
 }

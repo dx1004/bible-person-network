@@ -237,7 +237,8 @@ function parseSeedRows(seedPath) {
     seen.add(sid);
     const subjectPerson = String(seed.subject_person_id || '');
     const objectPerson = String(seed.object_person_id || '');
-    if (!/^nt-people-\d{4}$/.test(subjectPerson) || !/^nt-people-\d{4}$/.test(objectPerson)) {
+    const validPersonId = (value) => /^(?:person-\d{6}|nt-people-\d{4})$/.test(value);
+    if (!validPersonId(subjectPerson) || !validPersonId(objectPerson)) {
       throw new Error(`Invalid person ids in seed ${sid}`);
     }
     if (subjectPerson === objectPerson) {
@@ -1270,7 +1271,7 @@ function buildCorpus() {
     }
     let candidate;
     do {
-      candidate = `nt-people-${padNum(nextPersonNo++)}`;
+      candidate = `person-${String(nextPersonNo++).padStart(6, '0')}`;
     } while (existingPersonIds.has(candidate) || usedPersonIds.has(candidate));
     usedPersonIds.add(candidate);
     return candidate;

@@ -6,13 +6,25 @@
   "required": ["option_id", "person_id", "identity_key", "status", "identity_scope", "rationale", "created_at", "updated_at"],
   "properties": {
     "option_id": { "type": "string", "pattern": "^idopt-\\d{4}$" },
-    "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "person_id": {
+      "type": "string",
+      "anyOf": [
+        { "pattern": "^nt-people-\\d{4}$" },
+        { "pattern": "^person-\\d{6}$" }
+      ]
+    },
     "identity_key": { "type": "string", "minLength": 1 },
     "status": { "type": "string", "enum": ["independent", "merged", "linked", "disputed"] },
-    "identity_scope": { "type": "string", "enum": ["default", "conservative", "common_tradition"] },
+    "identity_scope": { "type": "string", "enum": ["default", "conservative", "common_tradition", "otnt_bridge"] },
     "rationale": { "type": "string" },
     "merge_group_id": { "type": "string", "minLength": 1 },
-    "merge_target_person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "merge_target_person_id": {
+      "type": "string",
+      "anyOf": [
+        { "pattern": "^nt-people-\\d{4}$" },
+        { "pattern": "^person-\\d{6}$" }
+      ]
+    },
     "display_label": { "type": "string", "minLength": 1 },
     "editor_note": { "type": "string" },
     "created_at": { "type": "string", "format": "date-time" },

@@ -1,8 +1,8 @@
 {
-  "name": "new-testament-person-network-web",
+  "name": "bible-person-network-web",
   "version": "0.1.0",
   "private": true,
-  "description": "Interactive New Testament people relationship network frontend.",
+    "description": "Interactive Bible people relationship network frontend.",
   "license": "MIT",
   "type": "module",
   "scripts": {

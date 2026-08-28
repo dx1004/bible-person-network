@@ -15,1324 +15,1324 @@
       "target_id": "cov-ts-0001",
       "relation_type": "teacher_student",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0233",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000233",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 9:9",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0233."
+      "rationale": "Direct NT-seed target between person-000156 and person-000233."
     },
     {
       "target_id": "cov-ts-0002",
       "relation_type": "teacher_student",
       "direction": "directed",
-      "subject_person_id": "nt-people-0116",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000116",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 22:3",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0116 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000116 and person-000266."
     },
     {
       "target_id": "cov-ts-0003",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0054",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000054",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 13:2-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0054."
+      "rationale": "Direct NT-seed target between person-000266 and person-000054."
     },
     {
       "target_id": "cov-ts-0004",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0320",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000320",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 15:40-41",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0320."
+      "rationale": "Direct NT-seed target between person-000266 and person-000320."
     },
     {
       "target_id": "cov-ts-0005",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0283",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000283",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ROM 16:3",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0283."
+      "rationale": "Direct NT-seed target between person-000266 and person-000283."
     },
     {
       "target_id": "cov-ts-0006",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0036",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000036",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ROM 16:3",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0036."
+      "rationale": "Direct NT-seed target between person-000266 and person-000036."
     },
     {
       "target_id": "cov-ts-0007",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0270",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000270",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0270."
+      "rationale": "Direct NT-seed target between person-000156 and person-000270."
     },
     {
       "target_id": "cov-ts-0008",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0351",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000351",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "1TI 1:18",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0351."
+      "rationale": "Direct NT-seed target between person-000266 and person-000351."
     },
     {
       "target_id": "cov-ts-0009",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0352",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000352",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "TIT 1:5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0352."
+      "rationale": "Direct NT-seed target between person-000266 and person-000352."
     },
     {
       "target_id": "cov-ts-0010",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0036",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000036",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 18:2-3",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0036 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000036 and person-000266."
     },
     {
       "target_id": "cov-ts-0011",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0283",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000283",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 18:2-3",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0283 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000283 and person-000266."
     },
     {
       "target_id": "cov-ts-0012",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0210",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000210",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 16:14-15",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0210 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000210 and person-000266."
     },
     {
       "target_id": "cov-ts-0013",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0126",
-      "object_person_id": "nt-people-0037",
+      "subject_person_id": "person-000126",
+      "object_person_id": "person-000037",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 2:22",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0126 and nt-people-0037."
+      "rationale": "Direct NT-seed target between person-000126 and person-000037."
     },
     {
       "target_id": "cov-ts-0014",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0282",
-      "object_person_id": "nt-people-0156",
+      "subject_person_id": "person-000282",
+      "object_person_id": "person-000156",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 27:26",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0282 and nt-people-0156."
+      "rationale": "Direct NT-seed target between person-000282 and person-000156."
     },
     {
       "target_id": "cov-ts-0015",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0115",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000115",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 18:12-16",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0115 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000115 and person-000266."
     },
     {
       "target_id": "cov-ts-0016",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0107",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000107",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 24:10",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0107 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000107 and person-000266."
     },
     {
       "target_id": "cov-ts-0017",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0108",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000108",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 25:12",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0108 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000108 and person-000266."
     },
     {
       "target_id": "cov-ts-0018",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0189",
-      "object_person_id": "nt-people-0156",
+      "subject_person_id": "person-000189",
+      "object_person_id": "person-000156",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 26:47-49",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0189 and nt-people-0156."
+      "rationale": "Direct NT-seed target between person-000189 and person-000156."
     },
     {
       "target_id": "cov-ts-0019",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0124",
-      "object_person_id": "nt-people-0143",
+      "subject_person_id": "person-000124",
+      "object_person_id": "person-000143",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 12:1-2",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0124 and nt-people-0143."
+      "rationale": "Direct NT-seed target between person-000124 and person-000143."
     },
     {
       "target_id": "cov-ts-0020",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0124",
-      "object_person_id": "nt-people-0270",
+      "subject_person_id": "person-000124",
+      "object_person_id": "person-000270",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 12:3-4",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0124 and nt-people-0270."
+      "rationale": "Direct NT-seed target between person-000124 and person-000270."
     },
     {
       "target_id": "cov-ts-0021",
       "relation_type": "teacher_student",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0270",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000270",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 4:18-22",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0270."
+      "rationale": "Direct NT-seed target between person-000156 and person-000270."
     },
     {
       "target_id": "cov-ts-0022",
       "relation_type": "teacher_student",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0028",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000028",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 4:18-22",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0028."
+      "rationale": "Direct NT-seed target between person-000156 and person-000028."
     },
     {
       "target_id": "cov-ts-0023",
       "relation_type": "teacher_student",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0143",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000143",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 4:18-22",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0143."
+      "rationale": "Direct NT-seed target between person-000156 and person-000143."
     },
     {
       "target_id": "cov-ts-0024",
       "relation_type": "teacher_student",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0166",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000166",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 4:18-22",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0166."
+      "rationale": "Direct NT-seed target between person-000156 and person-000166."
     },
     {
       "target_id": "cov-ts-0026",
       "relation_type": "teacher_student",
       "direction": "directed",
-      "subject_person_id": "nt-people-0283",
-      "object_person_id": "nt-people-0034",
+      "subject_person_id": "person-000283",
+      "object_person_id": "person-000034",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 18:26",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0283 and nt-people-0034."
+      "rationale": "Direct NT-seed target between person-000283 and person-000034."
     },
     {
       "target_id": "cov-ts-0027",
       "relation_type": "teacher_student",
       "direction": "directed",
-      "subject_person_id": "nt-people-0036",
-      "object_person_id": "nt-people-0034",
+      "subject_person_id": "person-000036",
+      "object_person_id": "person-000034",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 18:26",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0036 and nt-people-0034."
+      "rationale": "Direct NT-seed target between person-000036 and person-000034."
     },
     {
       "target_id": "cov-ts-0028",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0034",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000034",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "1CO 3:6-9",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0034."
+      "rationale": "Direct NT-seed target between person-000266 and person-000034."
     },
     {
       "target_id": "cov-ts-0029",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0358",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000358",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ROM 16:9",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0358."
+      "rationale": "Direct NT-seed target between person-000266 and person-000358."
     },
     {
       "target_id": "cov-ts-0030",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0097",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000097",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHP 2:25",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0097."
+      "rationale": "Direct NT-seed target between person-000266 and person-000097."
     },
     {
       "target_id": "cov-ts-0031",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0272",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000272",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHM 1:1",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0272."
+      "rationale": "Direct NT-seed target between person-000266 and person-000272."
     },
     {
       "target_id": "cov-ts-0032",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0219",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000219",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHM 1:24",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0219."
+      "rationale": "Direct NT-seed target between person-000266 and person-000219."
     },
     {
       "target_id": "cov-ts-0033",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0040",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000040",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHM 1:24",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0040."
+      "rationale": "Direct NT-seed target between person-000266 and person-000040."
     },
     {
       "target_id": "cov-ts-0034",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0078",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000078",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHM 1:24",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0078."
+      "rationale": "Direct NT-seed target between person-000266 and person-000078."
     },
     {
       "target_id": "cov-ts-0035",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0209",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000209",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHM 1:24",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0209."
+      "rationale": "Direct NT-seed target between person-000266 and person-000209."
     },
     {
       "target_id": "cov-ts-0036",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0104",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000104",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHP 4:2-3",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0104."
+      "rationale": "Direct NT-seed target between person-000266 and person-000104."
     },
     {
       "target_id": "cov-ts-0037",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0339",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000339",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHP 4:2-3",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0339."
+      "rationale": "Direct NT-seed target between person-000266 and person-000339."
     },
     {
       "target_id": "cov-ts-0038",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0070",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000070",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHP 4:2-3",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0070."
+      "rationale": "Direct NT-seed target between person-000266 and person-000070."
     },
     {
       "target_id": "cov-ts-0039",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0096",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000096",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "COL 1:7",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0096."
+      "rationale": "Direct NT-seed target between person-000266 and person-000096."
     },
     {
       "target_id": "cov-ts-0040",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0356",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000356",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "COL 4:7",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0356."
+      "rationale": "Direct NT-seed target between person-000266 and person-000356."
     },
     {
       "target_id": "cov-ts-0041",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0195",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000195",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "COL 4:10-11",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0195."
+      "rationale": "Direct NT-seed target between person-000266 and person-000195."
     },
     {
       "target_id": "cov-ts-0042",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0054",
-      "object_person_id": "nt-people-0219",
+      "subject_person_id": "person-000054",
+      "object_person_id": "person-000219",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 15:39",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0054 and nt-people-0219."
+      "rationale": "Direct NT-seed target between person-000054 and person-000219."
     },
     {
       "target_id": "cov-ts-0043",
       "relation_type": "teacher_student",
       "direction": "directed",
-      "subject_person_id": "nt-people-0049",
-      "object_person_id": "nt-people-0050",
+      "subject_person_id": "person-000049",
+      "object_person_id": "person-000050",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "REV 2:14",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0049 and nt-people-0050."
+      "rationale": "Direct NT-seed target between person-000049 and person-000050."
     },
     {
       "target_id": "cov-ts-0044",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0220",
-      "object_person_id": "nt-people-0156",
+      "subject_person_id": "person-000220",
+      "object_person_id": "person-000156",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "LUK 10:38-40",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0220 and nt-people-0156."
+      "rationale": "Direct NT-seed target between person-000220 and person-000156."
     },
     {
       "target_id": "cov-ts-0045",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0361",
-      "object_person_id": "nt-people-0156",
+      "subject_person_id": "person-000361",
+      "object_person_id": "person-000156",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "LUK 19:5-6",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0361 and nt-people-0156."
+      "rationale": "Direct NT-seed target between person-000361 and person-000156."
     },
     {
       "target_id": "cov-ts-0046",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0210",
-      "object_person_id": "nt-people-0320",
+      "subject_person_id": "person-000210",
+      "object_person_id": "person-000320",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 16:40",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0210 and nt-people-0320."
+      "rationale": "Direct NT-seed target between person-000210 and person-000320."
     },
     {
       "target_id": "cov-ts-0047",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0147",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000147",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 17:5-7",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0147 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000147 and person-000266."
     },
     {
       "target_id": "cov-ts-0048",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0147",
-      "object_person_id": "nt-people-0320",
+      "subject_person_id": "person-000147",
+      "object_person_id": "person-000320",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 17:5-7",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0147 and nt-people-0320."
+      "rationale": "Direct NT-seed target between person-000147 and person-000320."
     },
     {
       "target_id": "cov-ts-0049",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0274",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000274",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 21:8",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0274 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000274 and person-000266."
     },
     {
       "target_id": "cov-ts-0050",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0241",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000241",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 21:16",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0241 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000241 and person-000266."
     },
     {
       "target_id": "cov-ts-0051",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0285",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000285",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 28:7",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0285 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000285 and person-000266."
     },
     {
       "target_id": "cov-ts-0052",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0114",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000114",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ROM 16:23",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0114 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000114 and person-000266."
     },
     {
       "target_id": "cov-ts-0053",
       "relation_type": "host",
       "direction": "directed",
-      "subject_person_id": "nt-people-0071",
-      "object_person_id": "nt-people-0270",
+      "subject_person_id": "person-000071",
+      "object_person_id": "person-000270",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 10:22-24",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0071 and nt-people-0270."
+      "rationale": "Direct NT-seed target between person-000071 and person-000270."
     },
     {
       "target_id": "cov-ts-0054",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0348",
-      "object_person_id": "nt-people-0282",
+      "subject_person_id": "person-000348",
+      "object_person_id": "person-000282",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "LUK 3:1",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0348 and nt-people-0282."
+      "rationale": "Direct NT-seed target between person-000348 and person-000282."
     },
     {
       "target_id": "cov-ts-0055",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0348",
-      "object_person_id": "nt-people-0125",
+      "subject_person_id": "person-000348",
+      "object_person_id": "person-000125",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "LUK 3:1",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0348 and nt-people-0125."
+      "rationale": "Direct NT-seed target between person-000348 and person-000125."
     },
     {
       "target_id": "cov-ts-0056",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0348",
-      "object_person_id": "nt-people-0211",
+      "subject_person_id": "person-000348",
+      "object_person_id": "person-000211",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "LUK 3:1",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0348 and nt-people-0211."
+      "rationale": "Direct NT-seed target between person-000348 and person-000211."
     },
     {
       "target_id": "cov-ts-0057",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0348",
-      "object_person_id": "nt-people-0275",
+      "subject_person_id": "person-000348",
+      "object_person_id": "person-000275",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "LUK 3:1",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0348 and nt-people-0275."
+      "rationale": "Direct NT-seed target between person-000348 and person-000275."
     },
     {
       "target_id": "cov-ts-0058",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0069",
-      "object_person_id": "nt-people-0036",
+      "subject_person_id": "person-000069",
+      "object_person_id": "person-000036",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 18:2",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0069 and nt-people-0036."
+      "rationale": "Direct NT-seed target between person-000069 and person-000036."
     },
     {
       "target_id": "cov-ts-0059",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0069",
-      "object_person_id": "nt-people-0283",
+      "subject_person_id": "person-000069",
+      "object_person_id": "person-000283",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 18:2",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0069 and nt-people-0283."
+      "rationale": "Direct NT-seed target between person-000069 and person-000283."
     },
     {
       "target_id": "cov-ts-0060",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0107",
-      "object_person_id": "nt-people-0108",
+      "subject_person_id": "person-000107",
+      "object_person_id": "person-000108",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 24:27",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0107 and nt-people-0108."
+      "rationale": "Direct NT-seed target between person-000107 and person-000108."
     },
     {
       "target_id": "cov-ts-0061",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0047",
-      "object_person_id": "nt-people-0175",
+      "subject_person_id": "person-000047",
+      "object_person_id": "person-000175",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "LUK 2:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0047 and nt-people-0175."
+      "rationale": "Direct NT-seed target between person-000047 and person-000175."
     },
     {
       "target_id": "cov-ts-0062",
       "relation_type": "political",
       "direction": "directed",
-      "subject_person_id": "nt-people-0047",
-      "object_person_id": "nt-people-0223",
+      "subject_person_id": "person-000047",
+      "object_person_id": "person-000223",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "LUK 2:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0047 and nt-people-0223."
+      "rationale": "Direct NT-seed target between person-000047 and person-000223."
     },
     {
       "target_id": "cov-ts-0063",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0282",
-      "object_person_id": "nt-people-0051",
+      "subject_person_id": "person-000282",
+      "object_person_id": "person-000051",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 27:26",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0282 and nt-people-0051."
+      "rationale": "Direct NT-seed target between person-000282 and person-000051."
     },
     {
       "target_id": "cov-ts-0064",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0125",
-      "object_person_id": "nt-people-0165",
+      "subject_person_id": "person-000125",
+      "object_person_id": "person-000165",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 14:3-10",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0125 and nt-people-0165."
+      "rationale": "Direct NT-seed target between person-000125 and person-000165."
     },
     {
       "target_id": "cov-ts-0065",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0125",
-      "object_person_id": "nt-people-0156",
+      "subject_person_id": "person-000125",
+      "object_person_id": "person-000156",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "LUK 23:7-11",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0125 and nt-people-0156."
+      "rationale": "Direct NT-seed target between person-000125 and person-000156."
     },
     {
       "target_id": "cov-ts-0066",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0031",
-      "object_person_id": "nt-people-0156",
+      "subject_person_id": "person-000031",
+      "object_person_id": "person-000156",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "JHN 18:13-24",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0031 and nt-people-0156."
+      "rationale": "Direct NT-seed target between person-000031 and person-000156."
     },
     {
       "target_id": "cov-ts-0067",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0062",
-      "object_person_id": "nt-people-0156",
+      "subject_person_id": "person-000062",
+      "object_person_id": "person-000156",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 26:57-66",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0062 and nt-people-0156."
+      "rationale": "Direct NT-seed target between person-000062 and person-000156."
     },
     {
       "target_id": "cov-ts-0068",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0124",
-      "object_person_id": "nt-people-0143",
+      "subject_person_id": "person-000124",
+      "object_person_id": "person-000143",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 12:1-4",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0124 and nt-people-0143."
+      "rationale": "Direct NT-seed target between person-000124 and person-000143."
     },
     {
       "target_id": "cov-ts-0069",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0124",
-      "object_person_id": "nt-people-0270",
+      "subject_person_id": "person-000124",
+      "object_person_id": "person-000270",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 12:1-4",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0124 and nt-people-0270."
+      "rationale": "Direct NT-seed target between person-000124 and person-000270."
     },
     {
       "target_id": "cov-ts-0070",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0212",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000212",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 22:24",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0212 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000212 and person-000266."
     },
     {
       "target_id": "cov-ts-0071",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0025",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000025",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 23:2",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0025 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000025 and person-000266."
     },
     {
       "target_id": "cov-ts-0072",
       "relation_type": "legal",
       "direction": "directed",
-      "subject_person_id": "nt-people-0014",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000014",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 26:1",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0014 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000014 and person-000266."
     },
     {
       "target_id": "cov-ts-0073",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0126",
-      "object_person_id": "nt-people-0156",
+      "subject_person_id": "person-000126",
+      "object_person_id": "person-000156",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 2:13-16",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0126 and nt-people-0156."
+      "rationale": "Direct NT-seed target between person-000126 and person-000156."
     },
     {
       "target_id": "cov-ts-0074",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0127",
-      "object_person_id": "nt-people-0165",
+      "subject_person_id": "person-000127",
+      "object_person_id": "person-000165",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MRK 6:19",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0127 and nt-people-0165."
+      "rationale": "Direct NT-seed target between person-000127 and person-000165."
     },
     {
       "target_id": "cov-ts-0075",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0053",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000053",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 13:7-8",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0053 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000053 and person-000266."
     },
     {
       "target_id": "cov-ts-0076",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0053",
-      "object_person_id": "nt-people-0054",
+      "subject_person_id": "person-000053",
+      "object_person_id": "person-000054",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 13:7-8",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0053 and nt-people-0054."
+      "rationale": "Direct NT-seed target between person-000053 and person-000054."
     },
     {
       "target_id": "cov-ts-0077",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0079",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000079",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 19:24-29",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0079 and nt-people-0266."
+      "rationale": "Direct NT-seed target between person-000079 and person-000266."
     },
     {
       "target_id": "cov-ts-0078",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0145",
-      "object_person_id": "nt-people-0242",
+      "subject_person_id": "person-000145",
+      "object_person_id": "person-000242",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "2TI 3:8",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0145 and nt-people-0242."
+      "rationale": "Direct NT-seed target between person-000145 and person-000242."
     },
     {
       "target_id": "cov-ts-0079",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0063",
-      "object_person_id": "nt-people-0002",
+      "subject_person_id": "person-000063",
+      "object_person_id": "person-000002",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "1JN 3:12",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0063 and nt-people-0002."
+      "rationale": "Direct NT-seed target between person-000063 and person-000002."
     },
     {
       "target_id": "cov-ts-0080",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0337",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000337",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 7:58; ACT 8:1",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0337."
+      "rationale": "Direct NT-seed target between person-000266 and person-000337."
     },
     {
       "target_id": "cov-ts-0081",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0028",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000028",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0028."
+      "rationale": "Direct NT-seed target between person-000156 and person-000028."
     },
     {
       "target_id": "cov-ts-0082",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0143",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000143",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0143."
+      "rationale": "Direct NT-seed target between person-000156 and person-000143."
     },
     {
       "target_id": "cov-ts-0083",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0166",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000166",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0166."
+      "rationale": "Direct NT-seed target between person-000156 and person-000166."
     },
     {
       "target_id": "cov-ts-0084",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0233",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000233",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0233."
+      "rationale": "Direct NT-seed target between person-000156 and person-000233."
     },
     {
       "target_id": "cov-ts-0085",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0055",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000055",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0055."
+      "rationale": "Direct NT-seed target between person-000156 and person-000055."
     },
     {
       "target_id": "cov-ts-0086",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0347",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000347",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0347."
+      "rationale": "Direct NT-seed target between person-000156 and person-000347."
     },
     {
       "target_id": "cov-ts-0087",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0141",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000141",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0141."
+      "rationale": "Direct NT-seed target between person-000156 and person-000141."
     },
     {
       "target_id": "cov-ts-0088",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0188",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000188",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0188."
+      "rationale": "Direct NT-seed target between person-000156 and person-000188."
     },
     {
       "target_id": "cov-ts-0089",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0189",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000189",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0189."
+      "rationale": "Direct NT-seed target between person-000156 and person-000189."
     },
     {
       "target_id": "cov-ts-0090",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0276",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000276",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0276."
+      "rationale": "Direct NT-seed target between person-000156 and person-000276."
     },
     {
       "target_id": "cov-ts-0091",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0156",
-      "object_person_id": "nt-people-0328",
+      "subject_person_id": "person-000156",
+      "object_person_id": "person-000328",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "MAT 10:1-5",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0156 and nt-people-0328."
+      "rationale": "Direct NT-seed target between person-000156 and person-000328."
     },
     {
       "target_id": "cov-ts-0093",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0097",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000097",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHP 2:25",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0097."
+      "rationale": "Direct NT-seed target between person-000266 and person-000097."
     },
     {
       "target_id": "cov-ts-0094",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0356",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000356",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "COL 4:7",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0356."
+      "rationale": "Direct NT-seed target between person-000266 and person-000356."
     },
     {
       "target_id": "cov-ts-0095",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0262",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000262",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "PHM 1:12",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0262."
+      "rationale": "Direct NT-seed target between person-000266 and person-000262."
     },
     {
       "target_id": "cov-ts-0096",
       "relation_type": "commission",
       "direction": "directed",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0099",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000099",
       "relation_subtype": null,
       "evidence": {
         "source_id": "source:0001",
         "passage": "ACT 19:22",
         "evidence_level": "nt_text"
       },
-      "rationale": "Direct NT-seed target between nt-people-0266 and nt-people-0099."
+      "rationale": "Direct NT-seed target between person-000266 and person-000099."
     },
     {
       "target_id": "cov-ts-0104",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0351",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000351",
       "relation_subtype": null,
       "evidence": { "source_id": "source:0001", "passage": "ROM 16:21", "evidence_level": "nt_text" },
       "rationale": "Paul explicitly calls Timothy his fellow worker."
@@ -1341,8 +1341,8 @@
       "target_id": "cov-ts-0105",
       "relation_type": "collegial",
       "direction": "undirected",
-      "subject_person_id": "nt-people-0266",
-      "object_person_id": "nt-people-0352",
+      "subject_person_id": "person-000266",
+      "object_person_id": "person-000352",
       "relation_subtype": null,
       "evidence": { "source_id": "source:0001", "passage": "2CO 8:23", "evidence_level": "nt_text" },
       "rationale": "Paul explicitly calls Titus his partner and fellow worker."
@@ -1351,8 +1351,8 @@
       "target_id": "cov-ts-0106",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0139",
-      "object_person_id": "nt-people-0242",
+      "subject_person_id": "person-000139",
+      "object_person_id": "person-000242",
       "relation_subtype": null,
       "evidence": { "source_id": "source:0001", "passage": "2TI 3:8", "evidence_level": "nt_text" },
       "rationale": "Jambres is explicitly said to oppose Moses."
@@ -1361,8 +1361,8 @@
       "target_id": "cov-ts-0107",
       "relation_type": "hostile",
       "direction": "directed",
-      "subject_person_id": "nt-people-0025",
-      "object_person_id": "nt-people-0266",
+      "subject_person_id": "person-000025",
+      "object_person_id": "person-000266",
       "relation_subtype": null,
       "evidence": { "source_id": "source:0001", "passage": "ACT 23:2", "evidence_level": "nt_text" },
       "rationale": "Ananias orders those nearby to strike Paul."

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TAHOT/TOTHT coverage audit report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "audit_version",
+    "generated_at",
+    "manifest_created_at",
+    "scope",
+    "source_id",
+    "status_summary",
+    "books",
+    "source_files"
+  ],
+  "properties": {
+    "audit_version": { "type": "string", "minLength": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "manifest_created_at": { "type": "string", "format": "date-time" },
+    "scope": { "type": "string", "const": "independent" },
+    "source_id": { "type": "string", "const": "source:0005" },
+    "source_file_count": { "type": "integer", "minimum": 1 },
+    "candidate_total": { "type": "integer", "minimum": 0 },
+    "status_summary": {
+      "type": "object",
+      "required": ["covered", "ambiguous", "unmatched"],
+      "properties": {
+        "covered": { "type": "integer", "minimum": 0 },
+        "ambiguous": { "type": "integer", "minimum": 0 },
+        "unmatched": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "books": {
+      "type": "object",
+      "required": ["total_expected", "covered_count", "covered"],
+      "properties": {
+        "total_expected": { "type": "integer", "minimum": 1 },
+        "covered_count": { "type": "integer", "minimum": 0 },
+        "covered": { "type": "array", "items": { "type": "string", "pattern": "^[A-Z0-9]{3,4}$" } }
+      },
+      "additionalProperties": false
+    },
+    "source_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_path", "source_kind", "sha256", "bytes", "line_count", "data_line_count", "verse_reference_count"],
+        "properties": {
+          "source_path": { "type": "string", "minLength": 1 },
+          "source_kind": { "type": "string", "enum": ["tahot", "totht"] },
+          "sha256": { "type": "string", "minLength": 64 },
+          "bytes": { "type": "integer", "minimum": 1 },
+          "line_count": { "type": "integer", "minimum": 1 },
+          "data_line_count": { "type": "integer", "minimum": 0 },
+          "verse_reference_count": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "status_pending": { "type": "string" },
+    "note": { "type": "string" }
+  }
+}

@@ -30,6 +30,86 @@ function countPendingReview(rows) {
   return { chinesePending, relationPending, relationRejected };
 }
 
+function readJson(filePath, fallback = null) {
+  if (!fs.existsSync(filePath)) return fallback;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch {
+    return fallback;
+  }
+}
+
+function readJsonlRows(filePath) {
+  if (!fs.existsSync(filePath)) return [];
+  const raw = fs.readFileSync(filePath, 'utf8');
+  return raw
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      try {
+        return JSON.parse(line);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
+}
+
+function estimatePendingOldTestamentReview() {
+  const report = readJson(path.join(ROOT, 'editorial', 'old-testament-person-review-report.json'), null);
+  if (report && Number.isInteger(report.pending)) {
+    return report.pending;
+  }
+  const rows = readJsonlRows(path.join(ROOT, 'editorial', 'old-testament-person-review.jsonl'));
+  return rows.filter((row) => row?.final_decision?.status === 'pending' || row?.candidate_status === 'pending').length;
+}
+
+function estimateCrossTestamentPending() {
+  const report = readJson(path.join(ROOT, 'editorial', 'cross-testament-identity-review-report.json'), null);
+  const rows = readJsonlRows(path.join(ROOT, 'editorial', 'cross-testament-identity-review.jsonl'));
+  const pending = rows.filter((row) => row?.final_decision?.status === 'pending').length;
+  const unmatched = rows.filter((row) => !(row?.step_identity_matches?.length > 0)).length;
+  return {
+    pending: rows.length > 0 ? pending : Number(report?.snapshot_count || 0),
+    unmatched: rows.length > 0 ? unmatched : Number(report?.unmatched_count || 0),
+  };
+}
+
+function otGateBlocks(manifest, needsReview) {
+  const sources = manifest?.source_revisions || [];
+  const blockedSources = sources.filter((source) => source?.status === 'pending').map((source) => source.source_id).filter(Boolean);
+  const sourceStatusBlock = blockedSources.length > 0;
+
+  const publishedScopeStatus = manifest?.published_scope?.status;
+  const pipelineGate = manifest?.pipeline_gate || {};
+  const stage = pipelineGate.stage;
+  const gateState = pipelineGate.state;
+  const otStatePending = String(publishedScopeStatus || '').toLowerCase() === 'editorial_review_required'
+    || String(gateState || '').toLowerCase().includes('ot')
+    || String(stage || '').toLowerCase().includes('ot');
+
+  const oldTestamentPending = estimatePendingOldTestamentReview();
+  const crossTestament = estimateCrossTestamentPending();
+
+  const hasOtGateBlockers = sourceStatusBlock || otStatePending || oldTestamentPending > 0 || crossTestament.pending > 0;
+
+  return {
+    hasBlockers: hasOtGateBlockers,
+    blockers: {
+      needsReview: Boolean(needsReview),
+      sourcePendingCount: blockedSources.length,
+      sourcePending: blockedSources,
+      oldTestamentCandidatePending: oldTestamentPending,
+      crossTestamentPending: crossTestament.pending,
+      crossTestamentUnmatched: crossTestament.unmatched,
+      publishedScopeStatus,
+      pipelineGateState: gateState,
+      pipelineGateStage: stage
+    }
+  };
+}
+
 function reconciliationStatus() {
   const reconPath = path.join(DATA_DIR, 'reconciliation.json');
   if (!fs.existsSync(reconPath)) return 'unknown';
@@ -78,6 +158,9 @@ const needsReview = (
   sblNameExtractionStatus === 'unknown'
 );
 
+  const otGate = otGateBlocks(manifest, needsReview);
+  const needsEditorialReview = needsReview || otGate.hasBlockers;
+
 const report = {
   ...run,
   counts: {
@@ -91,7 +174,10 @@ const report = {
     minor: versionParts[1],
     patch: versionParts[2]
   },
-  status: needsReview ? 'editorial_review_required' : 'ready',
+  status: needsEditorialReview ? 'editorial_review_required' : 'ready',
+  gates: {
+    ot: otGate.blockers
+  },
   summary: [
     `People: ${run.counts.people}`,
     `Name variants: ${run.counts.names}`,
@@ -103,7 +189,12 @@ const report = {
     `Identity options: ${run.counts.identityOptions}`,
     `Chinese labels pending review: ${chinesePending}`,
     `Relation assertions pending review: ${relationPending}`,
-    `SBL proper-name extraction: ${sblNameExtractionStatus}`
+    `SBL proper-name extraction: ${sblNameExtractionStatus}`,
+    `Source revisions pending: ${otGate.blockers.sourcePendingCount}`,
+    `Old Testament review pending: ${otGate.blockers.oldTestamentCandidatePending}`,
+    `Cross-testament identity pending: ${otGate.blockers.crossTestamentPending}`,
+    `Cross-testament identity unmatched: ${otGate.blockers.crossTestamentUnmatched}`,
+    `OT pipeline stage: ${otGate.blockers.pipelineGateStage || 'unknown'} (${otGate.blockers.pipelineGateState || 'none'})`
   ]
 };
 const reportPath = path.join(ROOT, 'exports', 'report.json');

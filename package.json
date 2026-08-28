@@ -31,7 +31,16 @@
     "release:check": "npm run check",
     "pages:preview": "npm run release:check && wrangler pages deploy web/dist --project-name new-testament-person-network --branch preview",
     "pages:production": "npm run release:check && wrangler pages deploy web/dist --project-name new-testament-person-network --branch main",
-    "check": "npm run validate:sbl-greek-audit && npm run validate:data && npm run validate:chinese-name-candidates && npm run validate:chinese-name-review && npm run apply:chinese-name-review -- --check && npm run validate:relationship-review && npm run apply:relationship-review -- --check && npm run reconcile && npm run report && npm run test:step-boundary && npm run typecheck:web && npm --prefix web run check-person-era && npm run build:web && npm --prefix web run check-identity"
+    "check": "npm run validate:sbl-greek-audit && npm run validate:data && npm run check:migration && npm run validate:old-testament-candidates && npm run validate:old-testament-person-review && npm run validate:cross-testament-identity-review && npm run validate:tahot-totht-coverage-audit && npm run validate:chinese-name-candidates && npm run validate:chinese-name-review && npm run apply:chinese-name-review -- --check && npm run validate:relationship-review && npm run apply:relationship-review -- --check && npm run reconcile && npm run report && npm run test:step-boundary && npm run typecheck:web && npm --prefix web run check-person-era && npm run build:web && npm --prefix web run check-identity",
+    "generate:old-testament-candidates": "node scripts/generate-old-testament-candidates.mjs",
+    "validate:old-testament-candidates": "node scripts/generate-old-testament-candidates.mjs --validate-only",
+    "init:old-testament-person-review": "node scripts/init-old-testament-person-review.js",
+    "validate:old-testament-person-review": "node scripts/init-old-testament-person-review.js --validate-only",
+    "generate:cross-testament-identity-review": "node scripts/generate-cross-testament-identity-review.mjs",
+    "validate:cross-testament-identity-review": "node scripts/generate-cross-testament-identity-review.mjs --validate-only",
+    "check:migration": "node scripts/migrate-neutral-person-ids.mjs --check",
+    "generate:tahot-totht-coverage-audit": "node scripts/audit-tahot-totht-coverage.mjs",
+    "validate:tahot-totht-coverage-audit": "node scripts/audit-tahot-totht-coverage.mjs --validate-only"
   },
   "engines": {
     "node": ">=18"

@@ -1,8 +1,8 @@
-{"person_id":"nt-people-0079","status":"accepted","selected_candidate_id":"cnc-0472","proposed_chinese":"底米丢","decision_note":"审校A v2：ACT 19:24、19:38 的人物是银匠 Demetrius；锁定 CUV 字面作“底米丢”，且与 3JN 1:12 的低米丢保持保守分列。"}
-{"person_id":"nt-people-0121","status":"accepted","selected_candidate_id":"cnc-0660","proposed_chinese":"黑米","decision_note":"审校A v2：按 SBLGNT ROM 16:14 名单次序核对 Ἑρμῆν（Hermes），锁定 CUV 对应字面为“黑米”。"}
-{"person_id":"nt-people-0122","status":"accepted","selected_candidate_id":"cnc-0666","proposed_chinese":"黑马","decision_note":"审校A v2：按 SBLGNT ROM 16:14 名单次序核对 Ἑρμᾶν（Hermas），锁定 CUV 对应字面为“黑马”。"}
-{"person_id":"nt-people-0135","status":"accepted","selected_candidate_id":"cnc-0749","proposed_chinese":"雅各","decision_note":"审校A v2：该人物为族长 Israel/Jacob；MAT 1:2、LUK 3:34、HEB 11:21 等锁定 CUV 均以“雅各”指称其个人身份。"}
-{"person_id":"nt-people-0150","status":"accepted","selected_candidate_id":"cnc-0861","proposed_chinese":"巴拉加","decision_note":"审校A v2：MAT 23:35 明载 Zechariah 为 Barachiah 之子；锁定 CUV 字面为“巴拉加”。"}
-{"person_id":"nt-people-0333","status":"accepted","selected_candidate_id":"cnc-2147","proposed_chinese":"所巴特","decision_note":"审校A v2：ACT 20:4 的 Berean Sopater 在锁定 CUV 字面作“所巴特”；与 ROM 16:21 的 Sosipater 保守分列。"}
-{"person_id":"nt-people-0371","status":"accepted","selected_candidate_id":"cnc-2398","proposed_chinese":"低米丢","decision_note":"审校A v2：3JN 1:12 的 Demetrius 在锁定 CUV 字面作“低米丢”；与 ACT 19 的底米丢保守分列。"}
-{"person_id":"nt-people-0372","status":"accepted","selected_candidate_id":"cnc-2399","proposed_chinese":"所西巴德","decision_note":"审校A v2：ROM 16:21 的 Sosipater 在锁定 CUV 字面作“所西巴德”；不与 ACT 20:4 的所巴特合并。"}
+{"person_id":"person-000079","status":"accepted","selected_candidate_id":"cnc-0472","proposed_chinese":"底米丢","decision_note":"审校A v2：ACT 19:24、19:38 的人物是银匠 Demetrius；锁定 CUV 字面作“底米丢”，且与 3JN 1:12 的低米丢保持保守分列。"}
+{"person_id":"person-000121","status":"accepted","selected_candidate_id":"cnc-0660","proposed_chinese":"黑米","decision_note":"审校A v2：按 SBLGNT ROM 16:14 名单次序核对 Ἑρμῆν（Hermes），锁定 CUV 对应字面为“黑米”。"}
+{"person_id":"person-000122","status":"accepted","selected_candidate_id":"cnc-0666","proposed_chinese":"黑马","decision_note":"审校A v2：按 SBLGNT ROM 16:14 名单次序核对 Ἑρμᾶν（Hermas），锁定 CUV 对应字面为“黑马”。"}
+{"person_id":"person-000135","status":"accepted","selected_candidate_id":"cnc-0749","proposed_chinese":"雅各","decision_note":"审校A v2：该人物为族长 Israel/Jacob；MAT 1:2、LUK 3:34、HEB 11:21 等锁定 CUV 均以“雅各”指称其个人身份。"}
+{"person_id":"person-000150","status":"accepted","selected_candidate_id":"cnc-0861","proposed_chinese":"巴拉加","decision_note":"审校A v2：MAT 23:35 明载 Zechariah 为 Barachiah 之子；锁定 CUV 字面为“巴拉加”。"}
+{"person_id":"person-000333","status":"accepted","selected_candidate_id":"cnc-2147","proposed_chinese":"所巴特","decision_note":"审校A v2：ACT 20:4 的 Berean Sopater 在锁定 CUV 字面作“所巴特”；与 ROM 16:21 的 Sosipater 保守分列。"}
+{"person_id":"person-000371","status":"accepted","selected_candidate_id":"cnc-2398","proposed_chinese":"低米丢","decision_note":"审校A v2：3JN 1:12 的 Demetrius 在锁定 CUV 字面作“低米丢”；与 ACT 19 的底米丢保守分列。"}
+{"person_id":"person-000372","status":"accepted","selected_candidate_id":"cnc-2399","proposed_chinese":"所西巴德","decision_note":"审校A v2：ROM 16:21 的 Sosipater 在锁定 CUV 字面作“所西巴德”；不与 ACT 20:4 的所巴特合并。"}

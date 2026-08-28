@@ -1,8 +1,8 @@
-{"person_id":"nt-people-0079","status":"accepted","selected_candidate_id":"cnc-0472","proposed_chinese":"底米丢","decision_note":"徒19:24、19:38 的锁定 CUV 均以“底米丢”指银匠；与约三1:12的低米丢保持保守拆分。"}
-{"person_id":"nt-people-0121","status":"accepted","selected_candidate_id":"cnc-0660","proposed_chinese":"黑米","decision_note":"罗16:14 的希腊文次序与锁定 CUV 名单逐名对齐，Hermes 对应“黑米”，不是同节的黑马。"}
-{"person_id":"nt-people-0122","status":"accepted","selected_candidate_id":"cnc-0666","proposed_chinese":"黑马","decision_note":"罗16:14 的希腊文次序与锁定 CUV 名单逐名对齐，Hermas 对应“黑马”，与黑米区分。"}
-{"person_id":"nt-people-0135","status":"accepted","selected_candidate_id":"cnc-0749","proposed_chinese":"雅各","decision_note":"该具名人类实体是族长 Jacob/Israel；其新约个人位点在锁定 CUV 中主要具名为“雅各”。“以色列”候选包含群体用法，不作为人类主标签。"}
-{"person_id":"nt-people-0150","status":"accepted","selected_candidate_id":"cnc-0861","proposed_chinese":"巴拉加","decision_note":"太23:35 的 SBLGNT Βαραχίου 与锁定 CUV“巴拉加”逐字对应；人物已从耶何耶大身份中保守拆分。"}
-{"person_id":"nt-people-0333","status":"accepted","selected_candidate_id":"cnc-2147","proposed_chinese":"所巴特","decision_note":"徒20:4 的锁定 CUV 明确称“所巴特”；此人物与罗16:21的所西巴德已保守拆分。"}
-{"person_id":"nt-people-0371","status":"accepted","selected_candidate_id":"cnc-2398","proposed_chinese":"低米丢","decision_note":"约三1:12 的锁定 CUV 明确称“低米丢”；与徒19银匠底米丢保持保守拆分。"}
-{"person_id":"nt-people-0372","status":"accepted","selected_candidate_id":"cnc-2399","proposed_chinese":"所西巴德","decision_note":"罗16:21 的锁定 CUV 明确称“所西巴德”；与徒20:4的所巴特保持保守拆分。"}
+{"person_id":"person-000079","status":"accepted","selected_candidate_id":"cnc-0472","proposed_chinese":"底米丢","decision_note":"徒19:24、19:38 的锁定 CUV 均以“底米丢”指银匠；与约三1:12的低米丢保持保守拆分。"}
+{"person_id":"person-000121","status":"accepted","selected_candidate_id":"cnc-0660","proposed_chinese":"黑米","decision_note":"罗16:14 的希腊文次序与锁定 CUV 名单逐名对齐，Hermes 对应“黑米”，不是同节的黑马。"}
+{"person_id":"person-000122","status":"accepted","selected_candidate_id":"cnc-0666","proposed_chinese":"黑马","decision_note":"罗16:14 的希腊文次序与锁定 CUV 名单逐名对齐，Hermas 对应“黑马”，与黑米区分。"}
+{"person_id":"person-000135","status":"accepted","selected_candidate_id":"cnc-0749","proposed_chinese":"雅各","decision_note":"该具名人类实体是族长 Jacob/Israel；其新约个人位点在锁定 CUV 中主要具名为“雅各”。“以色列”候选包含群体用法，不作为人类主标签。"}
+{"person_id":"person-000150","status":"accepted","selected_candidate_id":"cnc-0861","proposed_chinese":"巴拉加","decision_note":"太23:35 的 SBLGNT Βαραχίου 与锁定 CUV“巴拉加”逐字对应；人物已从耶何耶大身份中保守拆分。"}
+{"person_id":"person-000333","status":"accepted","selected_candidate_id":"cnc-2147","proposed_chinese":"所巴特","decision_note":"徒20:4 的锁定 CUV 明确称“所巴特”；此人物与罗16:21的所西巴德已保守拆分。"}
+{"person_id":"person-000371","status":"accepted","selected_candidate_id":"cnc-2398","proposed_chinese":"低米丢","decision_note":"约三1:12 的锁定 CUV 明确称“低米丢”；与徒19银匠底米丢保持保守拆分。"}
+{"person_id":"person-000372","status":"accepted","selected_candidate_id":"cnc-2399","proposed_chinese":"所西巴德","decision_note":"罗16:21 的锁定 CUV 明确称“所西巴德”；与徒20:4的所巴特保持保守拆分。"}

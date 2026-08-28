@@ -1,5 +1,5 @@
 {
-  "dataset": "new-testament-person-network",
+  "dataset": "bible-person-network",
   "version": "0.1.0",
   "source_revision": "v1-editorial-2026-08-27",
   "created_at": "2026-08-26T00:00:00Z",
@@ -29,14 +29,73 @@
       "provider": "Josephus, Jewish Antiquities",
       "license": "public_domain",
       "url": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0146%3Abook%3D18%3Awhiston+chapter%3D5%3Awhiston+section%3D2"
+    },
+    {
+      "source_id": "source:0005",
+      "provider": "STEPBible TAHOT/TOTHT",
+      "license": "CC BY 4.0",
+      "version_sha": "efe428a0047bf7b9c3ce2624f60c252c6e435945",
+      "scope": "ot",
+      "status": "pending"
+    },
+    {
+      "source_id": "source:0006",
+      "provider": "Josephus, Antiquitates Judaicae (full-text scope, Whiston)",
+      "license": "public_domain",
+      "url": "https://www.perseus.tufts.edu/",
+      "scope": "history",
+      "status": "pending"
+    },
+    {
+      "source_id": "source:0007",
+      "provider": "Philo, trans. Yonge",
+      "license": "public_domain",
+      "url": "https://www.gutenberg.org/",
+      "scope": "history",
+      "status": "pending"
+    },
+    {
+      "source_id": "source:0008",
+      "provider": "Lexham Bible Dictionary (2016)",
+      "license": "proprietary_restricted",
+      "url": "https://www.logos.com/product/1531/lexham-bible-dictionary",
+      "scope": "bible",
+      "status": "pending"
+    },
+    {
+      "source_id": "source:0009",
+      "provider": "Anchor Yale Bible Dictionary",
+      "license": "proprietary_restricted",
+      "url": "https://yalebooks.yale.edu/",
+      "scope": "bible",
+      "status": "pending"
     }
   ],
+  "published_scope": {
+    "testament": "nt",
+    "status": "editorial_review_required",
+    "state": "no_ot_assertions_published"
+  },
+  "pipeline_gate": {
+    "stage": "ot_editorial_review",
+    "ot_candidate_count": 2720,
+    "ot_decisions_required": [
+      "people_decisions",
+      "identity_disambiguation",
+      "relationship_review",
+      "source_legal_clearance"
+    ]
+  },
   "supplemental_source": {
     "cuv_zip_sha256": "68df122e9195e071dc286f19ef53e530fcaadb3a16a7dc34b8430b7062f70598"
   },
   "scope": {
+    "books": 66,
     "nt_books": 27,
-    "object_type": ["human_person"],
+    "ot_books": 39,
+    "object_type": [
+      "human_person"
+    ],
     "language_default": "zh-hans"
   }
 }

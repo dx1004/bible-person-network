@@ -17,7 +17,13 @@
   ],
   "properties": {
     "review_id": { "type": "string", "pattern": "^cnr-\\d{4}$" },
-    "person_id": { "type": "string", "pattern": "^nt-people-\\d{4}$" },
+    "person_id": {
+      "type": "string",
+      "anyOf": [
+        { "pattern": "^person-\\d{6}$" },
+        { "pattern": "^nt-people-\\d{4}$" }
+      ]
+    },
     "latinized": { "type": "string", "minLength": 1 },
     "top_candidate_refs": {
       "type": "array",
