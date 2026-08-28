@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-08-28T21:31:45.673Z",
+  "generated_at": "2026-08-28T22:34:47.222Z",
   "review_rows": 2720,
   "candidate_rows": 2720,
   "source_id": "source:0002",
   "report_path": "editorial/old-testament-person-review-report.json",
   "output_path": "editorial/old-testament-person-review.jsonl",
-  "pending": 1105,
-  "accepted": 1606,
-  "rejected": 9,
-  "evidence_audit_passed": 1606,
+  "pending": 1013,
+  "accepted": 1697,
+  "rejected": 10,
+  "evidence_audit_passed": 1697,
   "total_candidates": 2720
 }
