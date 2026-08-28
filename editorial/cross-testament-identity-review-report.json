@@ -8,11 +8,11 @@
   "exact_match_count": 100,
   "with_matches": 100,
   "without_matches": 8,
-  "final_accepted_count": 97,
-  "final_pending_count": 11,
-  "final_rejected_count": 0,
+  "final_accepted_count": 100,
+  "final_pending_count": 6,
+  "final_rejected_count": 2,
   "output_path": "editorial/cross-testament-identity-review.jsonl",
   "report_path": "editorial/cross-testament-identity-review-report.json",
   "note": "Cross-testament identity snapshot uses multi-role AI review; unresolved or conflicting items remain pending.",
-  "output_checksum": "35e339952a66e9645d787c87ba37b8ac416fa2899940f7b079624a0537ec6944"
+  "output_checksum": "10e36bbf273064b516c35f88308a8acc07ffafc1fa7da7ba253fcb8380a1d98d"
 }

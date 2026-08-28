@@ -1,0 +1,236 @@
+{
+  "generated_at": "2026-08-26T00:00:00Z",
+  "source_id": "source:0003",
+  "source_locator": "source:0003",
+  "input_reference": {
+    "source": "source:0003",
+    "input_locator": "CUV_USFM_DIR",
+    "input_files": [
+      {
+        "path": ".sources/cmn-cu89s-usfm/02-GENcmn-cu89s.usfm",
+        "checksum": "f1a293082587059d2d9565b6719c90c59f44e52e7550063b82e8d992b954b7a0",
+        "size": 197901
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/03-EXOcmn-cu89s.usfm",
+        "checksum": "0968acf2391a29e934f89fbb3ef964ef50ffb9bcdca2f009b5d6930c248188cb",
+        "size": 147687
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/04-LEVcmn-cu89s.usfm",
+        "checksum": "db1c56cc49b5f8f0c2b4491c8837f65f86516454c80bed9af3184e5e7f19aaf9",
+        "size": 100518
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/05-NUMcmn-cu89s.usfm",
+        "checksum": "642f348f0ec3946ddb8ff75fde9b03c365012487d391dc6c7b19e5348630f487",
+        "size": 159229
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/06-DEUcmn-cu89s.usfm",
+        "checksum": "b71cd0b303203513c8d466d82961feaba32063af5bb34a081bbc9765c39d57b5",
+        "size": 128448
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/07-JOScmn-cu89s.usfm",
+        "checksum": "a8fe7a444d472c51150041d2b150c161416d47833c13fbb7a426f322ea50abad",
+        "size": 101440
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/08-JDGcmn-cu89s.usfm",
+        "checksum": "7d28191db8990989c91572b899dee434aa4c544abc87bed7f66a01a642e71a6c",
+        "size": 94867
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/09-RUTcmn-cu89s.usfm",
+        "checksum": "6fcfbb3f739573d2951f505d221860b2b833f43872581fcc9a0484f73fbfe5a7",
+        "size": 12899
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/10-1SAcmn-cu89s.usfm",
+        "checksum": "e1714028720ee8fae3d084924d33ce7ea50ea3c2f77a9f855314977931c00018",
+        "size": 124337
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/11-2SAcmn-cu89s.usfm",
+        "checksum": "505ae975683a3913f41eb0095dbd6e6363cec5e0678b5d6fc7d26ad941ebf319",
+        "size": 106056
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/12-1KIcmn-cu89s.usfm",
+        "checksum": "0da984024633d0b815c0a4a88a43d84af36ca2377a2cf1b630d42ea0a98f0f43",
+        "size": 117362
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/13-2KIcmn-cu89s.usfm",
+        "checksum": "d0462deb843c44898b169a4229e3e36d40600ab5d580236cd75131777269ab02",
+        "size": 115677
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/14-1CHcmn-cu89s.usfm",
+        "checksum": "32849f5a7d6b15b61972db50230b614ca85bc1d1ec41f36534bb35751ca37bad",
+        "size": 130936
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/15-2CHcmn-cu89s.usfm",
+        "checksum": "c9d964afc87999a53780405ebe791502cbb4407038ae374a210cf83729d3318c",
+        "size": 129072
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/16-EZRcmn-cu89s.usfm",
+        "checksum": "6b7ea0240d45e9669f9440c0ab81f013dbd50f7b1e333aafe20f4e44a280bb7a",
+        "size": 39566
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/17-NEHcmn-cu89s.usfm",
+        "checksum": "5063b598f68569c4aef0ce495dcfe47e75113922a38d219d38186749620b3d18",
+        "size": 57385
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/18-ESTcmn-cu89s.usfm",
+        "checksum": "65e0e7b4fb2dc68b3f6beda341b4cb48d28d2c4c0fcc7c7979f4c05fc9077e58",
+        "size": 25197
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/19-JOBcmn-cu89s.usfm",
+        "checksum": "907f2d15d3d03e8f4784cb4ebcb008165092416b1f0cb51175089a4a30d69860",
+        "size": 98208
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/20-PSAcmn-cu89s.usfm",
+        "checksum": "6b53bdd6357091a07e9c825f84c7e961bfbdf288954205a6e2a23337087a834e",
+        "size": 260909
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/21-PROcmn-cu89s.usfm",
+        "checksum": "9f7a8906aecdb263ecbf47b5e6be8eafbe4a319f6ba2de994a14d95503bdae26",
+        "size": 80853
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/22-ECCcmn-cu89s.usfm",
+        "checksum": "3adb1dc4513fc466951914cbfdd607e51442317a6492e35d9f9f6b27208acd2d",
+        "size": 25399
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/23-SNGcmn-cu89s.usfm",
+        "checksum": "6381964603e9890b3db9abfbbf89592a70079ded8c978e55d89b3e69fca8ac50",
+        "size": 17067
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/24-ISAcmn-cu89s.usfm",
+        "checksum": "4b428f149c640d8b28885d2457d703dc013e77328c3b9c9f189df69a5a80c866",
+        "size": 202550
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/25-JERcmn-cu89s.usfm",
+        "checksum": "3aea28d99764c85410f178587b2526efc303d6bd948871dd2e8b18fc70396d5a",
+        "size": 222174
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/26-LAMcmn-cu89s.usfm",
+        "checksum": "ee06a50522d86498578639b43d1f34facb70f38d79f17e71f1b4179633abd1d2",
+        "size": 19419
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/27-EZKcmn-cu89s.usfm",
+        "checksum": "598e87061febdc677f0fe13a862b664d647978289b8f26f0347af0b7d339573d",
+        "size": 175369
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/28-DANcmn-cu89s.usfm",
+        "checksum": "26c276f1c16c4adbabaf22fd1cacc7f318be41c3fd110b74cc636ff8daa4e5fc",
+        "size": 52776
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/29-HOScmn-cu89s.usfm",
+        "checksum": "029c4eee40884573fa469ba719bbedf596357c4e92d95a3ab6fd2c6749f5fa5a",
+        "size": 31430
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/30-JOLcmn-cu89s.usfm",
+        "checksum": "bb7c3e7e2b3e65daf15d3f47fe3366a8bb32957f35d86020deb6b5f8d11e0497",
+        "size": 10910
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/31-AMOcmn-cu89s.usfm",
+        "checksum": "1751d132a8ab63287be574922ca333d51be82983d9ac34ba022e0b4c3b44b049",
+        "size": 22817
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/32-OBAcmn-cu89s.usfm",
+        "checksum": "58fa0975bc25077e3df9562b88c9be10bd617e0ceb9e76029a537601fcee5661",
+        "size": 3797
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/33-JONcmn-cu89s.usfm",
+        "checksum": "9383213ef35d052e4cbc04b9bb880292091df38be27bddb38bf6bd5fab83f334",
+        "size": 6325
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/34-MICcmn-cu89s.usfm",
+        "checksum": "13d3bd17cf3d8d5ade18b1f3b2ad5a8cc9955df91c7c4ed866fc08054137e313",
+        "size": 18152
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/35-NAMcmn-cu89s.usfm",
+        "checksum": "de1388b8100dcb88e86d63d4ff61951400db6237a6814194c921d76b4db35fab",
+        "size": 7170
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/36-HABcmn-cu89s.usfm",
+        "checksum": "6a2f688c4f4fc207d2a552f1b33f12ab6b02d8cacbf908ef6bb0d15c2a415bd5",
+        "size": 8156
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/37-ZEPcmn-cu89s.usfm",
+        "checksum": "281a500e9f2befe456f8e403fb779e60d15345acbd8f3acc07fc697851b50358",
+        "size": 9016
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/38-HAGcmn-cu89s.usfm",
+        "checksum": "c8b23777d46467de1881cbd95db4ff896ada02eaea087b26c78acbddd941a8d3",
+        "size": 5672
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/39-ZECcmn-cu89s.usfm",
+        "checksum": "641e2647195f2e0d8b363a84eb6e6462f7c2af0f191081c181cce652b77ccb89",
+        "size": 30841
+      },
+      {
+        "path": ".sources/cmn-cu89s-usfm/40-MALcmn-cu89s.usfm",
+        "checksum": "f48c730ce821190868111ce09974acf4ef611bc5ee8916853e89a5370b2592f6",
+        "size": 9413
+      }
+    ],
+    "input_checksum": "b9756aa372b0b1c87ed02fc26dff13ec3db7fd83ed69d89a0953033a68ea8ac8"
+  },
+  "candidate_count": 24337,
+  "old_candidate_count": 2720,
+  "matched_old_candidate_count": 2698,
+  "no_match_old_candidate_count": 22,
+  "ambiguity_stats": {
+    "multi_token": 7398,
+    "none": 16939
+  },
+  "coverage": {
+    "min": 0,
+    "max": 1,
+    "avg": 0.5694
+  },
+  "precision": {
+    "min": 0,
+    "max": 1,
+    "avg": 0.3052
+  },
+  "notes": [
+    {
+      "kind": "summary",
+      "old_candidate_count": 2720,
+      "candidate_count": 24337,
+      "matched_old_candidate_count": 2698,
+      "no_match_old_candidate_count": 22,
+      "generated_rows_for_matched_candidates": 24315
+    }
+  ],
+  "checksum": "5d5f00c76a4efa01bea168b3e183ae74b05805d9f1c8d1f791aac5b183ec559f"
+}

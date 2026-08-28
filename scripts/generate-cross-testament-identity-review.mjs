@@ -16,8 +16,11 @@ const OUTPUT_PATH = path.join(EDITORIAL_DIR, 'cross-testament-identity-review.js
 const REPORT_PATH = path.join(EDITORIAL_DIR, 'cross-testament-identity-review-report.json');
 const MANIFEST_PATH = path.join(ROOT, 'data', 'manifest.json');
 const AI_ROUND1_PATH = path.join(EDITORIAL_DIR, 'ai-round1-cross-testament.jsonl');
+const AI_ROUND1_V2_PATH = path.join(EDITORIAL_DIR, 'ai-round1-cross-testament-v2.jsonl');
 const AI_ROUND2_PATH = path.join(EDITORIAL_DIR, 'ai-round2-cross-testament.jsonl');
+const AI_ROUND2_V2_PATH = path.join(EDITORIAL_DIR, 'ai-round2-cross-testament-v2.jsonl');
 const AI_BOARDROOM_PATH = path.join(EDITORIAL_DIR, 'ai-boardroom-cross-testament.jsonl');
+const AI_BOARDROOM_V2_PATH = path.join(EDITORIAL_DIR, 'ai-boardroom-cross-testament-v2.jsonl');
 const PEOPLE_PATH = path.join(ROOT, 'data', 'people.jsonl');
 
 const SOURCE_ID = 'source:0002';
@@ -158,7 +161,8 @@ function normalizeBoardroomDecision(row) {
 }
 
 function hasBibleRef(ref) {
-  return /[A-Z]{2,5}\s+\d+:\d+/.test(ref) || /^[A-Z]{2,4}\.\d+:\d+$/i.test(ref);
+  const normalized = String(ref || '').replace(/^Bible:\s*/i, '').trim();
+  return /^[1-3]?\s*[A-Z]{2,6}\s+\d+:\d+$/i.test(normalized) || /^[A-Z]{2,6}\.\d+:\d+$/i.test(normalized);
 }
 
 function hasRepositoryRef(ref) {
@@ -216,6 +220,16 @@ function loadDecisions(filePath, stage) {
   return map;
 }
 
+function loadDecisionInputs(primaryPath, overridePath, stage) {
+  const base = loadDecisions(primaryPath, stage);
+  if (!fs.existsSync(overridePath)) return base;
+  const override = loadDecisions(overridePath, stage);
+  for (const [candidateId, data] of override.entries()) {
+    base.set(candidateId, data);
+  }
+  return base;
+}
+
 function loadBoardroomDecisions(filePath) {
   if (!fs.existsSync(filePath)) return new Map();
   const map = new Map();
@@ -223,6 +237,16 @@ function loadBoardroomDecisions(filePath) {
     map.set(row.candidate_id, normalizeBoardroomDecision(row));
   }
   return map;
+}
+
+function loadBoardroomInputs(primaryPath, overridePath) {
+  const base = loadBoardroomDecisions(primaryPath);
+  if (!fs.existsSync(overridePath)) return base;
+  const override = loadBoardroomDecisions(overridePath);
+  for (const [candidateId, data] of override.entries()) {
+    base.set(candidateId, data);
+  }
+  return base;
 }
 
 function loadPeople(filePath) {
@@ -302,37 +326,65 @@ function buildRows(candidates, identityOptions, round1Inputs, round2Inputs, boar
     const r1 = normalizeDecisionShape(r1Entry?.decision || null, 'round1');
     const r2 = normalizeDecisionShape(r2Entry?.decision || null, 'round2');
     const boardroom = boardroomInputs.get(candidate.candidate_id) || { status: 'pending', candidate_id: candidate.candidate_id, evidence_refs: [] };
-    const boardroomAccepted = boardroom.status === 'accepted' &&
-      r1.status === 'accepted' &&
-      r2.status === 'accepted' &&
-      r1.decision_action === r2.decision_action &&
-      r1.target_person_id === r2.target_person_id &&
-      r1.canonical_chinese === r2.canonical_chinese &&
-      boardroom.decision_action === r1.decision_action &&
-      boardroom.target_person_id === r1.target_person_id &&
-      boardroom.canonical_chinese === r1.canonical_chinese;
-
-    const finalDecision = createPendingDecision();
-    let evidenceAudit = createPendingEvidenceAudit();
     const refsUnion = mergeEvidenceRefs(
       r1Entry?.evidence_refs,
       r2Entry?.evidence_refs,
       boardroom.evidence_refs
     );
-    const agreedTargetPersonId = boardroomAccepted ? r1.target_person_id : null;
+    const hasRepoRef = refsUnion.some((ref) => hasRepositoryRef(ref));
+    const hasBibleRefValue = refsUnion.some((ref) => hasBibleRef(ref));
+    const hasCandidateRef = refsUnion.some((ref) => String(ref || '').includes(`old-testament-person-candidates.jsonl#candidate_id=${candidate.candidate_id}`));
+
+    const exactAcceptance = r1.status === 'accepted' &&
+      r2.status === 'accepted' &&
+      boardroom.status === 'accepted' &&
+      r1.decision_action === r2.decision_action &&
+      r1.decision_action === boardroom.decision_action &&
+      r1.target_person_id === r2.target_person_id &&
+      r1.target_person_id === boardroom.target_person_id &&
+      r1.canonical_chinese === r2.canonical_chinese &&
+      r1.canonical_chinese === boardroom.canonical_chinese;
+
+    const exactRejection = r1.status === 'rejected' &&
+      r2.status === 'rejected' &&
+      boardroom.status === 'rejected' &&
+      r1.decision_action === null &&
+      r2.decision_action === null &&
+      boardroom.decision_action === null &&
+      r1.target_person_id === null &&
+      r2.target_person_id === null &&
+      boardroom.target_person_id === null &&
+      r1.canonical_chinese === null &&
+      r2.canonical_chinese === null &&
+      boardroom.canonical_chinese === null;
+
+    const finalDecision = createPendingDecision();
+    let evidenceAudit = createPendingEvidenceAudit();
+    const agreedTargetPersonId = exactAcceptance ? r1.target_person_id : null;
     const candidateMatchExists = !!agreedTargetPersonId && matches.some((match) => match?.person_id === agreedTargetPersonId);
     const targetPerson = peopleIndex.get(agreedTargetPersonId);
-    const auditChecksOk = boardroomAccepted &&
-      candidateMatchExists &&
+
+    const mergeAcceptanceChecksOk = exactAcceptance &&
       r1.decision_action === 'merge_existing' &&
+      candidateMatchExists &&
       !!targetPerson &&
       targetPerson.status === 'accepted' &&
       targetPerson.canonical_chinese === r1.canonical_chinese &&
-      refsUnion.some((ref) => hasRepositoryRef(ref)) &&
-      refsUnion.some((ref) => hasBibleRef(ref));
-    const finalAcceptable = boardroomAccepted && candidateMatchExists && auditChecksOk;
+      hasRepoRef &&
+      hasBibleRefValue &&
+      hasCandidateRef;
 
-    if (finalAcceptable) {
+    const createNewAcceptanceChecksOk = exactAcceptance &&
+      r1.decision_action === 'create_new' &&
+      !agreedTargetPersonId &&
+      matches.length === 0 &&
+      typeof r1.canonical_chinese === 'string' &&
+      r1.canonical_chinese.trim() &&
+      hasRepoRef &&
+      hasBibleRefValue &&
+      hasCandidateRef;
+
+    if (mergeAcceptanceChecksOk || createNewAcceptanceChecksOk) {
       finalDecision.status = 'accepted';
       finalDecision.decision_action = r1.decision_action;
       finalDecision.target_person_id = r1.target_person_id;
@@ -343,9 +395,11 @@ function buildRows(candidates, identityOptions, round1Inputs, round2Inputs, boar
       finalDecision.reviewer_role_id = REVIEW_ROLES.final_decision.roleId;
       finalDecision.reviewer_model_id = REVIEW_ROLES.final_decision.modelId;
       finalDecision.reviewer_prompt_version = REVIEW_ROLES.final_decision.promptVersion;
-    }
 
-    if (auditChecksOk) {
+      const evidenceRefs = mergeAcceptanceChecksOk && r1.target_person_id
+        ? mergeEvidenceRefs(refsUnion, [`data/identity-options.jsonl#person_id=${r1.target_person_id}`])
+        : refsUnion;
+
       evidenceAudit = {
         ...createPendingEvidenceAudit(),
         status: 'passed',
@@ -354,11 +408,38 @@ function buildRows(candidates, identityOptions, round1Inputs, round2Inputs, boar
         prompt_version: EVIDENCE_AUDITOR_ROLE.promptVersion,
         checked_at: boardroom.reviewed_at || timestamp,
         notes: 'Deterministic evidence audit passed on boardroom/finalized decisions and evidence constraints.',
-        evidence_refs: mergeEvidenceRefs(
-          refsUnion,
-          [`data/identity-options.jsonl#person_id=${r1.target_person_id}`]
-        )
+        evidence_refs: uniqueArray(mergeEvidenceRefs(
+          evidenceRefs,
+          hasCandidateRef ? [`editorial/old-testament-person-candidates.jsonl#candidate_id=${candidate.candidate_id}`] : []
+        ))
       };
+    }
+
+    if (exactRejection) {
+      const rejectionEvidenceOk = hasRepoRef && hasBibleRefValue && hasCandidateRef;
+      finalDecision.status = 'rejected';
+      finalDecision.reviewer = boardroom.reviewer || REVIEW_ROLES.final_decision.roleId;
+      finalDecision.decision_note = boardroom.decision_note || '';
+      finalDecision.reviewed_at = boardroom.reviewed_at || null;
+      finalDecision.reviewer_role_id = REVIEW_ROLES.final_decision.roleId;
+      finalDecision.reviewer_model_id = REVIEW_ROLES.final_decision.modelId;
+      finalDecision.reviewer_prompt_version = REVIEW_ROLES.final_decision.promptVersion;
+
+      if (rejectionEvidenceOk) {
+        evidenceAudit = {
+          ...createPendingEvidenceAudit(),
+          status: 'passed',
+          reviewer_role_id: EVIDENCE_AUDITOR_ROLE.roleId,
+          reviewer_model_id: EVIDENCE_AUDITOR_ROLE.modelId,
+          prompt_version: EVIDENCE_AUDITOR_ROLE.promptVersion,
+          checked_at: boardroom.reviewed_at || timestamp,
+          notes: 'Deterministic evidence audit passed on exact rejected consensus and evidence constraints.',
+          evidence_refs: uniqueArray(mergeEvidenceRefs(
+            refsUnion,
+            [`editorial/old-testament-person-candidates.jsonl#candidate_id=${candidate.candidate_id}`]
+          ))
+        };
+      }
     }
 
     rows.push({
@@ -573,9 +654,9 @@ function main() {
   const identityOptions = readJsonl(IDENTITY_OPTIONS_PATH);
   const manifest = readManifest();
 
-  const round1Inputs = loadDecisions(AI_ROUND1_PATH, 'round1');
-  const round2Inputs = loadDecisions(AI_ROUND2_PATH, 'round2');
-  const boardroomInputs = loadBoardroomDecisions(AI_BOARDROOM_PATH);
+  const round1Inputs = loadDecisionInputs(AI_ROUND1_PATH, AI_ROUND1_V2_PATH, 'round1');
+  const round2Inputs = loadDecisionInputs(AI_ROUND2_PATH, AI_ROUND2_V2_PATH, 'round2');
+  const boardroomInputs = loadBoardroomInputs(AI_BOARDROOM_PATH, AI_BOARDROOM_V2_PATH);
   const peopleIndex = loadPeople(PEOPLE_PATH);
 
   if (validateOnly) {

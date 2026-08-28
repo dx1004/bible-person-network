@@ -15,6 +15,8 @@ const REPORT_PATH = path.join(EDITORIAL_DIR, 'old-testament-person-review-report
 const SOURCE_ID = 'source:0002';
 const REVIEW_METHOD = 'multi_agent_ai_review';
 const PROTOCOL_VERSION = '2.0.0';
+const BIBLE_REF_RE = /[A-Z]{2,6}\s+\d{1,3}:\d{1,3}/;
+const REPO_REF_RE = /^(?:data\/|editorial\/|schemas\/|scripts\/|names\/|web\/)/;
 const REFERENCE_MODELS = {
   round1: {
     roleId: 'editorial_a',
@@ -115,6 +117,46 @@ function normalizeDecision(decision = {}, rowId, stage) {
     reviewer_model_id: decision?.reviewer_model_id ?? null,
     reviewer_prompt_version: decision?.reviewer_prompt_version ?? null
   };
+}
+
+function normalizeEvidenceAudit(audit) {
+  if (!audit || typeof audit !== 'object') return null;
+  return {
+    status: audit.status,
+    reviewer_role_id: audit.reviewer_role_id,
+    reviewer_model_id: audit.reviewer_model_id,
+    prompt_version: audit.prompt_version,
+    checked_at: audit.checked_at,
+    notes: audit.notes || '',
+    evidence_refs: Array.isArray(audit.evidence_refs) ? audit.evidence_refs : []
+  };
+}
+
+function validateEvidenceAudit(audit, rowId, required = false) {
+  if (!audit) {
+    if (required) throw new Error(`Final accepted requires evidence_audit: ${rowId}`);
+    return;
+  }
+  if (!['pending', 'passed', 'failed'].includes(audit.status)) {
+    throw new Error(`Invalid evidence_audit.status: ${rowId}`);
+  }
+  if (audit.status === 'passed') {
+    if (
+      audit.reviewer_role_id !== 'evidence_auditor' ||
+      audit.reviewer_model_id !== 'deterministic-validator' ||
+      audit.prompt_version !== 'evidence-auditor-v1' ||
+      !audit.checked_at || Number.isNaN(Date.parse(audit.checked_at)) ||
+      !audit.notes?.trim() || !audit.evidence_refs?.length
+    ) {
+      throw new Error(`Invalid passed evidence_audit metadata: ${rowId}`);
+    }
+    if (!audit.evidence_refs.some((ref) => BIBLE_REF_RE.test(ref))) {
+      throw new Error(`Passed evidence_audit requires Bible locator: ${rowId}`);
+    }
+    if (!audit.evidence_refs.some((ref) => REPO_REF_RE.test(ref))) {
+      throw new Error(`Passed evidence_audit requires repository locator: ${rowId}`);
+    }
+  }
 }
 
 function mapById(rows) {
@@ -224,6 +266,12 @@ function validateSemantics(rows, candidateSet) {
       if (row.final_decision.canonical_chinese !== row.round1.canonical_chinese || row.final_decision.canonical_chinese !== row.round2.canonical_chinese) {
         throw new Error(`Final accepted canonical_chinese mismatch: ${row.candidate_id}`);
       }
+      validateEvidenceAudit(row.evidence_audit, row.candidate_id, true);
+      if (row.evidence_audit.status !== 'passed') {
+        throw new Error(`Final accepted requires passed evidence_audit: ${row.candidate_id}`);
+      }
+    } else {
+      validateEvidenceAudit(row.evidence_audit, row.candidate_id, false);
     }
 
     for (const [name, decision] of [['round1', row.round1], ['round2', row.round2], ['final_decision', row.final_decision]]) {
@@ -260,9 +308,11 @@ function buildReviewRows(candidates, existingRows, timestamp) {
       round2: existingRow ? normalizeDecision(existingRow.round2, candidate.candidate_id, 'round2') : createPendingDecision(),
       final_decision: existingRow ? normalizeDecision(existingRow.final_decision, candidate.candidate_id, 'final_decision') : createPendingDecision(),
       created_at: existingRow?.created_at || timestamp,
-      updated_at: timestamp,
+      updated_at: existingRow?.updated_at || timestamp,
       notes: existingRow?.notes || 'Pending two-round OT identity review.'
     };
+    const evidenceAudit = normalizeEvidenceAudit(existingRow?.evidence_audit);
+    if (evidenceAudit) base.evidence_audit = evidenceAudit;
     return base;
   });
 
@@ -286,6 +336,25 @@ function writeJsonl(filePath, rows) {
   fs.writeFileSync(filePath, `${data}${rows.length > 0 ? '\n' : ''}`, 'utf8');
 }
 
+function deriveReviewCounts(rows) {
+  const counts = {
+    total: rows.length,
+    accepted: 0,
+    rejected: 0,
+    pending: 0,
+    evidence_audit_passed: 0
+  };
+  for (const row of rows) {
+    const status = row?.final_decision?.status || 'pending';
+    if (status === 'accepted') counts.accepted += 1;
+    else if (status === 'rejected') counts.rejected += 1;
+    else counts.pending += 1;
+
+    if (row?.evidence_audit?.status === 'passed') counts.evidence_audit_passed += 1;
+  }
+  return counts;
+}
+
 function writeReport(filePath, report) {
   fs.writeFileSync(filePath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
 }
@@ -307,6 +376,18 @@ function main() {
     const rows = readJsonl(OUTPUT_PATH);
     validateRows(rows, schema);
     validateSemantics(rows, candidateSet);
+    const counts = deriveReviewCounts(rows);
+    if (!fs.existsSync(REPORT_PATH)) {
+      throw new Error(`Missing ${REPORT_PATH}`);
+    }
+    const report = JSON.parse(fs.readFileSync(REPORT_PATH, 'utf8'));
+    if (report.review_rows !== rows.length) throw new Error(`Report review_rows mismatch: report=${report.review_rows} actual=${rows.length}`);
+    if (report.candidate_rows !== candidates.length) throw new Error(`Report candidate_rows mismatch: report=${report.candidate_rows} actual=${candidates.length}`);
+    if (report.total_candidates !== candidates.length) throw new Error(`Report total_candidates mismatch: report=${report.total_candidates} actual=${candidates.length}`);
+    if (report.accepted !== counts.accepted) throw new Error(`Report accepted mismatch: report=${report.accepted} actual=${counts.accepted}`);
+    if (report.rejected !== counts.rejected) throw new Error(`Report rejected mismatch: report=${report.rejected} actual=${counts.rejected}`);
+    if (report.pending !== counts.pending) throw new Error(`Report pending mismatch: report=${report.pending} actual=${counts.pending}`);
+    if (report.evidence_audit_passed !== counts.evidence_audit_passed) throw new Error(`Report evidence_audit_passed mismatch: report=${report.evidence_audit_passed} actual=${counts.evidence_audit_passed}`);
     console.log(`validated old-testament-person-review rows: ${rows.length}`);
     return;
   }
@@ -320,8 +401,12 @@ function main() {
   validateSemantics(rows, candidateSet);
 
   writeJsonl(OUTPUT_PATH, rows);
-  const pending = rows.filter((row) => row.candidate_status === 'pending' || row.final_decision?.status === 'pending').length;
-  const report = buildReport(rows, candidates.length, pending);
+  const counts = deriveReviewCounts(rows);
+  const report = buildReport(rows, candidates.length, counts.pending);
+  report.accepted = counts.accepted;
+  report.rejected = counts.rejected;
+  report.evidence_audit_passed = counts.evidence_audit_passed;
+  report.total_candidates = candidates.length;
   writeReport(REPORT_PATH, report);
   console.log(`generated old-testament-person-review rows: ${rows.length}`);
 }

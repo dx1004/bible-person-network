@@ -33,18 +33,25 @@
     "precheck": "npm run validate:source-access-review",
     "pages:preview": "npm run release:check && wrangler pages deploy web/dist --project-name new-testament-person-network --branch preview",
     "pages:production": "npm run release:check && wrangler pages deploy web/dist --project-name new-testament-person-network --branch main",
-    "check": "npm run validate:sbl-greek-audit && npm run validate:data && npm run check:migration && npm run validate:old-testament-candidates && npm run validate:old-testament-person-review && npm run validate:cross-testament-identity-review && npm run validate:tahot-totht-coverage-audit && npm run validate:chinese-name-candidates && npm run validate:chinese-name-review && npm run apply:chinese-name-review -- --check && npm run validate:relationship-review && npm run apply:relationship-review -- --check && npm run reconcile && npm run report && npm run test:step-boundary && npm run typecheck:web && npm --prefix web run check-person-era && npm run build:web && npm --prefix web run check-identity",
+    "check": "npm run validate:sbl-greek-audit && npm run validate:data && npm run check:migration && npm run validate:old-testament-candidates && npm run validate:historical-source-person-hits && npm run validate:old-testament-chinese-name-candidates && npm run validate:old-testament-person-review && npm run validate:old-testament-person-review-sidecar && npm run test:old-testament-person-review-sidecar && npm run validate:cross-testament-identity-review && npm run validate:tahot-totht-coverage-audit && npm run validate:chinese-name-candidates && npm run validate:chinese-name-review && npm run apply:chinese-name-review -- --check && npm run validate:relationship-review && npm run apply:relationship-review -- --check && npm run reconcile && npm run report && npm run test:step-boundary && npm run typecheck:web && npm --prefix web run check-person-era && npm run build:web && npm --prefix web run check-identity",
     "generate:old-testament-candidates": "node scripts/generate-old-testament-candidates.mjs",
     "validate:old-testament-candidates": "node scripts/generate-old-testament-candidates.mjs --validate-only",
     "init:old-testament-person-review": "node scripts/init-old-testament-person-review.js",
     "validate:old-testament-person-review": "node scripts/init-old-testament-person-review.js --validate-only",
+    "generate:historical-source-person-hits": "node scripts/generate-historical-source-person-hits.mjs",
+    "validate:historical-source-person-hits": "node scripts/generate-historical-source-person-hits.mjs --validate-only",
     "generate:cross-testament-identity-review": "node scripts/generate-cross-testament-identity-review.mjs",
     "validate:cross-testament-identity-review": "node scripts/generate-cross-testament-identity-review.mjs --validate-only",
     "check:migration": "node scripts/migrate-neutral-person-ids.mjs --check",
     "generate:tahot-totht-coverage-audit": "node scripts/audit-tahot-totht-coverage.mjs",
     "validate:tahot-totht-coverage-audit": "node scripts/audit-tahot-totht-coverage.mjs --validate-only",
     "validate:source-access-review": "node scripts/validate-source-access-review.mjs",
-    "verify:historical-sources": "node scripts/validate-source-access-review.mjs --verify-local"
+    "verify:historical-sources": "node scripts/validate-source-access-review.mjs --verify-local",
+    "apply:old-testament-person-review-sidecar": "node scripts/apply-old-testament-person-review-sidecar.js",
+    "validate:old-testament-person-review-sidecar": "node scripts/validate-old-testament-person-review-sidecar.js",
+    "test:old-testament-person-review-sidecar": "node scripts/test-old-testament-person-review-sidecar.js",
+    "generate:old-testament-chinese-name-candidates": "node scripts/generate-old-testament-chinese-name-candidates.mjs",
+    "validate:old-testament-chinese-name-candidates": "node scripts/generate-old-testament-chinese-name-candidates.mjs --validate-only"
   },
   "engines": {
     "node": ">=18"

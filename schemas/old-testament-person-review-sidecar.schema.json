@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Old Testament person review sidecar row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_id", "candidate_id", "stage", "decision", "created_at", "batch_id", "operator"],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^otpr-\\d{4}$" },
+    "candidate_id": { "type": "string", "pattern": "^otc-\\d{4}$" },
+    "stage": { "type": "string", "enum": ["round1", "round2", "final_decision"] },
+    "batch_id": { "type": "string", "minLength": 1 },
+    "batch_row_id": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "operator": { "type": ["string", "null"], "minLength": 1 },
+    "fingerprint": { "type": ["string", "null"], "minLength": 1 },
+    "signature": { "type": ["string", "null"], "minLength": 1 },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "decision_action",
+        "target_person_id",
+        "canonical_chinese",
+        "reviewer",
+        "decision_note",
+        "reviewed_at",
+        "reviewer_role_id",
+        "reviewer_model_id",
+        "reviewer_prompt_version"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "decision_action": { "type": ["string", "null"], "enum": [null, "create_new", "merge_existing"] },
+        "target_person_id": {
+          "type": ["string", "null"],
+          "anyOf": [
+            { "pattern": "^nt-people-\\d{4}$" },
+            { "pattern": "^person-\\d{6}$" }
+          ]
+        },
+        "canonical_chinese": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer": { "type": ["string", "null"] },
+        "decision_note": { "type": "string" },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+        "reviewer_role_id": {
+          "type": ["string", "null"],
+          "enum": ["editorial_a", "critic_b", "boardroom_adjudicator", null]
+        },
+        "reviewer_model_id": { "type": ["string", "null"], "minLength": 1 },
+        "reviewer_prompt_version": { "type": ["string", "null"], "minLength": 1 },
+        "source_file": { "type": ["string", "null"], "minLength": 1 }
+      }
+    },
+    "evidence_audit": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["status", "reviewer_role_id", "reviewer_model_id", "prompt_version", "checked_at", "notes", "evidence_refs"],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "passed", "failed"] },
+        "reviewer_role_id": { "type": "string", "enum": ["evidence_auditor"] },
+        "reviewer_model_id": { "type": "string", "minLength": 1 },
+        "prompt_version": { "type": "string", "minLength": 1 },
+        "checked_at": { "type": "string", "format": "date-time" },
+        "notes": { "type": "string" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

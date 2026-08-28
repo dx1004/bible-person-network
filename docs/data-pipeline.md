@@ -22,6 +22,10 @@
 
 - `npm run init:old-testament-person-review`：根据旧约候选生成双轮独立 AI 审校快照，默认 `pending`。
 - `npm run validate:old-testament-person-review`：校验审校快照，要求 `final` 与 `round1/2` 一致，且必须满足 multi-agent 协议记录。
+- `npm run generate:historical-source-person-hits`：核对已登记哈希后，以 2,720 个旧约候选的拉丁名称扫描 Josephus Whiston 与 Philo Yonge 的本地公版缓存；只生成逐候选、逐来源的 `pending` 命中索引与稳定行号定位，不保存原文或摘录。
+- `npm run validate:historical-source-person-hits`：仅用已提交的候选、命中索引和报告检查 5,440 行覆盖、排序、校验和与全量 `pending` 状态；不要求本机存在 `.sources`。
+- `npm run generate:old-testament-chinese-name-candidates`：基于旧约人物候选与和合本 CUV 人名标记，生成旧约中文名候选（pending）。
+- `npm run validate:old-testament-chinese-name-candidates`：校验 `editorial/old-testament-chinese-name-candidates.jsonl` 与其 report。
 - `npm run generate:cross-testament-identity-review`：生成旧约候选与 `identity-options` 的跨约身份候选快照（不入库），自动填充 `multi_agent_ai_review` 元信息（方法、版本、角色模型）。
 - `npm run validate:cross-testament-identity-review`：校验跨约身份快照（含 `review_method`、`protocol_version`、角色与证据审计元信息）。
 

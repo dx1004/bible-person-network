@@ -1,0 +1,74 @@
+{
+  "dataset": "pending_historical_source_person_hit_index",
+  "version": 1,
+  "review_state": "discovery_only_all_rows_pending",
+  "candidate_input": "editorial/old-testament-person-candidates.jsonl",
+  "candidate_count": 2720,
+  "candidate_sha256": "02e1ac555c421cba1be2531bfa691cebc8d4459c5dc4aad31fdc987338a1aafe",
+  "output_path": "editorial/historical-source-person-hits.jsonl",
+  "output_sha256": "0b300b72959b9feff498d5383d9dba7df34c53d816e7d49f81caaa53d3df9a24",
+  "row_count": 5440,
+  "hit_rows": 1272,
+  "no_hit_rows": 4168,
+  "locator_cap": 25,
+  "source_files": [
+    {
+      "source_id": "source:0006",
+      "source_path": ".sources/josephus-whiston-gutenberg/pg2848.txt",
+      "sha256": "bb2e32da8ba3adc109b7694e6a8f2f11570462af2bedd55798da70b754c6e440",
+      "bytes": 3067150,
+      "line_count": 48982
+    },
+    {
+      "source_id": "source:0007",
+      "source_path": ".sources/philo-yonge-1854-55/volume-01.txt",
+      "sha256": "dd3965248ebef988309ee72449400b64e611874978a459280217f9b612407ea7",
+      "bytes": 1525818,
+      "line_count": 27057
+    },
+    {
+      "source_id": "source:0007",
+      "source_path": ".sources/philo-yonge-1854-55/volume-02.txt",
+      "sha256": "fbe13478cb391c72017ad2863550be615d2f49cc725264c046c3bfe54e91f61b",
+      "bytes": 1501538,
+      "line_count": 26798
+    },
+    {
+      "source_id": "source:0007",
+      "source_path": ".sources/philo-yonge-1854-55/volume-03.txt",
+      "sha256": "05a0daf7f5bd1e7c132389348ec2e31c19daa67d95449a5819b83d8f4612c944",
+      "bytes": 1552724,
+      "line_count": 27721
+    },
+    {
+      "source_id": "source:0007",
+      "source_path": ".sources/philo-yonge-1854-55/volume-04.txt",
+      "sha256": "f5e3f6e574e139a109380fa2e886278126d9ccc311999b769258c57edfce7c90",
+      "bytes": 1389497,
+      "line_count": 28680
+    }
+  ],
+  "per_source": {
+    "source:0006": {
+      "coverage_rows": 2720,
+      "hit_rows": 1019,
+      "no_hit_rows": 1701,
+      "total_hits": 22380,
+      "capped_rows": 134
+    },
+    "source:0007": {
+      "coverage_rows": 2720,
+      "hit_rows": 253,
+      "no_hit_rows": 2467,
+      "total_hits": 12775,
+      "capped_rows": 37
+    }
+  },
+  "limitations": [
+    "Name hits are discovery candidates, not identity or relationship evidence.",
+    "Shared, short, and ordinary-word names can produce false positives.",
+    "Philo OCR locators require confirmation against the public-domain page scans.",
+    "Locator lists are capped; hit_count retains the complete occurrence count.",
+    "No source text or snippets are stored in the generated artifacts."
+  ]
+}
