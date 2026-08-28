@@ -28,7 +28,13 @@
     "license_evidence": { "type": "string", "format": "uri" },
     "access_status": {
       "type": "string",
-      "enum": ["locked_public_download", "member_catalog_unverified", "member_access_verified"]
+      "enum": [
+        "locked_public_download",
+        "member_catalog_unverified",
+        "official_temporary_access_verified",
+        "member_catalog_checked_no_approved_edition",
+        "member_access_verified"
+      ]
     },
     "systematic_review_status": {
       "type": "string",
@@ -41,7 +47,7 @@
     "full_text_in_git": { "const": false },
     "catalog_status": {
       "type": "string",
-      "enum": ["exact_edition_locked", "awaiting_authenticated_catalog_check"]
+      "enum": ["exact_edition_locked", "awaiting_authenticated_catalog_check", "exact_edition_not_available"]
     },
     "files": {
       "type": "array",

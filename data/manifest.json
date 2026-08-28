@@ -62,9 +62,9 @@
       "source_id": "source:0008",
       "provider": "Lexham Bible Dictionary (2016)",
       "license": "proprietary_restricted",
-      "url": "https://www.logos.com/product/1531/lexham-bible-dictionary",
+      "url": "https://www.logos.com/product/36564/lexham-bible-dictionary",
       "scope": "bible",
-      "access_status": "member_catalog_unverified",
+      "access_status": "official_temporary_access_verified",
       "systematic_review_status": "not_started",
       "status": "pending"
     },
@@ -74,7 +74,7 @@
       "license": "proprietary_restricted",
       "url": "https://yalebooks.yale.edu/",
       "scope": "bible",
-      "access_status": "member_catalog_unverified",
+      "access_status": "member_catalog_checked_no_approved_edition",
       "systematic_review_status": "not_started",
       "status": "pending"
     }

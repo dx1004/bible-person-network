@@ -52,8 +52,9 @@ for (const [index, row] of rows.entries()) {
   if (isPublic && !row.files?.length) errors.push(`${row.source_id}: locked public-domain source must record files`);
   if (!isPublic && row.files?.length) errors.push(`${row.source_id}: restricted source must not record full-text files`);
   if (!isPublic && row.full_text_in_git !== false) errors.push(`${row.source_id}: restricted full text must not be stored in Git`);
-  if (row.systematic_review_status === 'completed' && row.access_status === 'member_catalog_unverified') {
-    errors.push(`${row.source_id}: systematic review cannot complete before member access is verified`);
+  const reviewableAccess = new Set(['locked_public_download', 'official_temporary_access_verified', 'member_access_verified']);
+  if (row.systematic_review_status !== 'not_started' && !reviewableAccess.has(row.access_status)) {
+    errors.push(`${row.source_id}: systematic review cannot start before approved access is verified`);
   }
 
   const resolvedFiles = new Map();
