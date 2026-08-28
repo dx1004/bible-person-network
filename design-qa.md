@@ -238,3 +238,31 @@ The selected option supplied the information architecture: searchable people ind
 ## Final result
 
 **passed**
+
+---
+
+# Design QA — Font Scale Calibration
+
+## Scope
+
+- Calibrated the live research-atlas typography against `/Users/dx/Desktop/Screenshot 2026-08-27 at 5.08.05 PM.png`.
+- Preserved the established title, dataset counts, three-column proportions, and control placement.
+- Increased undersized navigation, filter, list, inspector, source, footer, node, and relationship-label text by roughly 1–2 px, with matching line-height and row-height adjustments.
+- Kept the narrow layout compact while removing the sub-11 px text used by visible controls.
+
+## Visual evidence
+
+- Desktop capture: `/tmp/nt-people-font-size-qa/01-desktop.png`.
+- 500 px responsive capture: `/tmp/nt-people-font-size-qa/02-narrow.png`.
+- Desktop labels remain visually distinct from the brand and dataset counts; list rows and the inspector can now be scanned without browser zoom.
+- The compact graph remains fully contained above its relationship ribbon after node-label enlargement.
+
+## Validation evidence
+
+- TypeScript checking passed before visual review.
+- Full repository validation, strict design audit, production build, data integrity checks, and responsive visual review passed after the final CSS update.
+- Current publication counts remain 364 people and 222 accepted relationships; editorial review state is unchanged.
+
+## Final result
+
+**passed**
