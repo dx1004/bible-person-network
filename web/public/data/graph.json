@@ -40657,7 +40657,8 @@
         "ot_text",
         "ancient",
         "modern"
-      ]
+      ],
+      "graphMode": "family_tree"
     },
     {
       "id": "discipleship",

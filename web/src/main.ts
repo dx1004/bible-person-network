@@ -690,11 +690,14 @@ function renderGraph() {
   if (!selected) return;
   const topic = activeTopic();
   const isFamilyTree = topic?.graphMode === 'family_tree';
+  const isFamilyTopic = topic?.id === 'family';
   const isTopicPyramid = Boolean(topic && topic.id !== 'all' && filters.topic !== 'custom');
   const isPyramid = !isFamilyTree;
   const selectedName = personDisplayName(selected);
   const relationships = isFamilyTree
-    ? familyTreeRelationships(currentModel)
+    ? isFamilyTopic
+      ? focusRelationships(currentModel).filter((relationship) => familyRelationKind(relationship) !== 'other')
+      : familyTreeRelationships(currentModel)
     : isTopicPyramid ? connectedTopicRelationships(currentModel) : focusRelationships(currentModel);
 
   graphHeading.textContent = isFamilyTree ? `${topic?.name || '家族'}谱系` : isTopicPyramid ? `${topic?.name || '专题'}关系层级` : `${selectedName}的关系层级`;
@@ -702,7 +705,7 @@ function renderGraph() {
   graphModeNote.textContent = isFamilyTree
     ? '谱系视图 · 年长辈在上 · 手足在下 · 子女／后代更下 · 实线：父母／祖先 · 点线：手足 · 虚线：婚姻'
     : isTopicPyramid ? '专题层级图 · 保留焦点人物所在关系网，按方向分层排列' : '层级关系图 · 上层为指向焦点的关系，下层为焦点发出或并列的关系';
-  graphContainer.setAttribute('aria-label', isFamilyTree ? '希律家族代际关系图；点选人物后可在右侧读取全部关系和出处' : isTopicPyramid ? '专题关系层级图；点选人物或路径后可在右侧读取全部关系和出处' : '选中人物的层级关系图；所有关系也可在右侧文字列表读取');
+  graphContainer.setAttribute('aria-label', isFamilyTree ? '家族代际关系图；点选人物后可在右侧读取全部关系和出处' : isTopicPyramid ? '专题关系层级图；点选人物或路径后可在右侧读取全部关系和出处' : '选中人物的层级关系图；所有关系也可在右侧文字列表读取');
 
   if (!relationships.length) {
     if (cy) {

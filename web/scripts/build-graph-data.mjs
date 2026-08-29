@@ -612,7 +612,8 @@ async function loadJSON(fileName, fallback = []) {
         ],
         bookIncludes: [],
         eraIncludes: [],
-        evidenceIncludes: ['nt_text', 'ot_text', 'ancient', 'modern']
+        evidenceIncludes: ['nt_text', 'ot_text', 'ancient', 'modern'],
+        graphMode: 'family_tree'
       },
       {
         id: 'discipleship',
