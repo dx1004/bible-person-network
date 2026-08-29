@@ -539,6 +539,14 @@ async function loadJSON(fileName, fallback = []) {
     });
 
     const paulPersonId = graphPeople.find((person) => person.nameZh === '保罗')?.id || 'person-000000';
+    const jesusPersonId = graphPeople.find((person) => person.nameZh === '耶稣')?.id || 'person-000000';
+    const discipleshipLabels = {
+      'person-000143': '雅各（西庇太之子）',
+      'person-000141': '雅各（亚勒腓之子）',
+      'person-000188': '犹大（达太）',
+      'person-000189': '犹大（加略人）',
+      'person-000328': '西门（奋锐党人）'
+    };
     const paulTeamPersonIds = unique(
       relationships
         .filter((relationship) =>
@@ -618,10 +626,12 @@ async function loadJSON(fileName, fallback = []) {
       {
         id: 'discipleship',
         name: '门徒关系',
-        relationTypes: withCandidateVariants(['师徒']),
+        relationTypes: withCandidateVariants(['师徒', '差派']),
         bookIncludes: [],
         eraIncludes: [],
-    evidenceIncludes: ['nt_text', 'ot_text', 'ancient', 'modern']
+        evidenceIncludes: ['nt_text', 'ot_text', 'ancient', 'modern'],
+        focusPersonId: jesusPersonId,
+        personLabels: discipleshipLabels
       },
       {
         id: 'paulTeam',

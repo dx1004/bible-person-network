@@ -40665,7 +40665,9 @@
       "name": "门徒关系",
       "relationTypes": [
         "师徒",
-        "候选师徒"
+        "候选师徒",
+        "差派",
+        "候选差派"
       ],
       "bookIncludes": [],
       "eraIncludes": [],
@@ -40674,7 +40676,15 @@
         "ot_text",
         "ancient",
         "modern"
-      ]
+      ],
+      "focusPersonId": "person-000156",
+      "personLabels": {
+        "person-000143": "雅各（西庇太之子）",
+        "person-000141": "雅各（亚勒腓之子）",
+        "person-000188": "犹大（达太）",
+        "person-000189": "犹大（加略人）",
+        "person-000328": "西门（奋锐党人）"
+      }
     },
     {
       "id": "paulTeam",
