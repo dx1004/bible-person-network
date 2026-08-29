@@ -380,15 +380,15 @@
       "Name variants: 918",
       "Mentions: 3056",
       "Assertions: 355",
-      "Published relationships: 222",
+      "Published relationships: 305",
       "Rejected assertions retained for audit: 50",
       "Sources: 9",
       "Identity options: 368",
       "Chinese labels pending review: 4",
-      "Relation assertions pending review: 83",
+      "Relation assertions pending review: 0",
       "SBL proper-name extraction: implemented",
       "Source revisions pending: 5",
-      "Old Testament review pending: 1013",
+      "Old Testament review pending: 1008",
       "Cross-testament identity pending: 6",
       "Cross-testament identity unmatched: 8",
       "OT pipeline stage: ot_editorial_review (none)"
@@ -37247,6 +37247,66 @@
       "identityGuards": []
     },
     {
+      "id": "asrt-0260",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000054",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0003；方向标记：undirected；出处：ACT 13:2-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 13:2-5"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0261",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000320",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0004；方向标记：undirected；出处：ACT 15:40-41",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 15:40-41"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
       "id": "asrt-0262",
       "fromPerson": "person-000266",
       "toPerson": "person-000283",
@@ -37299,6 +37359,100 @@
       "book": "ROM",
       "books": [
         "ROM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0264",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000270",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0007；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0265",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000351",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0008；方向标记：directed；出处：1TI 1:18；1CO 4:17",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "1TI 1:18",
+        "1CO 4:17"
+      ],
+      "book": "1TI",
+      "books": [
+        "1TI",
+        "1CO"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0266",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000352",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0009；方向标记：directed；出处：TIT 1:5；2CO 12:18",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "TIT 1:5",
+        "2CO 12:18"
+      ],
+      "book": "TIT",
+      "books": [
+        "TIT",
+        "2CO"
       ],
       "testaments": [
         "nt"
@@ -37635,6 +37789,2352 @@
       ],
       "era": "使徒时代",
       "identityGuards": []
+    },
+    {
+      "id": "asrt-0278",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000270",
+      "rawRelationType": "teacher_student",
+      "type": "师徒",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0023；方向标记：directed；出处：MAT 4:18-22",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 4:18-22"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0279",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000028",
+      "rawRelationType": "teacher_student",
+      "type": "师徒",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0024；方向标记：directed；出处：MAT 4:18-22",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 4:18-22"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0280",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000143",
+      "rawRelationType": "teacher_student",
+      "type": "师徒",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0025；方向标记：directed；出处：MAT 4:18-22",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 4:18-22"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0281",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000166",
+      "rawRelationType": "teacher_student",
+      "type": "师徒",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0026；方向标记：directed；出处：MAT 4:18-22",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 4:18-22"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0282",
+      "fromPerson": "person-000283",
+      "toPerson": "person-000034",
+      "rawRelationType": "teacher_student",
+      "type": "师徒",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0029；方向标记：directed；出处：ACT 18:26",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 18:26"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0283",
+      "fromPerson": "person-000036",
+      "toPerson": "person-000034",
+      "rawRelationType": "teacher_student",
+      "type": "师徒",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0030；方向标记：directed；出处：ACT 18:26",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 18:26"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0284",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000034",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0031；方向标记：undirected；出处：1CO 3:6-9",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "1CO 3:6-9"
+      ],
+      "book": "1CO",
+      "books": [
+        "1CO"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0285",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000358",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0033；方向标记：undirected；出处：ROM 16:9",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ROM 16:9"
+      ],
+      "book": "ROM",
+      "books": [
+        "ROM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0286",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000097",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0034；方向标记：undirected；出处：PHP 2:25",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHP 2:25"
+      ],
+      "book": "PHP",
+      "books": [
+        "PHP"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0287",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000272",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0035；方向标记：undirected；出处：PHM 1:1",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHM 1:1"
+      ],
+      "book": "PHM",
+      "books": [
+        "PHM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0288",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000219",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0036；方向标记：undirected；出处：PHM 1:24",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHM 1:24"
+      ],
+      "book": "PHM",
+      "books": [
+        "PHM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0289",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000040",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0037；方向标记：undirected；出处：PHM 1:24",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHM 1:24"
+      ],
+      "book": "PHM",
+      "books": [
+        "PHM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0290",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000078",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0038；方向标记：undirected；出处：PHM 1:24",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHM 1:24"
+      ],
+      "book": "PHM",
+      "books": [
+        "PHM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0291",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000209",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0039；方向标记：undirected；出处：PHM 1:24",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHM 1:24"
+      ],
+      "book": "PHM",
+      "books": [
+        "PHM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0292",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000104",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0040；方向标记：undirected；出处：PHP 4:2-3",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHP 4:2-3"
+      ],
+      "book": "PHP",
+      "books": [
+        "PHP"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0293",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000339",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0041；方向标记：undirected；出处：PHP 4:2-3",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHP 4:2-3"
+      ],
+      "book": "PHP",
+      "books": [
+        "PHP"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0294",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000070",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0042；方向标记：undirected；出处：PHP 4:2-3",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHP 4:2-3"
+      ],
+      "book": "PHP",
+      "books": [
+        "PHP"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0295",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000096",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0043；方向标记：undirected；出处：COL 1:7",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "COL 1:7"
+      ],
+      "book": "COL",
+      "books": [
+        "COL"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0296",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000356",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0044；方向标记：undirected；出处：COL 4:7",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "COL 4:7"
+      ],
+      "book": "COL",
+      "books": [
+        "COL"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0297",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000195",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0045；方向标记：undirected；出处：COL 4:10-11",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "COL 4:10-11"
+      ],
+      "book": "COL",
+      "books": [
+        "COL"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0298",
+      "fromPerson": "person-000054",
+      "toPerson": "person-000219",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0046；方向标记：undirected；出处：ACT 15:39",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 15:39"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0299",
+      "fromPerson": "person-000049",
+      "toPerson": "person-000050",
+      "rawRelationType": "teacher_student",
+      "type": "师徒",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0047；方向标记：directed；出处：REV 2:14",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "REV 2:14"
+      ],
+      "book": "REV",
+      "books": [
+        "REV"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0300",
+      "fromPerson": "person-000220",
+      "toPerson": "person-000156",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0048；方向标记：directed；出处：LUK 10:38-40",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "LUK 10:38-40"
+      ],
+      "book": "LUK",
+      "books": [
+        "LUK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0301",
+      "fromPerson": "person-000361",
+      "toPerson": "person-000156",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0049；方向标记：directed；出处：LUK 19:5-6",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "LUK 19:5-6"
+      ],
+      "book": "LUK",
+      "books": [
+        "LUK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0302",
+      "fromPerson": "person-000210",
+      "toPerson": "person-000320",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0050；方向标记：directed；出处：ACT 16:40",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 16:40"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0303",
+      "fromPerson": "person-000147",
+      "toPerson": "person-000266",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0051；方向标记：directed；出处：ACT 17:5-7",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 17:5-7"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0304",
+      "fromPerson": "person-000147",
+      "toPerson": "person-000320",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0052；方向标记：directed；出处：ACT 17:5-7",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 17:5-7"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0305",
+      "fromPerson": "person-000274",
+      "toPerson": "person-000266",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0053；方向标记：directed；出处：ACT 21:8",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 21:8"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0306",
+      "fromPerson": "person-000241",
+      "toPerson": "person-000266",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0054；方向标记：directed；出处：ACT 21:16",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 21:16"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0307",
+      "fromPerson": "person-000285",
+      "toPerson": "person-000266",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0055；方向标记：directed；出处：ACT 28:7",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 28:7"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0308",
+      "fromPerson": "person-000114",
+      "toPerson": "person-000266",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0056；方向标记：directed；出处：ROM 16:23",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ROM 16:23"
+      ],
+      "book": "ROM",
+      "books": [
+        "ROM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0309",
+      "fromPerson": "person-000071",
+      "toPerson": "person-000270",
+      "rawRelationType": "host",
+      "type": "接待",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0057；方向标记：directed；出处：ACT 10:22-24",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 10:22-24"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0310",
+      "fromPerson": "person-000348",
+      "toPerson": "person-000282",
+      "rawRelationType": "political",
+      "type": "政治权属",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0058；方向标记：directed；出处：LUK 3:1",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "LUK 3:1"
+      ],
+      "book": "LUK",
+      "books": [
+        "LUK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0311",
+      "fromPerson": "person-000348",
+      "toPerson": "person-000125",
+      "rawRelationType": "political",
+      "type": "政治权属",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0059；方向标记：directed；出处：LUK 3:1",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "LUK 3:1"
+      ],
+      "book": "LUK",
+      "books": [
+        "LUK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0312",
+      "fromPerson": "person-000348",
+      "toPerson": "person-000211",
+      "rawRelationType": "political",
+      "type": "政治权属",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0060；方向标记：directed；出处：LUK 3:1",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "LUK 3:1"
+      ],
+      "book": "LUK",
+      "books": [
+        "LUK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0313",
+      "fromPerson": "person-000348",
+      "toPerson": "person-000275",
+      "rawRelationType": "political",
+      "type": "政治权属",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0061；方向标记：directed；出处：LUK 3:1",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "LUK 3:1"
+      ],
+      "book": "LUK",
+      "books": [
+        "LUK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0314",
+      "fromPerson": "person-000069",
+      "toPerson": "person-000036",
+      "rawRelationType": "political",
+      "type": "政治权属",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0062；方向标记：directed；出处：ACT 18:2",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 18:2"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0315",
+      "fromPerson": "person-000069",
+      "toPerson": "person-000283",
+      "rawRelationType": "political",
+      "type": "政治权属",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0063；方向标记：directed；出处：ACT 18:2",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 18:2"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0316",
+      "fromPerson": "person-000107",
+      "toPerson": "person-000108",
+      "rawRelationType": "political",
+      "type": "政治权属",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0065；方向标记：directed；出处：ACT 24:27",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 24:27"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0317",
+      "fromPerson": "person-000047",
+      "toPerson": "person-000175",
+      "rawRelationType": "political",
+      "type": "政治权属",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0066；方向标记：directed；出处：LUK 2:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "LUK 2:1-5"
+      ],
+      "book": "LUK",
+      "books": [
+        "LUK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0318",
+      "fromPerson": "person-000047",
+      "toPerson": "person-000223",
+      "rawRelationType": "political",
+      "type": "政治权属",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0067；方向标记：directed；出处：LUK 2:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "LUK 2:1-5"
+      ],
+      "book": "LUK",
+      "books": [
+        "LUK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0319",
+      "fromPerson": "person-000282",
+      "toPerson": "person-000051",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0068；方向标记：directed；出处：MAT 27:26",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 27:26"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0320",
+      "fromPerson": "person-000125",
+      "toPerson": "person-000165",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0069；方向标记：directed；出处：MAT 14:3-10；Josephus, Antiquities 18.116-119",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text",
+        "ancient"
+      ],
+      "sources": [
+        "source:0001",
+        "source:0004"
+      ],
+      "passages": [
+        "MAT 14:3-10",
+        "Josephus, Antiquities 18.116-119"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT",
+        "Josephus"
+      ],
+      "testaments": [
+        "nt",
+        "ot"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0321",
+      "fromPerson": "person-000125",
+      "toPerson": "person-000156",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0070；方向标记：directed；出处：LUK 23:7-11",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "LUK 23:7-11"
+      ],
+      "book": "LUK",
+      "books": [
+        "LUK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0322",
+      "fromPerson": "person-000031",
+      "toPerson": "person-000156",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0071；方向标记：directed；出处：JHN 18:13-24",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "JHN 18:13-24"
+      ],
+      "book": "JHN",
+      "books": [
+        "JHN"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0323",
+      "fromPerson": "person-000062",
+      "toPerson": "person-000156",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0072；方向标记：directed；出处：MAT 26:57-66",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 26:57-66"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0324",
+      "fromPerson": "person-000124",
+      "toPerson": "person-000143",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0073；方向标记：directed；出处：ACT 12:1-4",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 12:1-4"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0325",
+      "fromPerson": "person-000124",
+      "toPerson": "person-000270",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0074；方向标记：directed；出处：ACT 12:1-4",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 12:1-4"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0326",
+      "fromPerson": "person-000212",
+      "toPerson": "person-000266",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0075；方向标记：directed；出处：ACT 22:24",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 22:24"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0327",
+      "fromPerson": "person-000025",
+      "toPerson": "person-000266",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0076；方向标记：directed；出处：ACT 23:2",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 23:2"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0328",
+      "fromPerson": "person-000014",
+      "toPerson": "person-000266",
+      "rawRelationType": "legal",
+      "type": "司法行为",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0079；方向标记：directed；出处：ACT 26:1",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 26:1"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0329",
+      "fromPerson": "person-000126",
+      "toPerson": "person-000156",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0080；方向标记：directed；出处：MAT 2:13-16",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 2:13-16"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0330",
+      "fromPerson": "person-000127",
+      "toPerson": "person-000165",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0081；方向标记：directed；出处：MRK 6:19",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MRK 6:19"
+      ],
+      "book": "MRK",
+      "books": [
+        "MRK"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0331",
+      "fromPerson": "person-000053",
+      "toPerson": "person-000266",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0083；方向标记：directed；出处：ACT 13:7-8",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 13:7-8"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0332",
+      "fromPerson": "person-000053",
+      "toPerson": "person-000054",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0084；方向标记：directed；出处：ACT 13:7-8",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 13:7-8"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0333",
+      "fromPerson": "person-000079",
+      "toPerson": "person-000266",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0085；方向标记：directed；出处：ACT 19:24-29",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 19:24-29"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0334",
+      "fromPerson": "person-000145",
+      "toPerson": "person-000242",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0086；方向标记：directed；出处：2TI 3:8",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "2TI 3:8"
+      ],
+      "book": "2TI",
+      "books": [
+        "2TI"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0335",
+      "fromPerson": "person-000063",
+      "toPerson": "person-000002",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0087；方向标记：directed；出处：1JN 3:12",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "1JN 3:12"
+      ],
+      "book": "1JN",
+      "books": [
+        "1JN"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0336",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000337",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0088；方向标记：directed；出处：ACT 7:58；ACT 8:1",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 7:58",
+        "ACT 8:1"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0337",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000028",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0089；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0338",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000143",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0090；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0339",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000166",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0091；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0340",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000233",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0092；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0341",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000055",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0093；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0342",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000347",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0094；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0343",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000141",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0095；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0344",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000188",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0096；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0345",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000189",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0097；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0346",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000276",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0098；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0347",
+      "fromPerson": "person-000156",
+      "toPerson": "person-000328",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0099；方向标记：directed；出处：MAT 10:1-5",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "MAT 10:1-5"
+      ],
+      "book": "MAT",
+      "books": [
+        "MAT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0348",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000097",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0101；方向标记：directed；出处：PHP 2:25",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHP 2:25"
+      ],
+      "book": "PHP",
+      "books": [
+        "PHP"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0349",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000356",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0102；方向标记：directed；出处：COL 4:7",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "COL 4:7"
+      ],
+      "book": "COL",
+      "books": [
+        "COL"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0350",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000262",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0103；方向标记：directed；出处：PHM 1:12",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "PHM 1:12"
+      ],
+      "book": "PHM",
+      "books": [
+        "PHM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0351",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000099",
+      "rawRelationType": "commission",
+      "type": "差派",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0104；方向标记：directed；出处：ACT 19:22",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 19:22"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0352",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000351",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0112；方向标记：undirected；出处：ROM 16:21",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ROM 16:21"
+      ],
+      "book": "ROM",
+      "books": [
+        "ROM"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0353",
+      "fromPerson": "person-000266",
+      "toPerson": "person-000352",
+      "rawRelationType": "collegial",
+      "type": "长期同工",
+      "direction": "undirected",
+      "description": "Explicit seed seed-rs-0113；方向标记：undirected；出处：2CO 8:23",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "2CO 8:23"
+      ],
+      "book": "2CO",
+      "books": [
+        "2CO"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0354",
+      "fromPerson": "person-000139",
+      "toPerson": "person-000242",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0114；方向标记：directed；出处：2TI 3:8",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "2TI 3:8"
+      ],
+      "book": "2TI",
+      "books": [
+        "2TI"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
+    },
+    {
+      "id": "asrt-0355",
+      "fromPerson": "person-000025",
+      "toPerson": "person-000266",
+      "rawRelationType": "hostile",
+      "type": "明确敌对",
+      "direction": "outgoing",
+      "description": "Explicit seed seed-rs-0115；方向标记：directed；出处：ACT 23:2",
+      "certainty": "high",
+      "rawEvidenceLevel": "nt_text",
+      "evidenceLevel": "nt_text",
+      "evidenceLevels": [
+        "nt_text"
+      ],
+      "sources": [
+        "source:0001"
+      ],
+      "passages": [
+        "ACT 23:2"
+      ],
+      "book": "ACT",
+      "books": [
+        "ACT"
+      ],
+      "testaments": [
+        "nt"
+      ],
+      "era": "使徒时代",
+      "identityGuards": []
     }
   ],
   "sources": [
@@ -37828,8 +40328,26 @@
       ],
       "personIncludes": [
         "person-000266",
+        "person-000054",
+        "person-000320",
         "person-000283",
-        "person-000036"
+        "person-000036",
+        "person-000034",
+        "person-000358",
+        "person-000097",
+        "person-000272",
+        "person-000219",
+        "person-000040",
+        "person-000078",
+        "person-000209",
+        "person-000104",
+        "person-000339",
+        "person-000070",
+        "person-000096",
+        "person-000356",
+        "person-000195",
+        "person-000351",
+        "person-000352"
       ]
     },
     {

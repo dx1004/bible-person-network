@@ -2,9 +2,9 @@
 
 以可审计、可重建的数据管线制作圣经人物关系网。项目包含版本化人物资料、JSON Schema、Neo4j 本地研究库，以及 Cytoscape.js 静态网页。
 
-GitHub：<https://github.com/dx1004/new-testament-person-network>（仓库尚未正式改名）
+GitHub：<https://github.com/dx1004/bible-person-network>（仓库已改名）
 
-网站：<https://nt-people.coudx.com>（旧预览；当前版本在审校完成前暂停部署）
+网站：<https://bible-people.coudx.com>（域名初始化中；当前版本在审校完成前暂停部署）
 
 ## 收录范围
 
@@ -102,7 +102,7 @@ Neo4j 仅供本地研究与构建，不作为公开网站后端。复制 `neo4j/
 
 - 预览发布：`npm run pages:preview`
 - 正式发布：`npm run pages:production`
-- 自定义域名：<https://nt-people.coudx.com>
+- 自定义域名：<https://bible-people.coudx.com>（旧地址暂时保留）
 
 ## 许可
 

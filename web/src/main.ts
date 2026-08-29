@@ -168,7 +168,7 @@ appRoot.innerHTML = `
           <div class="dataset-stat"><strong id="relations-total">—</strong><span>关系</span></div>
         </div>
         <button id="header-fit" class="header-action" type="button" data-onclick="direct"><i class="ph ph-layout" aria-hidden="true"></i><span>视图</span></button>
-      <a class="header-action" href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer"><i class="ph ph-book-open" aria-hidden="true"></i><span>帮助</span></a>
+      <a class="header-action" href="https://github.com/dx1004/bible-person-network" target="_blank" rel="noopener noreferrer"><i class="ph ph-book-open" aria-hidden="true"></i><span>帮助</span></a>
       </div>
     </header>
     <div id="review-warning" class="review-warning reading-surface" role="status" hidden>
@@ -235,7 +235,7 @@ appRoot.innerHTML = `
       </div>
       <nav class="site-footer-links" aria-label="资料与联系方式">
         <a class="site-footer-link" href="mailto:xunalinxu1004@coudx.com"><i class="ph ph-envelope-simple" aria-hidden="true"></i><span>联系：xunalinxu1004@coudx.com</span></a>
-      <a class="site-footer-link" href="https://github.com/dx1004/new-testament-person-network" target="_blank" rel="noopener noreferrer">资料与代码 <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>
+      <a class="site-footer-link" href="https://github.com/dx1004/bible-person-network" target="_blank" rel="noopener noreferrer">资料与代码 <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>
       </nav>
     </footer>
   </div>`;
@@ -523,21 +523,140 @@ function familyTreeRelationships(model: VisibleModel) {
     .sort((a, b) => kindRank[familyRelationKind(a)] - kindRank[familyRelationKind(b)] || relationshipPriority(b) - relationshipPriority(a));
 }
 
+function focusRelationshipRank(relationship: Relationship) {
+  if (relationship.direction === 'undirected' || relationship.direction === 'bidirectional') return 1;
+  const focusIsSource = relationship.fromPerson === selectedPersonId;
+  const focusStartsRelationship = relationship.direction === 'incoming' ? !focusIsSource : focusIsSource;
+  return focusStartsRelationship ? 1 : -1;
+}
+
+function connectedTopicRelationships(model: VisibleModel) {
+  const adjacency = new Map<string, Relationship[]>();
+  for (const relationship of model.relationships) {
+    const from = adjacency.get(relationship.fromPerson) || [];
+    const to = adjacency.get(relationship.toPerson) || [];
+    from.push(relationship); to.push(relationship);
+    adjacency.set(relationship.fromPerson, from); adjacency.set(relationship.toPerson, to);
+  }
+  const included = new Set<string>([selectedPersonId]);
+  const queue = [selectedPersonId];
+  while (queue.length) {
+    const personId = queue.shift()!;
+    for (const relationship of adjacency.get(personId) || []) {
+      const neighbor = relationship.fromPerson === personId ? relationship.toPerson : relationship.fromPerson;
+      if (!included.has(neighbor)) { included.add(neighbor); queue.push(neighbor); }
+    }
+  }
+  return model.relationships.filter((relationship) => included.has(relationship.fromPerson) && included.has(relationship.toPerson));
+}
+
+function pyramidPositions(
+  relationships: Relationship[],
+  width: number,
+  height: number,
+  compact: boolean,
+  includeConnectedNetwork = false
+) {
+  const positions = new Map<string, { x: number; y: number }>();
+  const ranks = new Map<string, number>([[selectedPersonId, 0]]);
+  const priorities = new Map<string, number>();
+
+  if (includeConnectedNetwork) {
+    const adjacency = new Map<string, Relationship[]>();
+    for (const relationship of relationships) {
+      const from = adjacency.get(relationship.fromPerson) || [];
+      const to = adjacency.get(relationship.toPerson) || [];
+      from.push(relationship); to.push(relationship);
+      adjacency.set(relationship.fromPerson, from); adjacency.set(relationship.toPerson, to);
+    }
+    const queue = [selectedPersonId];
+    while (queue.length) {
+      const current = queue.shift()!;
+      const currentRank = ranks.get(current) || 0;
+      for (const relationship of adjacency.get(current) || []) {
+        const isSource = relationship.fromPerson === current;
+        const next = isSource ? relationship.toPerson : relationship.fromPerson;
+        if (ranks.has(next)) continue;
+        const directionalStep = relationship.direction === 'undirected' || relationship.direction === 'bidirectional'
+          ? (currentRank < 0 ? 1 : -1)
+          : (relationship.direction === 'incoming' ? -1 : 1) * (isSource ? 1 : -1);
+        ranks.set(next, currentRank + directionalStep);
+        priorities.set(next, relationshipPriority(relationship));
+        queue.push(next);
+      }
+    }
+  } else {
+    for (const relationship of relationships) {
+      const personId = relationship.fromPerson === selectedPersonId ? relationship.toPerson : relationship.fromPerson;
+      const rank = focusRelationshipRank(relationship);
+      const priority = relationshipPriority(relationship);
+      if (!ranks.has(personId) || priority > (priorities.get(personId) || -1)) {
+        ranks.set(personId, rank);
+        priorities.set(personId, priority);
+      }
+    }
+  }
+
+  const rows = new Map<number, string[]>();
+  for (const [personId, rank] of ranks) {
+    const row = rows.get(rank) || [];
+    row.push(personId);
+    rows.set(rank, row);
+  }
+  const rankValues = [...rows.keys()].sort((a, b) => a - b);
+  const hasAbove = rankValues.some((rank) => rank < 0);
+  const hasBelow = rankValues.some((rank) => rank > 0);
+  const yByRank = new Map<number, number>();
+  const top = hasAbove && hasBelow ? 0.12 : 0.22;
+  const bottom = hasAbove && hasBelow ? 0.84 : 0.78;
+  rankValues.forEach((rank, index) => yByRank.set(rank, rankValues.length === 1 ? height * 0.5 : height * (top + ((bottom - top) * index) / (rankValues.length - 1))));
+
+  for (const [rank, personIds] of rows) {
+    const ordered = personIds.sort((a, b) => {
+      if (a === selectedPersonId) return -1;
+      if (b === selectedPersonId) return 1;
+      const aPerson = currentModel?.personMap.get(a) || originalPersonById.get(a);
+      const bPerson = currentModel?.personMap.get(b) || originalPersonById.get(b);
+      return personDisplayName(aPerson).localeCompare(personDisplayName(bPerson), 'zh-Hans');
+    });
+    const y = yByRank.get(rank) || height * 0.5;
+    const perRow = compact ? 5 : 7;
+    const chunks: string[][] = [];
+    for (let index = 0; index < ordered.length; index += perRow) chunks.push(ordered.slice(index, index + perRow));
+    if (rank > 0) chunks.reverse();
+    const rootY = yByRank.get(0) || height * 0.5;
+    const rowSpread = chunks.length > 1 ? Math.min(Math.abs(rootY - y) * 0.7, height * 0.34) : 0;
+    chunks.forEach((chunk, rowIndex) => {
+      const directionToFocus = Math.sign(rootY - y);
+      const rowY = chunks.length === 1 ? y : y + (directionToFocus * rowSpread * rowIndex) / (chunks.length - 1);
+      chunk.forEach((personId, index) => {
+        const x = chunk.length === 1 ? width * 0.5 : width * ((compact ? 0.14 : 0.18) + ((compact ? 0.72 : 0.64) * index) / (chunk.length - 1));
+        positions.set(personId, { x, y: rowY });
+      });
+    });
+  }
+  return positions;
+}
+
 function renderGraph() {
   if (!currentModel) return;
   const selected = currentModel.personMap.get(selectedPersonId) || originalPersonById.get(selectedPersonId);
   if (!selected) return;
   const topic = activeTopic();
   const isFamilyTree = topic?.graphMode === 'family_tree';
+  const isTopicPyramid = Boolean(topic && topic.id !== 'all' && filters.topic !== 'custom');
+  const isPyramid = !isFamilyTree;
   const selectedName = personDisplayName(selected);
-  const relationships = isFamilyTree ? familyTreeRelationships(currentModel) : focusRelationships(currentModel);
+  const relationships = isFamilyTree
+    ? familyTreeRelationships(currentModel)
+    : isTopicPyramid ? connectedTopicRelationships(currentModel) : focusRelationships(currentModel);
 
-  graphHeading.textContent = isFamilyTree ? `${topic?.name || '家族'}谱系` : `${selectedName}的一度关系`;
+  graphHeading.textContent = isFamilyTree ? `${topic?.name || '家族'}谱系` : isTopicPyramid ? `${topic?.name || '专题'}关系层级` : `${selectedName}的关系层级`;
   graphModeNote.hidden = false;
   graphModeNote.textContent = isFamilyTree
     ? '代际视图 · 实线：父母／祖先 · 虚线：婚姻 · 点线：手足'
-    : '一度关系 · 点击人物切换焦点 · 点击关系查看类型与出处';
-  graphContainer.setAttribute('aria-label', isFamilyTree ? '希律家族代际关系图；点选人物后可在右侧读取全部关系和出处' : '选中人物的一度关系图；所有关系也可在右侧文字列表读取');
+    : isTopicPyramid ? '专题层级图 · 保留焦点人物所在关系网，按方向分层排列' : '层级关系图 · 上层为指向焦点的关系，下层为焦点发出或并列的关系';
+  graphContainer.setAttribute('aria-label', isFamilyTree ? '希律家族代际关系图；点选人物后可在右侧读取全部关系和出处' : isTopicPyramid ? '专题关系层级图；点选人物或路径后可在右侧读取全部关系和出处' : '选中人物的层级关系图；所有关系也可在右侧文字列表读取');
 
   if (!relationships.length) {
     if (cy) {
@@ -549,7 +668,7 @@ function renderGraph() {
     zoomControls.hidden = true;
     graphEmpty.hidden = false;
     focusSubtitle.textContent = `${selected.era} · ${relationships.length} 条当前关系`;
-    evidenceRibbonTitle.textContent = `${selectedName} · ${relationships.length} 条一度关系`;
+    evidenceRibbonTitle.textContent = `${selectedName} · ${relationships.length} 条关系`;
     evidenceRibbonMeta.textContent = '当前筛选下无可显示关系，图谱已隐藏。可开启更多证据层、重置筛选，或更换焦点人物。';
     graphStatus.textContent = '当前筛选下无可显示关系。';
     return;
@@ -561,7 +680,7 @@ function renderGraph() {
   graphEmpty.hidden = true;
 
   const isCompactGraph = window.innerWidth <= 620;
-  const edgeLimit = isFamilyTree ? (isCompactGraph ? 6 : 10) : (isCompactGraph ? 6 : GRAPH_EDGE_LIMIT);
+  const edgeLimit = isFamilyTree ? (isCompactGraph ? 6 : 10) : isTopicPyramid ? (isCompactGraph ? 10 : 24) : (isCompactGraph ? 6 : GRAPH_EDGE_LIMIT);
   const displayedRelationships = relationships.slice(0, edgeLimit);
   const nodeIds = new Set<string>([selectedPersonId]);
   displayedRelationships.forEach((relationship) => { nodeIds.add(relationship.fromPerson); nodeIds.add(relationship.toPerson); });
@@ -570,20 +689,17 @@ function renderGraph() {
   const capped = relationships.length > displayedRelationships.length;
   focusSubtitle.textContent = isFamilyTree
     ? '按代际排列 · 已省略可由共同父系推知的重复手足线 · 点击人物查看详情'
-    : `${selected.era} · ${relationships.length} 条当前关系 · 点击人物切换焦点`;
-  evidenceRibbonTitle.textContent = isFamilyTree ? `${topic?.name || '家族'} · ${currentModel.relationships.length} 条已审关系` : `${selectedName} · ${relationships.length} 条一度关系`;
-  evidenceRibbonMeta.textContent = isFamilyTree ? '实线为父母／祖先，虚线为婚姻，点线为手足；点击关系查看出处。' : '点击一条发光路径，查看关系类型、经文位置和资料来源。';
+    : isTopicPyramid ? `${topic?.name || '专题'} · ${relationships.length} 条连通关系 · 按方向分层排列` : `${selected.era} · ${relationships.length} 条当前关系 · 按方向分层排列`;
+  evidenceRibbonTitle.textContent = isFamilyTree ? `${topic?.name || '家族'} · ${currentModel.relationships.length} 条已审关系` : `${selectedName} · ${relationships.length} 条关系`;
+  evidenceRibbonMeta.textContent = isFamilyTree ? '实线为父母／祖先，虚线为婚姻，点线为手足；点击关系查看出处。' : isTopicPyramid ? '显示焦点所在的完整连通关系网；人物按关系方向分层，点击路径查看出处。' : '人物按关系方向分层；点击路径查看类型、经文位置和资料来源。';
   const width = Math.max(graphContainer.clientWidth, 320);
   const visibleStageHeight = graphContainer.parentElement?.clientHeight || graphContainer.clientHeight;
   const height = Math.max(visibleStageHeight, 300);
   graphStatus.textContent = isFamilyTree
     ? `家族图显示 ${displayedRelationships.length}/${currentModel.relationships.length} 条结构关系；重复手足线已折叠，点选人物可查看全部关系。`
-    : capped ? `画布显示 ${displayedRelationships.length}/${relationships.length} 条一度关系；右侧列表保留全部 ${relationships.length} 条。` : `当前显示 ${nodes.length} 人 · ${relationships.length} 条一度关系。`;
-  const neighborIds = nodes.filter((person) => person.id !== selectedPersonId).map((person) => person.id);
-  const positions = new Map<string, { x: number; y: number }>();
+    : capped ? `层级图显示 ${displayedRelationships.length}/${relationships.length} 条关系；右侧列表保留全部 ${relationships.length} 条。` : `当前显示 ${nodes.length} 人 · ${relationships.length} 条关系。`;
   const center = { x: width * 0.5, y: height * (isCompactGraph ? 0.46 : 0.48) };
-  const radiusX = width * (isCompactGraph ? 0.3 : 0.36);
-  const radiusY = height * (isCompactGraph ? 0.2 : 0.36);
+  let positions = new Map<string, { x: number; y: number }>();
 
   if (isFamilyTree) {
     const order = new Map((topic?.personOrder || []).map((personId, index) => [personId, index]));
@@ -603,17 +719,17 @@ function renderGraph() {
         positions.set(personId, { x, y });
       });
     });
-  } else {
-    positions.set(selectedPersonId, center);
-    neighborIds.forEach((personId, index) => {
-      const startAngle = neighborIds.length <= 2 ? 0 : -Math.PI / 2;
-      const angle = startAngle + (Math.PI * 2 * index) / Math.max(neighborIds.length, 1);
-      const stagger = 0.84 + ((index * 37) % 5) * 0.045;
-      positions.set(personId, { x: center.x + Math.cos(angle) * radiusX * stagger, y: center.y + Math.sin(angle) * radiusY * stagger });
-    });
+  } else if (isPyramid) {
+    positions = pyramidPositions(displayedRelationships, width, height, isCompactGraph, isTopicPyramid);
   }
 
   cy?.destroy();
+  const relationLabelCount = new Map<string, number>();
+  for (const relationship of displayedRelationships) {
+    const label = relationshipShortLabel[relationship.type] || relationship.type;
+    relationLabelCount.set(label, (relationLabelCount.get(label) || 0) + 1);
+  }
+  const firstLabelledRelation = new Set<string>();
   cy = cytoscape({
     container: graphContainer,
     elements: [
@@ -621,18 +737,22 @@ function renderGraph() {
       ...displayedRelationships.map((relationship) => {
         const sourceArrow = relationship.direction === 'incoming' || relationship.direction === 'bidirectional' ? 'triangle' : 'none';
         const targetArrow = relationship.direction === 'incoming' || relationship.direction === 'undirected' ? 'none' : 'triangle';
-        return { group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, shortLabel: relationshipShortLabel[relationship.type] || relationship.type, passage: relationship.passages[0] || '', direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], relationKind: isFamilyTree ? familyRelationKind(relationship) : 'default', sourceArrow, targetArrow } };
+        const shortLabel = relationshipShortLabel[relationship.type] || relationship.type;
+        const duplicateCount = relationLabelCount.get(shortLabel) || 0;
+        const showSummaryLabel = duplicateCount > 3 && !firstLabelledRelation.has(shortLabel);
+        if (showSummaryLabel) firstLabelledRelation.add(shortLabel);
+        return { group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, shortLabel: duplicateCount > 3 ? (showSummaryLabel ? `${shortLabel} × ${duplicateCount}` : '') : shortLabel, passage: relationship.passages[0] || '', direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], relationKind: isFamilyTree ? familyRelationKind(relationship) : 'default', sourceArrow, targetArrow } };
       })
     ],
     style: [
-      { selector: 'node', style: { label: 'data(label)', shape: 'round-rectangle', color: '#16233a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 13 : 15, 'font-weight': 700, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': isFamilyTree ? '104px' : '86px', 'background-color': '#f4f7fb', 'background-opacity': 1, 'border-color': '#6b98d8', 'border-width': 1.5, width: isFamilyTree ? (isCompactGraph ? 92 : 118) : (isCompactGraph ? 82 : 98), height: isFamilyTree ? (isCompactGraph ? 48 : 56) : (isCompactGraph ? 44 : 50), 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'node', style: { label: 'data(label)', shape: 'round-rectangle', color: '#16233a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 13 : 15, 'font-weight': 700, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': (isFamilyTree || isPyramid) ? '104px' : '86px', 'background-color': '#f4f7fb', 'background-opacity': 1, 'border-color': '#6b98d8', 'border-width': 1.5, width: (isFamilyTree || isPyramid) ? (isCompactGraph ? 92 : 112) : (isCompactGraph ? 82 : 98), height: (isFamilyTree || isPyramid) ? (isCompactGraph ? 48 : 54) : (isCompactGraph ? 44 : 50), 'overlay-opacity': 0, 'underlay-opacity': 0 } },
       { selector: 'node[era = "旧约背景"]', style: { 'background-color': '#eef7ef', 'border-color': '#5e9470' } },
       { selector: 'node[era = "耶稣时期"]', style: { 'background-color': '#fff1ee', 'border-color': '#df8178' } },
       { selector: 'node[era = "时代待审"]', style: { opacity: 0.72 } },
-      { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 4, width: isFamilyTree ? (isCompactGraph ? 104 : 132) : (isCompactGraph ? 98 : 116), height: isFamilyTree ? (isCompactGraph ? 56 : 66) : (isCompactGraph ? 52 : 60), 'font-size': isFamilyTree ? (isCompactGraph ? 14 : 17) : (isCompactGraph ? 15 : 18), 'underlay-opacity': 0 } },
+      { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 4, width: (isFamilyTree || isPyramid) ? (isCompactGraph ? 104 : 128) : (isCompactGraph ? 98 : 116), height: (isFamilyTree || isPyramid) ? (isCompactGraph ? 56 : 64) : (isCompactGraph ? 52 : 60), 'font-size': (isFamilyTree || isPyramid) ? (isCompactGraph ? 14 : 17) : (isCompactGraph ? 15 : 18), 'underlay-opacity': 0 } },
       { selector: 'node:selected', style: { 'border-color': '#245fae', 'border-width': 3 } },
       { selector: 'node.route-neighbor', style: { 'border-color': '#245fae', 'border-width': 3 } },
-      { selector: 'edge', style: { width: isFamilyTree ? 1.8 : 1.5, 'curve-style': isFamilyTree ? 'bezier' : 'straight', 'control-point-step-size': isFamilyTree ? 34 : 40, 'line-color': 'data(evidenceColor)', 'line-opacity': isFamilyTree ? 0.7 : 0.72, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.62, label: 'data(shortLabel)', color: '#46546a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 10 : 11, 'font-weight': 600, 'text-rotation': 'autorotate', 'text-background-color': '#fffefa', 'text-background-opacity': 0.94, 'text-background-padding': '3', 'text-background-shape': 'roundrectangle', 'text-border-color': '#dfe5ec', 'text-border-width': 0.7, 'text-border-opacity': 0.9, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'edge', style: { width: (isFamilyTree || isPyramid) ? 1.8 : 1.5, 'curve-style': isFamilyTree ? 'bezier' : 'straight', 'control-point-step-size': isFamilyTree ? 34 : 40, 'line-color': 'data(evidenceColor)', 'line-opacity': (isFamilyTree || isPyramid) ? 0.68 : 0.72, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.62, label: 'data(shortLabel)', color: '#46546a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 10 : 11, 'font-weight': 600, 'text-rotation': isFamilyTree ? 'autorotate' : 'none', 'text-background-color': '#fffefa', 'text-background-opacity': 0.98, 'text-background-padding': '4', 'text-background-shape': 'roundrectangle', 'text-border-color': '#dfe5ec', 'text-border-width': 0.7, 'text-border-opacity': 0.9, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
       { selector: 'edge[relationKind = "marriage"]', style: { 'line-style': 'dashed', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
       { selector: 'edge[relationKind = "sibling"]', style: { 'line-style': 'dotted', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
       { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.72 } },

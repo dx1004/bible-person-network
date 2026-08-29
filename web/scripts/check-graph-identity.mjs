@@ -344,8 +344,9 @@ async function main() {
   const paulTeamMatches = graph.relationships.filter((relation) =>
     paulTeamTopic.relationTypes.includes(relation.type) && paulTeamSet.has(relation.fromPerson) && paulTeamSet.has(relation.toPerson)
   );
-  if (paulTeamMatches.length !== paulCoworker.length) {
-    throw new Error(`Paul coworker topic is incomplete: ${paulTeamMatches.length} != ${paulCoworker.length}`);
+  const missingPaulCoworker = paulCoworker.filter((relation) => !paulTeamMatches.some((topicRelation) => topicRelation.id === relation.id));
+  if (missingPaulCoworker.length) {
+    throw new Error(`Paul coworker topic is incomplete: missing ${missingPaulCoworker.map((relation) => relation.id).join(', ')}`);
   }
   console.log(`[topic-completeness] family=${familyMatches.length}; discipleship=${discipleshipMatches.length}; paulTeam=${paulTeamMatches.length}`);
 }

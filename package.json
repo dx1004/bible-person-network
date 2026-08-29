@@ -1,8 +1,8 @@
 {
-  "name": "new-testament-person-network-data",
+  "name": "bible-person-network-data",
   "version": "0.1.0",
   "private": true,
-  "description": "Versioned people and relationship corpus for New Testament person network (data pipeline only).",
+  "description": "Versioned people and relationship corpus for the Bible person network (data pipeline only).",
   "license": "MIT",
   "type": "module",
   "scripts": {
