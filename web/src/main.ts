@@ -519,6 +519,17 @@ function familyTreeRelationships(model: VisibleModel) {
     .sort((a, b) => kindRank[familyRelationKind(a)] - kindRank[familyRelationKind(b)] || relationshipPriority(b) - relationshipPriority(a));
 }
 
+function focusFamilyRelationships(model: VisibleModel) {
+  const kindRank = { parent: 0, marriage: 1, sibling: 2, other: 3 } as const;
+  const direct = focusRelationships(model).filter((relationship) => familyRelationKind(relationship) !== 'other');
+  const directFamilyIds = new Set([selectedPersonId, ...direct.flatMap((relationship) => [relationship.fromPerson, relationship.toPerson])]);
+  const related = model.relationships.filter((relationship) =>
+    familyRelationKind(relationship) !== 'other' && (directFamilyIds.has(relationship.fromPerson) || directFamilyIds.has(relationship.toPerson))
+  );
+  return [...new Map(related.map((relationship) => [relationship.id, relationship])).values()]
+    .sort((a, b) => kindRank[familyRelationKind(a)] - kindRank[familyRelationKind(b)] || relationshipPriority(b) - relationshipPriority(a));
+}
+
 function familyTreeRanks(relationships: Relationship[], nodeIds: Set<string>, topic?: TopicPreset) {
   const ranks = new Map<string, number>();
   const parentsByChild = new Map<string, string[]>();
@@ -696,7 +707,7 @@ function renderGraph() {
   const selectedName = personDisplayName(selected);
   const relationships = isFamilyTree
     ? isFamilyTopic
-      ? focusRelationships(currentModel).filter((relationship) => familyRelationKind(relationship) !== 'other')
+      ? focusFamilyRelationships(currentModel)
       : familyTreeRelationships(currentModel)
     : isTopicPyramid ? connectedTopicRelationships(currentModel) : focusRelationships(currentModel);
 
@@ -729,7 +740,7 @@ function renderGraph() {
   graphEmpty.hidden = true;
 
   const isCompactGraph = window.innerWidth <= 620;
-  const edgeLimit = isFamilyTree ? (isCompactGraph ? 6 : 10) : isTopicPyramid ? (isCompactGraph ? 10 : 24) : (isCompactGraph ? 6 : GRAPH_EDGE_LIMIT);
+  const edgeLimit = isFamilyTree ? (isFamilyTopic ? (isCompactGraph ? 12 : 20) : (isCompactGraph ? 6 : 10)) : isTopicPyramid ? (isCompactGraph ? 10 : 24) : (isCompactGraph ? 6 : GRAPH_EDGE_LIMIT);
   const displayedRelationships = relationships.slice(0, edgeLimit);
   const nodeIds = new Set<string>([selectedPersonId]);
   displayedRelationships.forEach((relationship) => { nodeIds.add(relationship.fromPerson); nodeIds.add(relationship.toPerson); });
