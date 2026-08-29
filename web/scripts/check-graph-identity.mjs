@@ -331,8 +331,10 @@ async function main() {
   if (discipleshipMatches.some((relation) => relation.type === '长期同工')) {
     throw new Error('discipleship topic incorrectly includes coworker relationships');
   }
-  if (discipleshipMatches.length !== graph.relationships.filter((relation) => relation.type === '师徒').length) {
-    throw new Error('discipleship topic does not cover every published 师徒 relationship');
+  const expectedDiscipleship = graph.relationships.filter((relation) => ['师徒', '差派'].includes(relation.type));
+  const missingDiscipleship = expectedDiscipleship.filter((relation) => !discipleshipMatches.some((match) => match.id === relation.id));
+  if (missingDiscipleship.length) {
+    throw new Error(`discipleship topic is incomplete: missing ${missingDiscipleship.map((relation) => relation.id).join(', ')}`);
   }
 
   const paul = graph.people.find((person) => person.nameZh === '保罗');

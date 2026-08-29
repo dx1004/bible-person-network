@@ -540,6 +540,11 @@ async function loadJSON(fileName, fallback = []) {
 
     const paulPersonId = graphPeople.find((person) => person.nameZh === '保罗')?.id || 'person-000000';
     const jesusPersonId = graphPeople.find((person) => person.nameZh === '耶稣')?.id || 'person-000000';
+    const discipleshipPersonIds = unique(
+      relationships
+        .filter((relationship) => ['师徒', '差派'].includes(relationship.type))
+        .flatMap((relationship) => [relationship.fromPerson, relationship.toPerson])
+    );
     const discipleshipLabels = {
       'person-000143': '雅各（西庇太之子）',
       'person-000141': '雅各（亚勒腓之子）',
@@ -630,6 +635,7 @@ async function loadJSON(fileName, fallback = []) {
         bookIncludes: [],
         eraIncludes: [],
         evidenceIncludes: ['nt_text', 'ot_text', 'ancient', 'modern'],
+        personIncludes: discipleshipPersonIds,
         focusPersonId: jesusPersonId,
         personLabels: discipleshipLabels
       },
