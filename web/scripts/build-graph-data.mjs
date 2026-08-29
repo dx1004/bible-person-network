@@ -438,6 +438,7 @@ async function loadJSON(fileName, fallback = []) {
         ].filter((id) => /^nt-people-\d{4}$/i.test(String(id || '').trim()))),
         nameZh,
         nameLat: latinFallback || greekFallback || nameZh,
+        sex: ['male', 'female', 'mixed', 'unknown'].includes(person.sex) ? person.sex : 'unknown',
         aliases,
         era: personEra,
         books: books.length ? books : ['新约背景'],

@@ -404,6 +404,7 @@
       ],
       "nameZh": "亚伦",
       "nameLat": "Aaron",
+      "sex": "male",
       "aliases": [
         "Aaron",
         "Ἀαρών"
@@ -471,6 +472,7 @@
       ],
       "nameZh": "亚伯",
       "nameLat": "Abel",
+      "sex": "male",
       "aliases": [
         "Abel",
         "Ἄβελ"
@@ -533,6 +535,7 @@
       ],
       "nameZh": "亚比亚他",
       "nameLat": "Abiathar",
+      "sex": "male",
       "aliases": [
         "Abiathar",
         "Ἀβιαθάρ"
@@ -578,6 +581,7 @@
       ],
       "nameZh": "亚比雅",
       "nameLat": "Abijah",
+      "sex": "male",
       "aliases": [
         "Abijah",
         "Ἀβιά"
@@ -623,6 +627,7 @@
       ],
       "nameZh": "亚比雅",
       "nameLat": "Abijah",
+      "sex": "male",
       "aliases": [
         "Abijah",
         "Ἀβιά"
@@ -668,6 +673,7 @@
       ],
       "nameZh": "亚比玉",
       "nameLat": "Abiud",
+      "sex": "male",
       "aliases": [
         "Abiud",
         "Ἀβιούδ"
@@ -713,6 +719,7 @@
       ],
       "nameZh": "亚伯拉罕",
       "nameLat": "Abraham",
+      "sex": "male",
       "aliases": [
         "Abraham",
         "Ἀβραάμ"
@@ -1108,6 +1115,7 @@
       ],
       "nameZh": "亚该古",
       "nameLat": "Achaicus",
+      "sex": "male",
       "aliases": [
         "Achaicus",
         "Ἀχαϊκός"
@@ -1158,6 +1166,7 @@
       ],
       "nameZh": "亚金",
       "nameLat": "Achim",
+      "sex": "male",
       "aliases": [
         "Achim",
         "Ἀχείμ"
@@ -1203,6 +1212,7 @@
       ],
       "nameZh": "亚当",
       "nameLat": "Adam",
+      "sex": "male",
       "aliases": [
         "Adam",
         "Ἀδάμ"
@@ -1282,6 +1292,7 @@
       ],
       "nameZh": "亚底",
       "nameLat": "Addi",
+      "sex": "male",
       "aliases": [
         "Addi",
         "Ἀδδί"
@@ -1327,6 +1338,7 @@
       ],
       "nameZh": "以尼雅",
       "nameLat": "Aeneas",
+      "sex": "male",
       "aliases": [
         "Aeneas",
         "Αἰνέας"
@@ -1377,6 +1389,7 @@
       ],
       "nameZh": "亚迦布",
       "nameLat": "Agabus",
+      "sex": "male",
       "aliases": [
         "Agabus",
         "Ἄγαβος"
@@ -1427,6 +1440,7 @@
       ],
       "nameZh": "亚基帕",
       "nameLat": "Agrippa",
+      "sex": "male",
       "aliases": [
         "Agrippa",
         "Ἀγρίππας"
@@ -1527,6 +1541,7 @@
       ],
       "nameZh": "亚哈斯",
       "nameLat": "Ahaz",
+      "sex": "male",
       "aliases": [
         "Ahaz",
         "Ἀχάζ"
@@ -1572,6 +1587,7 @@
       ],
       "nameZh": "亚历山大",
       "nameLat": "Alexander",
+      "sex": "male",
       "aliases": [
         "Alexander",
         "Ἀλέξανδρος"
@@ -1617,6 +1633,7 @@
       ],
       "nameZh": "Alexander",
       "nameLat": "Alexander",
+      "sex": "male",
       "aliases": [
         "Ἀλέξανδρος"
       ],
@@ -1661,6 +1678,7 @@
       ],
       "nameZh": "亚历山大",
       "nameLat": "Alexander",
+      "sex": "male",
       "aliases": [
         "Alexander",
         "Ἀλέξανδρος"
@@ -1706,6 +1724,7 @@
       ],
       "nameZh": "亚历山大",
       "nameLat": "Alexander",
+      "sex": "male",
       "aliases": [
         "Alexander",
         "Ἀλέξανδρος"
@@ -1751,6 +1770,7 @@
       ],
       "nameZh": "亚历山大",
       "nameLat": "Alexander",
+      "sex": "male",
       "aliases": [
         "Alexander",
         "Ἀλέξανδρος"
@@ -1796,6 +1816,7 @@
       ],
       "nameZh": "亚勒腓",
       "nameLat": "Alphaeus",
+      "sex": "male",
       "aliases": [
         "Alphaeus",
         "Ἀλφαῖος",
@@ -1877,6 +1898,7 @@
       ],
       "nameZh": "亚米拿达",
       "nameLat": "Amminadab",
+      "sex": "male",
       "aliases": [
         "Amminadab",
         "Ἀμιναδάβ"
@@ -1928,6 +1950,7 @@
       ],
       "nameZh": "亚们",
       "nameLat": "Amon",
+      "sex": "male",
       "aliases": [
         "Amon",
         "Ἀμών",
@@ -1974,6 +1997,7 @@
       ],
       "nameZh": "亚摩斯",
       "nameLat": "Amos",
+      "sex": "male",
       "aliases": [
         "Amos",
         "Ἀμώς"
@@ -2019,6 +2043,7 @@
       ],
       "nameZh": "暗伯利",
       "nameLat": "Ampliatus",
+      "sex": "male",
       "aliases": [
         "Ampliatus",
         "Ἀμπλίας"
@@ -2064,6 +2089,7 @@
       ],
       "nameZh": "亚拿尼亚",
       "nameLat": "Ananias",
+      "sex": "male",
       "aliases": [
         "Ananias",
         "Ἀνανίας"
@@ -2114,6 +2140,7 @@
       ],
       "nameZh": "亚拿尼亚",
       "nameLat": "Ananias",
+      "sex": "male",
       "aliases": [
         "Ananias",
         "Ἀνανίας"
@@ -2169,6 +2196,7 @@
       ],
       "nameZh": "亚拿尼亚",
       "nameLat": "Ananias",
+      "sex": "male",
       "aliases": [
         "Ananias",
         "Ἀνανίας"
@@ -2234,6 +2262,7 @@
       ],
       "nameZh": "安得烈",
       "nameLat": "Andrew",
+      "sex": "male",
       "aliases": [
         "Andrew",
         "Ἀνδρέας"
@@ -2338,6 +2367,7 @@
       ],
       "nameZh": "安多尼古",
       "nameLat": "Andronicus",
+      "sex": "male",
       "aliases": [
         "Andronicus",
         "Ἀνδρόνικος"
@@ -2383,6 +2413,7 @@
       ],
       "nameZh": "亚拿",
       "nameLat": "Anna",
+      "sex": "female",
       "aliases": [
         "Anna",
         "Ἄννα"
@@ -2428,6 +2459,7 @@
       ],
       "nameZh": "亚那",
       "nameLat": "Annas",
+      "sex": "male",
       "aliases": [
         "Annas",
         "Ἄννας"
@@ -2490,6 +2522,7 @@
       ],
       "nameZh": "安提帕",
       "nameLat": "Antipas",
+      "sex": "male",
       "aliases": [
         "Antipas",
         "Ἀντίπας"
@@ -2535,6 +2568,7 @@
       ],
       "nameZh": "亚比利",
       "nameLat": "Apelles",
+      "sex": "male",
       "aliases": [
         "Apelles",
         "Ἀπελλῆς"
@@ -2580,6 +2614,7 @@
       ],
       "nameZh": "亚波罗",
       "nameLat": "Apollos",
+      "sex": "male",
       "aliases": [
         "Apollos",
         "Ἀπολλῶς"
@@ -2672,6 +2707,7 @@
       ],
       "nameZh": "亚腓亚",
       "nameLat": "Apphia",
+      "sex": "female",
       "aliases": [
         "Apphia",
         "Ἀπφία"
@@ -2717,6 +2753,7 @@
       ],
       "nameZh": "亚居拉",
       "nameLat": "Aquila",
+      "sex": "male",
       "aliases": [
         "Aquila",
         "Ἀκύλας"
@@ -2790,6 +2827,7 @@
       ],
       "nameZh": "亚基老",
       "nameLat": "Archelaus",
+      "sex": "male",
       "aliases": [
         "Archelaus",
         "Ἀρχέλαος"
@@ -2835,6 +2873,7 @@
       ],
       "nameZh": "亚基布",
       "nameLat": "Archippus",
+      "sex": "male",
       "aliases": [
         "Archippus",
         "Ἄρχιππος"
@@ -2886,6 +2925,7 @@
       ],
       "nameZh": "亚哩达",
       "nameLat": "Aretas",
+      "sex": "male",
       "aliases": [
         "Aretas",
         "Ἀρέτας"
@@ -2931,6 +2971,7 @@
       ],
       "nameZh": "亚里达古",
       "nameLat": "Aristarchus",
+      "sex": "male",
       "aliases": [
         "Aristarchus",
         "Ἀρίσταρχος"
@@ -2998,6 +3039,7 @@
       ],
       "nameZh": "亚利多布",
       "nameLat": "Aristobulus",
+      "sex": "male",
       "aliases": [
         "Aristobulus",
         "Ἀριστόβουλος"
@@ -3043,6 +3085,7 @@
       ],
       "nameZh": "亚法撒",
       "nameLat": "Arpachshad",
+      "sex": "male",
       "aliases": [
         "Arpachshad",
         "Ἀρφαξάδ"
@@ -3088,6 +3131,7 @@
       ],
       "nameZh": "亚提马",
       "nameLat": "Artemas",
+      "sex": "male",
       "aliases": [
         "Artemas",
         "Ἀρτεμάς"
@@ -3133,6 +3177,7 @@
       ],
       "nameZh": "亚撒",
       "nameLat": "Asa",
+      "sex": "male",
       "aliases": [
         "Asa",
         "Ἀσά"
@@ -3183,6 +3228,7 @@
       ],
       "nameZh": "亚设",
       "nameLat": "Asher",
+      "sex": "male",
       "aliases": [
         "Asher",
         "Ἀσήρ"
@@ -3234,6 +3280,7 @@
       ],
       "nameZh": "亚逊其土",
       "nameLat": "Asyncritus",
+      "sex": "male",
       "aliases": [
         "Asyncritus",
         "Ἀσύγκριτος"
@@ -3279,6 +3326,7 @@
       ],
       "nameZh": "奥古斯都",
       "nameLat": "Augustus",
+      "sex": "male",
       "aliases": [
         "Augustus",
         "Αὔγουστος",
@@ -3347,6 +3395,7 @@
       ],
       "nameZh": "亚所",
       "nameLat": "Azor",
+      "sex": "male",
       "aliases": [
         "Azor",
         "Ἀζώρ"
@@ -3397,6 +3446,7 @@
       ],
       "nameZh": "巴兰",
       "nameLat": "Balaam",
+      "sex": "male",
       "aliases": [
         "Balaam",
         "Βαλαάμ"
@@ -3454,6 +3504,7 @@
       ],
       "nameZh": "巴勒",
       "nameLat": "Balak",
+      "sex": "male",
       "aliases": [
         "Balak",
         "Βαλάκ"
@@ -3499,6 +3550,7 @@
       ],
       "nameZh": "巴拉巴",
       "nameLat": "Barabbas",
+      "sex": "male",
       "aliases": [
         "Barabbas",
         "Βαραββᾶς",
@@ -3593,6 +3645,7 @@
       ],
       "nameZh": "巴拉",
       "nameLat": "Barak",
+      "sex": "male",
       "aliases": [
         "Barak",
         "Βαράκ"
@@ -3638,6 +3691,7 @@
       ],
       "nameZh": "巴·耶稣",
       "nameLat": "Bar-jesus",
+      "sex": "male",
       "aliases": [
         "Bar-jesus",
         "Βαριησοῦς",
@@ -3689,6 +3743,7 @@
       ],
       "nameZh": "巴拿巴",
       "nameLat": "Barnabas",
+      "sex": "male",
       "aliases": [
         "Barnabas",
         "Βαρνάβας",
@@ -3874,6 +3929,7 @@
       ],
       "nameZh": "巴多罗买",
       "nameLat": "Bartholomew",
+      "sex": "male",
       "aliases": [
         "Bartholomew",
         "Βαρθολομαῖος"
@@ -3948,6 +4004,7 @@
       ],
       "nameZh": "巴底买",
       "nameLat": "Bartimaeus",
+      "sex": "male",
       "aliases": [
         "Bartimaeus",
         "Βαρτιμαῖος"
@@ -3993,6 +4050,7 @@
       ],
       "nameZh": "便雅悯",
       "nameLat": "Benjamin",
+      "sex": "male",
       "aliases": [
         "Benjamin",
         "Βενιαμίν"
@@ -4056,6 +4114,7 @@
       ],
       "nameZh": "比珥",
       "nameLat": "Beor",
+      "sex": "male",
       "aliases": [
         "Beor",
         "Βοσόρ, Βεώρ"
@@ -4101,6 +4160,7 @@
       ],
       "nameZh": "百妮基",
       "nameLat": "Bernice",
+      "sex": "female",
       "aliases": [
         "Bernice",
         "Βερνίκη"
@@ -4156,6 +4216,7 @@
       ],
       "nameZh": "伯拉斯都",
       "nameLat": "Blastus",
+      "sex": "male",
       "aliases": [
         "Blastus",
         "Βλάστος"
@@ -4201,6 +4262,7 @@
       ],
       "nameZh": "波阿斯",
       "nameLat": "Boaz",
+      "sex": "male",
       "aliases": [
         "Boaz",
         "Βοόζ"
@@ -4252,6 +4314,7 @@
       ],
       "nameZh": "该亚法",
       "nameLat": "Caiaphas",
+      "sex": "male",
       "aliases": [
         "Caiaphas",
         "Καϊάφας"
@@ -4340,6 +4403,7 @@
       ],
       "nameZh": "该隐",
       "nameLat": "Cain",
+      "sex": "male",
       "aliases": [
         "Cain",
         "Κάϊν"
@@ -4397,6 +4461,7 @@
       ],
       "nameZh": "该南",
       "nameLat": "Cainan",
+      "sex": "male",
       "aliases": [
         "Cainan",
         "Καϊνάν, Καϊνάμ"
@@ -4442,6 +4507,7 @@
       ],
       "nameZh": "加布",
       "nameLat": "Carpus",
+      "sex": "male",
       "aliases": [
         "Carpus",
         "Κάρπος"
@@ -4487,6 +4553,7 @@
       ],
       "nameZh": "革来",
       "nameLat": "Chloe",
+      "sex": "female",
       "aliases": [
         "Chloe",
         "Χλόη"
@@ -4532,6 +4599,7 @@
       ],
       "nameZh": "苦撒",
       "nameLat": "Chuza",
+      "sex": "male",
       "aliases": [
         "Chuza",
         "Χουζᾶς"
@@ -4577,6 +4645,7 @@
       ],
       "nameZh": "革老底亚",
       "nameLat": "Claudia",
+      "sex": "female",
       "aliases": [
         "Claudia",
         "Κλαυδία"
@@ -4622,6 +4691,7 @@
       ],
       "nameZh": "克劳第",
       "nameLat": "Claudius",
+      "sex": "male",
       "aliases": [
         "Claudius",
         "Κλαύδιος",
@@ -4718,6 +4788,7 @@
       ],
       "nameZh": "革利免",
       "nameLat": "Clement",
+      "sex": "male",
       "aliases": [
         "Clement",
         "Κλήμης"
@@ -4763,6 +4834,7 @@
       ],
       "nameZh": "哥尼流",
       "nameLat": "Cornelius",
+      "sex": "male",
       "aliases": [
         "Cornelius",
         "Κορνήλιος"
@@ -4853,6 +4925,7 @@
       ],
       "nameZh": "哥桑",
       "nameLat": "Cosam",
+      "sex": "male",
       "aliases": [
         "Cosam",
         "Κωσάμ"
@@ -4898,6 +4971,7 @@
       ],
       "nameZh": "革勒士",
       "nameLat": "Crescens",
+      "sex": "male",
       "aliases": [
         "Crescens",
         "Κρήσκης"
@@ -4943,6 +5017,7 @@
       ],
       "nameZh": "基利司布",
       "nameLat": "Crispus",
+      "sex": "male",
       "aliases": [
         "Crispus",
         "Κρίσπος"
@@ -4994,6 +5069,7 @@
       ],
       "nameZh": "大马哩",
       "nameLat": "Damaris",
+      "sex": "female",
       "aliases": [
         "Damaris",
         "Δάμαρις"
@@ -5039,6 +5115,7 @@
       ],
       "nameZh": "但以理",
       "nameLat": "Daniel",
+      "sex": "male",
       "aliases": [
         "Daniel",
         "Δανιήλ"
@@ -5090,6 +5167,7 @@
       ],
       "nameZh": "大卫",
       "nameLat": "David",
+      "sex": "male",
       "aliases": [
         "David",
         "Δαυείδ, Δαυίδ, Δαβίδ"
@@ -5408,6 +5486,7 @@
       ],
       "nameZh": "底马",
       "nameLat": "Demas",
+      "sex": "male",
       "aliases": [
         "Demas",
         "Δημᾶς"
@@ -5465,6 +5544,7 @@
       ],
       "nameZh": "底米丢",
       "nameLat": "Demetrius",
+      "sex": "male",
       "aliases": [
         "Demetrius",
         "Δημήτριος"
@@ -5515,6 +5595,7 @@
       ],
       "nameZh": "低米丢",
       "nameLat": "Demetrius",
+      "sex": "male",
       "aliases": [
         "Demetrius",
         "Δημήτριος"
@@ -5560,6 +5641,7 @@
       ],
       "nameZh": "丢尼修",
       "nameLat": "Dionysius",
+      "sex": "male",
       "aliases": [
         "Dionysius",
         "Διονύσιος"
@@ -5605,6 +5687,7 @@
       ],
       "nameZh": "丢特腓",
       "nameLat": "Diotrephes",
+      "sex": "male",
       "aliases": [
         "Diotrephes",
         "Διοτρεφής"
@@ -5650,6 +5733,7 @@
       ],
       "nameZh": "土西拉",
       "nameLat": "Drusilla",
+      "sex": "female",
       "aliases": [
         "Drusilla",
         "Δρούσιλλα"
@@ -5695,6 +5779,7 @@
       ],
       "nameZh": "希伯",
       "nameLat": "Eber",
+      "sex": "male",
       "aliases": [
         "Eber",
         "Ἐβέρ"
@@ -5740,6 +5825,7 @@
       ],
       "nameZh": "以利亚撒",
       "nameLat": "Eleazar",
+      "sex": "male",
       "aliases": [
         "Eleazar",
         "Ἐλεάζαρ"
@@ -5785,6 +5871,7 @@
       ],
       "nameZh": "以利亚敬",
       "nameLat": "Eliakim",
+      "sex": "male",
       "aliases": [
         "Eliakim",
         "Ἐλιακείμ"
@@ -5830,6 +5917,7 @@
       ],
       "nameZh": "以利亚敬",
       "nameLat": "Eliakim",
+      "sex": "male",
       "aliases": [
         "Eliakim",
         "Ἐλιακείμ"
@@ -5875,6 +5963,7 @@
       ],
       "nameZh": "以利以谢",
       "nameLat": "Eliezer",
+      "sex": "male",
       "aliases": [
         "Eliezer",
         "Ἐλιέζερ"
@@ -5920,6 +6009,7 @@
       ],
       "nameZh": "以利亚",
       "nameLat": "Elijah",
+      "sex": "male",
       "aliases": [
         "Elijah",
         "Ἡλίας"
@@ -6115,6 +6205,7 @@
       ],
       "nameZh": "以利沙",
       "nameLat": "Elisha",
+      "sex": "male",
       "aliases": [
         "Elisha",
         "Ἐλισσαῖος"
@@ -6160,6 +6251,7 @@
       ],
       "nameZh": "以律",
       "nameLat": "Eliud",
+      "sex": "male",
       "aliases": [
         "Eliud",
         "Ἐλιούδ"
@@ -6210,6 +6302,7 @@
       ],
       "nameZh": "伊利莎白",
       "nameLat": "Elizabeth",
+      "sex": "female",
       "aliases": [
         "Elizabeth",
         "Ἐλισάβετ"
@@ -6290,6 +6383,7 @@
       ],
       "nameZh": "以摩当",
       "nameLat": "Elmadam",
+      "sex": "male",
       "aliases": [
         "Elmadam",
         "Ἐλμωδάμ"
@@ -6335,6 +6429,7 @@
       ],
       "nameZh": "以诺",
       "nameLat": "Enoch",
+      "sex": "male",
       "aliases": [
         "Enoch",
         "Ἐνώχ"
@@ -6392,6 +6487,7 @@
       ],
       "nameZh": "以挪士",
       "nameLat": "Enosh",
+      "sex": "male",
       "aliases": [
         "Enosh",
         "Ἐνώς"
@@ -6437,6 +6533,7 @@
       ],
       "nameZh": "以拜尼土",
       "nameLat": "Epaenetus",
+      "sex": "male",
       "aliases": [
         "Epaenetus",
         "Ἐπαίνετος"
@@ -6482,6 +6579,7 @@
       ],
       "nameZh": "以巴弗",
       "nameLat": "Epaphras",
+      "sex": "male",
       "aliases": [
         "Epaphras",
         "Ἐπαφρᾶς"
@@ -6538,6 +6636,7 @@
       ],
       "nameZh": "以巴弗提",
       "nameLat": "Epaphroditus",
+      "sex": "male",
       "aliases": [
         "Epaphroditus",
         "Ἐπαφρόδιτος"
@@ -6593,6 +6692,7 @@
       ],
       "nameZh": "珥",
       "nameLat": "Er",
+      "sex": "male",
       "aliases": [
         "Er",
         "Ἤρ"
@@ -6638,6 +6738,7 @@
       ],
       "nameZh": "以拉都",
       "nameLat": "Erastus",
+      "sex": "male",
       "aliases": [
         "Erastus",
         "Ἔραστος"
@@ -6695,6 +6796,7 @@
       ],
       "nameZh": "以扫",
       "nameLat": "Esau",
+      "sex": "male",
       "aliases": [
         "Esau",
         "Ἠσαῦ"
@@ -6745,6 +6847,7 @@
       ],
       "nameZh": "以斯利",
       "nameLat": "Esli",
+      "sex": "male",
       "aliases": [
         "Esli",
         "Ἐσλί"
@@ -6790,6 +6893,7 @@
       ],
       "nameZh": "友布罗",
       "nameLat": "Eubulus",
+      "sex": "male",
       "aliases": [
         "Eubulus",
         "Εὔβουλος"
@@ -6835,6 +6939,7 @@
       ],
       "nameZh": "友妮基",
       "nameLat": "Eunice",
+      "sex": "female",
       "aliases": [
         "Eunice",
         "Εὐνίκη"
@@ -6880,6 +6985,7 @@
       ],
       "nameZh": "友阿蝶",
       "nameLat": "Euodia",
+      "sex": "female",
       "aliases": [
         "Euodia",
         "Εὐοδία"
@@ -6925,6 +7031,7 @@
       ],
       "nameZh": "犹推古",
       "nameLat": "Eutychus",
+      "sex": "male",
       "aliases": [
         "Eutychus",
         "Εὔτυχος"
@@ -6970,6 +7077,7 @@
       ],
       "nameZh": "夏娃",
       "nameLat": "Eve",
+      "sex": "female",
       "aliases": [
         "Eve",
         "Εὖα"
@@ -7021,6 +7129,7 @@
       ],
       "nameZh": "腓力斯",
       "nameLat": "Felix",
+      "sex": "male",
       "aliases": [
         "Felix",
         "Φῆλιξ"
@@ -7101,6 +7210,7 @@
       ],
       "nameZh": "非斯都",
       "nameLat": "Festus",
+      "sex": "male",
       "aliases": [
         "Festus",
         "Φῆστος",
@@ -7207,6 +7317,7 @@
       ],
       "nameZh": "福徒拿都",
       "nameLat": "Fortunatus",
+      "sex": "male",
       "aliases": [
         "Fortunatus",
         "Φορτουνᾶτος"
@@ -7257,6 +7368,7 @@
       ],
       "nameZh": "迦得",
       "nameLat": "Gad",
+      "sex": "male",
       "aliases": [
         "Gad",
         "Γάδ"
@@ -7302,6 +7414,7 @@
       ],
       "nameZh": "该犹",
       "nameLat": "Gaius",
+      "sex": "male",
       "aliases": [
         "Gaius",
         "Γάϊος"
@@ -7347,6 +7460,7 @@
       ],
       "nameZh": "该犹",
       "nameLat": "Gaius",
+      "sex": "male",
       "aliases": [
         "Gaius",
         "Γάϊος"
@@ -7392,6 +7506,7 @@
       ],
       "nameZh": "该犹",
       "nameLat": "Gaius",
+      "sex": "male",
       "aliases": [
         "Gaius",
         "Γάϊος"
@@ -7437,6 +7552,7 @@
       ],
       "nameZh": "该犹",
       "nameLat": "Gaius",
+      "sex": "male",
       "aliases": [
         "Gaius",
         "Γάϊος"
@@ -7488,6 +7604,7 @@
       ],
       "nameZh": "迦流",
       "nameLat": "Gallio",
+      "sex": "male",
       "aliases": [
         "Gallio",
         "Γαλλίων"
@@ -7543,6 +7660,7 @@
       ],
       "nameZh": "迦玛列",
       "nameLat": "Gamaliel",
+      "sex": "male",
       "aliases": [
         "Gamaliel",
         "Γαμαλιήλ"
@@ -7593,6 +7711,7 @@
       ],
       "nameZh": "基甸",
       "nameLat": "Gideon",
+      "sex": "male",
       "aliases": [
         "Gideon",
         "Γεδεών"
@@ -7638,6 +7757,7 @@
       ],
       "nameZh": "夏甲",
       "nameLat": "Hagar",
+      "sex": "female",
       "aliases": [
         "Hagar",
         "Ἄγαρ"
@@ -7688,6 +7808,7 @@
       ],
       "nameZh": "哈抹",
       "nameLat": "Hamor",
+      "sex": "male",
       "aliases": [
         "Hamor",
         "Ἐμμόρ"
@@ -7733,6 +7854,7 @@
       ],
       "nameZh": "希里",
       "nameLat": "Heli",
+      "sex": "male",
       "aliases": [
         "Heli",
         "Ἡλί"
@@ -7778,6 +7900,7 @@
       ],
       "nameZh": "黑米",
       "nameLat": "Hermes",
+      "sex": "male",
       "aliases": [
         "Hermes",
         "Ἑρμῆς",
@@ -7824,6 +7947,7 @@
       ],
       "nameZh": "黑马",
       "nameLat": "Hermas",
+      "sex": "male",
       "aliases": [
         "Hermas",
         "Ἑρμᾶς",
@@ -7870,6 +7994,7 @@
       ],
       "nameZh": "黑摩其尼",
       "nameLat": "Hermogenes",
+      "sex": "male",
       "aliases": [
         "Hermogenes",
         "Ἑρμογένης"
@@ -7915,6 +8040,7 @@
       ],
       "nameZh": "希律",
       "nameLat": "Herod",
+      "sex": "male",
       "aliases": [
         "Herod",
         "Ἡρώδης"
@@ -7985,6 +8111,7 @@
       ],
       "nameZh": "希律",
       "nameLat": "Herod",
+      "sex": "male",
       "aliases": [
         "Herod",
         "Ἡρώδης"
@@ -8148,6 +8275,7 @@
       ],
       "nameZh": "希律",
       "nameLat": "Herod",
+      "sex": "male",
       "aliases": [
         "Herod",
         "Ἡρώδης"
@@ -8245,6 +8373,7 @@
       ],
       "nameZh": "希罗底",
       "nameLat": "Herodias",
+      "sex": "female",
       "aliases": [
         "Herodias",
         "Ἡρωδιάς"
@@ -8317,6 +8446,7 @@
       ],
       "nameZh": "希罗天",
       "nameLat": "Herodion",
+      "sex": "male",
       "aliases": [
         "Herodion",
         "Ἡρωδίων"
@@ -8362,6 +8492,7 @@
       ],
       "nameZh": "希西家",
       "nameLat": "Hezekiah",
+      "sex": "male",
       "aliases": [
         "Hezekiah",
         "Ἐζεκίας"
@@ -8412,6 +8543,7 @@
       ],
       "nameZh": "何西阿",
       "nameLat": "Hosea",
+      "sex": "male",
       "aliases": [
         "Hosea",
         "Ὡσηέ"
@@ -8457,6 +8589,7 @@
       ],
       "nameZh": "许米乃",
       "nameLat": "Hymenaeus",
+      "sex": "male",
       "aliases": [
         "Hymenaeus",
         "Ὑμεναῖος"
@@ -8508,6 +8641,7 @@
       ],
       "nameZh": "以撒",
       "nameLat": "Isaac",
+      "sex": "male",
       "aliases": [
         "Isaac",
         "Ἰσαάκ"
@@ -8645,6 +8779,7 @@
       ],
       "nameZh": "以赛亚",
       "nameLat": "Isaiah",
+      "sex": "male",
       "aliases": [
         "Isaiah",
         "Ἡσαΐας"
@@ -8800,6 +8935,7 @@
       ],
       "nameZh": "雅各",
       "nameLat": "Israel",
+      "sex": "male",
       "aliases": [
         "Israel",
         "Ἰακώβ"
@@ -8961,6 +9097,7 @@
       ],
       "nameZh": "雅各",
       "nameLat": "Jacob",
+      "sex": "male",
       "aliases": [
         "Jacob",
         "Ἰακώβ"
@@ -9011,6 +9148,7 @@
       ],
       "nameZh": "睚鲁",
       "nameLat": "Jairus",
+      "sex": "male",
       "aliases": [
         "Jairus",
         "Ἰάειρος"
@@ -9062,6 +9200,7 @@
       ],
       "nameZh": "佯庇",
       "nameLat": "Jambres",
+      "sex": "male",
       "aliases": [
         "Jambres",
         "Ἰαμβρῆς"
@@ -9107,6 +9246,7 @@
       ],
       "nameZh": "雅各",
       "nameLat": "James",
+      "sex": "male",
       "aliases": [
         "James",
         "Ἰάκωβος"
@@ -9158,6 +9298,7 @@
       ],
       "nameZh": "雅各",
       "nameLat": "James",
+      "sex": "male",
       "aliases": [
         "James",
         "Ἰάκωβος"
@@ -9241,6 +9382,7 @@
       ],
       "nameZh": "雅各",
       "nameLat": "James",
+      "sex": "male",
       "aliases": [
         "James",
         "Ἰάκωβος"
@@ -9342,6 +9484,7 @@
       ],
       "nameZh": "雅各",
       "nameLat": "James",
+      "sex": "male",
       "aliases": [
         "James",
         "Ἰάκωβος"
@@ -9480,6 +9623,7 @@
       ],
       "nameZh": "雅拿",
       "nameLat": "Jannai",
+      "sex": "male",
       "aliases": [
         "Jannai",
         "Ἰαννά"
@@ -9525,6 +9669,7 @@
       ],
       "nameZh": "雅尼",
       "nameLat": "Jannes",
+      "sex": "male",
       "aliases": [
         "Jannes",
         "Ἰαννῆς"
@@ -9570,6 +9715,7 @@
       ],
       "nameZh": "雅列",
       "nameLat": "Jared",
+      "sex": "male",
       "aliases": [
         "Jared",
         "Ἰάρεδ"
@@ -9615,6 +9761,7 @@
       ],
       "nameZh": "耶孙",
       "nameLat": "Jason",
+      "sex": "male",
       "aliases": [
         "Jason",
         "Ἰάσων"
@@ -9681,6 +9828,7 @@
       ],
       "nameZh": "耶哥尼雅",
       "nameLat": "Jehoiachin",
+      "sex": "male",
       "aliases": [
         "Jehoiachin",
         "Ἰεχονίας"
@@ -9731,6 +9879,7 @@
       ],
       "nameZh": "巴拉加",
       "nameLat": "Barachiah",
+      "sex": "male",
       "aliases": [
         "Barachiah",
         "Βαραχίας"
@@ -9776,6 +9925,7 @@
       ],
       "nameZh": "约兰",
       "nameLat": "Jehoram",
+      "sex": "male",
       "aliases": [
         "Jehoram",
         "Ἰωράμ"
@@ -9821,6 +9971,7 @@
       ],
       "nameZh": "约沙法",
       "nameLat": "Jehoshaphat",
+      "sex": "male",
       "aliases": [
         "Jehoshaphat",
         "Ἰωσαφάτ"
@@ -9866,6 +10017,7 @@
       ],
       "nameZh": "耶弗他",
       "nameLat": "Jephthah",
+      "sex": "male",
       "aliases": [
         "Jephthah",
         "Ἰεφθάε"
@@ -9911,6 +10063,7 @@
       ],
       "nameZh": "耶利米",
       "nameLat": "Jeremiah",
+      "sex": "male",
       "aliases": [
         "Jeremiah",
         "Ἱερεμίας"
@@ -9966,6 +10119,7 @@
       ],
       "nameZh": "耶西",
       "nameLat": "Jesse",
+      "sex": "male",
       "aliases": [
         "Jesse",
         "Ἰεσσαί"
@@ -10034,6 +10188,7 @@
       ],
       "nameZh": "耶稣",
       "nameLat": "Jesus",
+      "sex": "male",
       "aliases": [
         "Jesus",
         "Ἰησοῦς",
@@ -15861,6 +16016,7 @@
       ],
       "nameZh": "Jezebel",
       "nameLat": "Jezebel",
+      "sex": "female",
       "aliases": [
         "Ἰεζαβήλ"
       ],
@@ -15905,6 +16061,7 @@
       ],
       "nameZh": "约亚拿",
       "nameLat": "Joanan",
+      "sex": "male",
       "aliases": [
         "Joanan",
         "Ἰωαννᾶς"
@@ -15950,6 +16107,7 @@
       ],
       "nameZh": "约亚拿",
       "nameLat": "Joanna",
+      "sex": "female",
       "aliases": [
         "Joanna",
         "Ἰωάννα, Ἰωανάν"
@@ -16000,6 +16158,7 @@
       ],
       "nameZh": "约伯",
       "nameLat": "Job",
+      "sex": "male",
       "aliases": [
         "Job",
         "Ἰώβ"
@@ -16045,6 +16204,7 @@
       ],
       "nameZh": "犹大",
       "nameLat": "Joda",
+      "sex": "male",
       "aliases": [
         "Joda",
         "Ἰωδά",
@@ -16091,6 +16251,7 @@
       ],
       "nameZh": "约珥",
       "nameLat": "Joel",
+      "sex": "male",
       "aliases": [
         "Joel",
         "Ἰωήλ"
@@ -16136,6 +16297,7 @@
       ],
       "nameZh": "约翰",
       "nameLat": "John",
+      "sex": "male",
       "aliases": [
         "John",
         "Ἰωάννης"
@@ -16181,6 +16343,7 @@
       ],
       "nameZh": "约翰",
       "nameLat": "John",
+      "sex": "male",
       "aliases": [
         "John",
         "Ἰωάννης",
@@ -16248,6 +16411,7 @@
       ],
       "nameZh": "约翰",
       "nameLat": "John",
+      "sex": "male",
       "aliases": [
         "John",
         "Ἰωάννης"
@@ -16737,6 +16901,7 @@
       ],
       "nameZh": "约翰",
       "nameLat": "John",
+      "sex": "male",
       "aliases": [
         "John",
         "Ἰωάννης",
@@ -16958,6 +17123,7 @@
       ],
       "nameZh": "约拿",
       "nameLat": "Jonah",
+      "sex": "male",
       "aliases": [
         "Jonah",
         "Ἰωνᾶς"
@@ -17034,6 +17200,7 @@
       ],
       "nameZh": "约南",
       "nameLat": "Jonam",
+      "sex": "male",
       "aliases": [
         "Jonam",
         "Ἰωνάν"
@@ -17079,6 +17246,7 @@
       ],
       "nameZh": "约令",
       "nameLat": "Jorim",
+      "sex": "male",
       "aliases": [
         "Jorim",
         "Ἰωρείμ"
@@ -17124,6 +17292,7 @@
       ],
       "nameZh": "约瑟",
       "nameLat": "Josech",
+      "sex": "male",
       "aliases": [
         "Josech",
         "Ἰωσήχ",
@@ -17170,6 +17339,7 @@
       ],
       "nameZh": "约瑟",
       "nameLat": "Joseph",
+      "sex": "male",
       "aliases": [
         "Joseph",
         "Ἰωσήφ",
@@ -17217,6 +17387,7 @@
       ],
       "nameZh": "约瑟",
       "nameLat": "Joseph",
+      "sex": "male",
       "aliases": [
         "Joseph",
         "Ἰωσήφ"
@@ -17300,6 +17471,7 @@
       ],
       "nameZh": "约瑟",
       "nameLat": "Joseph",
+      "sex": "male",
       "aliases": [
         "Joseph",
         "Ἰωσήφ"
@@ -17345,6 +17517,7 @@
       ],
       "nameZh": "约瑟",
       "nameLat": "Joseph",
+      "sex": "male",
       "aliases": [
         "Joseph",
         "Ἰωσήφ"
@@ -17390,6 +17563,7 @@
       ],
       "nameZh": "约瑟",
       "nameLat": "Joseph",
+      "sex": "male",
       "aliases": [
         "Joseph",
         "Ἰωσήφ"
@@ -17517,6 +17691,7 @@
       ],
       "nameZh": "约瑟",
       "nameLat": "Joseph",
+      "sex": "male",
       "aliases": [
         "Joseph",
         "Ἰωσήφ"
@@ -17590,6 +17765,7 @@
       ],
       "nameZh": "约西",
       "nameLat": "Joses",
+      "sex": "male",
       "aliases": [
         "Joses",
         "Ἰωσῆς",
@@ -17642,6 +17818,7 @@
       ],
       "nameZh": "约西",
       "nameLat": "Joses",
+      "sex": "male",
       "aliases": [
         "Joses",
         "Ἰωσῆς",
@@ -17699,6 +17876,7 @@
       ],
       "nameZh": "约书亚",
       "nameLat": "Joshua",
+      "sex": "male",
       "aliases": [
         "Joshua",
         "Ἰησοῦς"
@@ -17750,6 +17928,7 @@
       ],
       "nameZh": "约细",
       "nameLat": "Joshua",
+      "sex": "male",
       "aliases": [
         "Joshua",
         "Ἰησοῦς",
@@ -17796,6 +17975,7 @@
       ],
       "nameZh": "约西亚",
       "nameLat": "Josiah",
+      "sex": "male",
       "aliases": [
         "Josiah",
         "Ἰωσίας"
@@ -17846,6 +18026,7 @@
       ],
       "nameZh": "约坦",
       "nameLat": "Jotham",
+      "sex": "male",
       "aliases": [
         "Jotham",
         "Ἰωάθαμ"
@@ -17891,6 +18072,7 @@
       ],
       "nameZh": "犹大",
       "nameLat": "Judah",
+      "sex": "male",
       "aliases": [
         "Judah",
         "Ἰουδά",
@@ -17980,6 +18162,7 @@
       ],
       "nameZh": "犹大",
       "nameLat": "Judah",
+      "sex": "male",
       "aliases": [
         "Judah",
         "Ἰούδας"
@@ -18025,6 +18208,7 @@
       ],
       "nameZh": "犹大",
       "nameLat": "Judas",
+      "sex": "male",
       "aliases": [
         "Judas",
         "Ἰούδας",
@@ -18081,6 +18265,7 @@
       ],
       "nameZh": "犹大",
       "nameLat": "Judas",
+      "sex": "male",
       "aliases": [
         "Judas",
         "Ἰούδας"
@@ -18126,6 +18311,7 @@
       ],
       "nameZh": "犹大",
       "nameLat": "Judas",
+      "sex": "male",
       "aliases": [
         "Judas",
         "Ἰούδας"
@@ -18171,6 +18357,7 @@
       ],
       "nameZh": "犹大",
       "nameLat": "Judas",
+      "sex": "male",
       "aliases": [
         "Judas",
         "Ἰούδας",
@@ -18242,6 +18429,7 @@
       ],
       "nameZh": "犹大",
       "nameLat": "Judas",
+      "sex": "male",
       "aliases": [
         "Judas",
         "Ἰούδας",
@@ -18402,6 +18590,7 @@
       ],
       "nameZh": "犹大",
       "nameLat": "Jude",
+      "sex": "male",
       "aliases": [
         "Jude",
         "Ἰούδας"
@@ -18459,6 +18648,7 @@
       ],
       "nameZh": "犹利亚",
       "nameLat": "Julia",
+      "sex": "female",
       "aliases": [
         "Julia",
         "Ἰουλία"
@@ -18504,6 +18694,7 @@
       ],
       "nameZh": "犹流",
       "nameLat": "Julius",
+      "sex": "male",
       "aliases": [
         "Julius",
         "Ἰούλιος"
@@ -18554,6 +18745,7 @@
       ],
       "nameZh": "犹尼亚",
       "nameLat": "Junia",
+      "sex": "female",
       "aliases": [
         "Junia",
         "Ἰουνιᾶς"
@@ -18599,6 +18791,7 @@
       ],
       "nameZh": "提多·犹士都",
       "nameLat": "Justus",
+      "sex": "male",
       "aliases": [
         "Justus",
         "Ἰοῦστος",
@@ -18645,6 +18838,7 @@
       ],
       "nameZh": "耶数",
       "nameLat": "Justus",
+      "sex": "male",
       "aliases": [
         "Justus",
         "Ἰοῦστος",
@@ -18691,6 +18885,7 @@
       ],
       "nameZh": "该南",
       "nameLat": "Kenan",
+      "sex": "male",
       "aliases": [
         "Kenan",
         "Καϊνάν, Καϊνάμ"
@@ -18736,6 +18931,7 @@
       ],
       "nameZh": "基士",
       "nameLat": "Kish",
+      "sex": "male",
       "aliases": [
         "Kish",
         "Κίς"
@@ -18781,6 +18977,7 @@
       ],
       "nameZh": "拉麦",
       "nameLat": "Lamech",
+      "sex": "male",
       "aliases": [
         "Lamech",
         "Λάμεχ"
@@ -18826,6 +19023,7 @@
       ],
       "nameZh": "拉撒路",
       "nameLat": "Lazarus",
+      "sex": "male",
       "aliases": [
         "Lazarus",
         "Λάζαρος"
@@ -18921,6 +19119,7 @@
       ],
       "nameZh": "拉撒路",
       "nameLat": "Lazarus",
+      "sex": "male",
       "aliases": [
         "Lazarus",
         "Λάζαρος"
@@ -18981,6 +19180,7 @@
       ],
       "nameZh": "利未",
       "nameLat": "Levi",
+      "sex": "male",
       "aliases": [
         "Levi",
         "Λευΐ"
@@ -19037,6 +19237,7 @@
       ],
       "nameZh": "利未",
       "nameLat": "Levi",
+      "sex": "male",
       "aliases": [
         "Levi",
         "Λευΐ"
@@ -19082,6 +19283,7 @@
       ],
       "nameZh": "利未",
       "nameLat": "Levi",
+      "sex": "male",
       "aliases": [
         "Levi",
         "Λευΐ"
@@ -19127,6 +19329,7 @@
       ],
       "nameZh": "利奴",
       "nameLat": "Linus",
+      "sex": "male",
       "aliases": [
         "Linus",
         "Λίνος"
@@ -19172,6 +19375,7 @@
       ],
       "nameZh": "罗以",
       "nameLat": "Lois",
+      "sex": "female",
       "aliases": [
         "Lois",
         "Λωΐς"
@@ -19217,6 +19421,7 @@
       ],
       "nameZh": "罗得",
       "nameLat": "Lot",
+      "sex": "male",
       "aliases": [
         "Lot",
         "Λώτ"
@@ -19278,6 +19483,7 @@
       ],
       "nameZh": "路求",
       "nameLat": "Lucius",
+      "sex": "male",
       "aliases": [
         "Lucius",
         "Λούκιος"
@@ -19329,6 +19535,7 @@
       ],
       "nameZh": "路加",
       "nameLat": "Luke",
+      "sex": "male",
       "aliases": [
         "Luke",
         "Λουκᾶς"
@@ -19392,6 +19599,7 @@
       ],
       "nameZh": "吕底亚",
       "nameLat": "Lydia",
+      "sex": "female",
       "aliases": [
         "Lydia",
         "Λυδία"
@@ -19442,6 +19650,7 @@
       ],
       "nameZh": "吕撒聂",
       "nameLat": "Lysanias",
+      "sex": "male",
       "aliases": [
         "Lysanias",
         "Λυσανίας"
@@ -19487,6 +19696,7 @@
       ],
       "nameZh": "克劳第·吕西亚",
       "nameLat": "Lysias",
+      "sex": "male",
       "aliases": [
         "Lysias",
         "Λυσίας",
@@ -19538,6 +19748,7 @@
       ],
       "nameZh": "玛押",
       "nameLat": "Maath",
+      "sex": "male",
       "aliases": [
         "Maath",
         "Μαάθ"
@@ -19583,6 +19794,7 @@
       ],
       "nameZh": "玛勒列",
       "nameLat": "Mahalalel",
+      "sex": "male",
       "aliases": [
         "Mahalalel",
         "Μαλελεήλ"
@@ -19628,6 +19840,7 @@
       ],
       "nameZh": "马勒古",
       "nameLat": "Malchus",
+      "sex": "male",
       "aliases": [
         "Malchus",
         "Μάλχος"
@@ -19673,6 +19886,7 @@
       ],
       "nameZh": "马念",
       "nameLat": "Manaen",
+      "sex": "male",
       "aliases": [
         "Manaen",
         "Μαναήν"
@@ -19718,6 +19932,7 @@
       ],
       "nameZh": "玛拿西",
       "nameLat": "Manasseh",
+      "sex": "male",
       "aliases": [
         "Manasseh",
         "Μανασσῆς"
@@ -19763,6 +19978,7 @@
       ],
       "nameZh": "马可",
       "nameLat": "Mark",
+      "sex": "male",
       "aliases": [
         "Mark",
         "Μάρκος",
@@ -19858,6 +20074,7 @@
       ],
       "nameZh": "马大",
       "nameLat": "Martha",
+      "sex": "female",
       "aliases": [
         "Martha",
         "Μάρθα"
@@ -19959,6 +20176,7 @@
       ],
       "nameZh": "马利亚",
       "nameLat": "Mary",
+      "sex": "female",
       "aliases": [
         "Mary",
         "Μαρία"
@@ -20004,6 +20222,7 @@
       ],
       "nameZh": "马利亚",
       "nameLat": "Mary",
+      "sex": "female",
       "aliases": [
         "Mary",
         "Μαρία"
@@ -20100,6 +20319,7 @@
       ],
       "nameZh": "马利亚",
       "nameLat": "Mary",
+      "sex": "female",
       "aliases": [
         "Mary",
         "Μαρία"
@@ -20243,6 +20463,7 @@
       ],
       "nameZh": "马利亚",
       "nameLat": "Mary",
+      "sex": "female",
       "aliases": [
         "Mary",
         "Μαρία"
@@ -20321,6 +20542,7 @@
       ],
       "nameZh": "马利亚",
       "nameLat": "Mary",
+      "sex": "female",
       "aliases": [
         "Mary",
         "Μαρία"
@@ -20366,6 +20588,7 @@
       ],
       "nameZh": "抹大拉的马利亚",
       "nameLat": "Mary_Magdalene",
+      "sex": "female",
       "aliases": [
         "Mary_Magdalene",
         "Μαρία"
@@ -20479,6 +20702,7 @@
       ],
       "nameZh": "玛达他",
       "nameLat": "Mattatha",
+      "sex": "male",
       "aliases": [
         "Mattatha",
         "Ματταθά"
@@ -20524,6 +20748,7 @@
       ],
       "nameZh": "玛他提亚",
       "nameLat": "Mattathias",
+      "sex": "male",
       "aliases": [
         "Mattathias",
         "Ματταθίας"
@@ -20569,6 +20794,7 @@
       ],
       "nameZh": "玛他提亚",
       "nameLat": "Mattathias",
+      "sex": "male",
       "aliases": [
         "Mattathias",
         "Ματταθίας"
@@ -20614,6 +20840,7 @@
       ],
       "nameZh": "马但",
       "nameLat": "Matthan",
+      "sex": "male",
       "aliases": [
         "Matthan",
         "Ματθάν"
@@ -20659,6 +20886,7 @@
       ],
       "nameZh": "玛塔",
       "nameLat": "Matthat",
+      "sex": "male",
       "aliases": [
         "Matthat",
         "Ματθάτ, Μαθθάτ"
@@ -20704,6 +20932,7 @@
       ],
       "nameZh": "玛塔",
       "nameLat": "Matthat",
+      "sex": "male",
       "aliases": [
         "Matthat",
         "Ματθάτ, Μαθθάτ"
@@ -20749,6 +20978,7 @@
       ],
       "nameZh": "马太",
       "nameLat": "Matthew",
+      "sex": "male",
       "aliases": [
         "Matthew",
         "Ματθαῖος",
@@ -20833,6 +21063,7 @@
       ],
       "nameZh": "马提亚",
       "nameLat": "Matthias",
+      "sex": "male",
       "aliases": [
         "Matthias",
         "Ματθίας, Μαθθίας"
@@ -20883,6 +21114,7 @@
       ],
       "nameZh": "麦基",
       "nameLat": "Melchi",
+      "sex": "male",
       "aliases": [
         "Melchi",
         "Μελχί"
@@ -20928,6 +21160,7 @@
       ],
       "nameZh": "麦基",
       "nameLat": "Melchi",
+      "sex": "male",
       "aliases": [
         "Melchi",
         "Μελχί"
@@ -20973,6 +21206,7 @@
       ],
       "nameZh": "麦基洗德",
       "nameLat": "Melchizedek",
+      "sex": "male",
       "aliases": [
         "Melchizedek",
         "Μελχισεδέκ"
@@ -21058,6 +21292,7 @@
       ],
       "nameZh": "米利亚",
       "nameLat": "Melea",
+      "sex": "male",
       "aliases": [
         "Melea",
         "Μελεᾶς"
@@ -21103,6 +21338,7 @@
       ],
       "nameZh": "买南",
       "nameLat": "Menna",
+      "sex": "male",
       "aliases": [
         "Menna",
         "Μαϊνάν"
@@ -21148,6 +21384,7 @@
       ],
       "nameZh": "玛土撒拉",
       "nameLat": "Methuselah",
+      "sex": "male",
       "aliases": [
         "Methuselah",
         "Μαθουσάλα"
@@ -21193,6 +21430,7 @@
       ],
       "nameZh": "拿孙",
       "nameLat": "Mnason",
+      "sex": "male",
       "aliases": [
         "Mnason",
         "Μνάσων"
@@ -21238,6 +21476,7 @@
       ],
       "nameZh": "摩西",
       "nameLat": "Moses",
+      "sex": "male",
       "aliases": [
         "Moses",
         "Μωϋσῆς, Μωσῆς"
@@ -21689,6 +21928,7 @@
       ],
       "nameZh": "乃缦",
       "nameLat": "Naaman",
+      "sex": "male",
       "aliases": [
         "Naaman",
         "Νεεμάν, Ναιμάν"
@@ -21734,6 +21974,7 @@
       ],
       "nameZh": "拿该",
       "nameLat": "Naggai",
+      "sex": "male",
       "aliases": [
         "Naggai",
         "Ναγγαί"
@@ -21779,6 +22020,7 @@
       ],
       "nameZh": "拿鹤",
       "nameLat": "Nahor",
+      "sex": "male",
       "aliases": [
         "Nahor",
         "Ναχώρ"
@@ -21824,6 +22066,7 @@
       ],
       "nameZh": "拿顺",
       "nameLat": "Nahshon",
+      "sex": "male",
       "aliases": [
         "Nahshon",
         "Ναασσών"
@@ -21875,6 +22118,7 @@
       ],
       "nameZh": "拿鸿",
       "nameLat": "Nahum",
+      "sex": "male",
       "aliases": [
         "Nahum",
         "Ναούμ"
@@ -21920,6 +22164,7 @@
       ],
       "nameZh": "拿其数",
       "nameLat": "Narcissus",
+      "sex": "male",
       "aliases": [
         "Narcissus",
         "Νάρκισσος"
@@ -21965,6 +22210,7 @@
       ],
       "nameZh": "拿单",
       "nameLat": "Nathan",
+      "sex": "male",
       "aliases": [
         "Nathan",
         "Ναθάν"
@@ -22010,6 +22256,7 @@
       ],
       "nameZh": "拿但业",
       "nameLat": "Nathanael",
+      "sex": "male",
       "aliases": [
         "Nathanael",
         "Ναθαναήλ"
@@ -22091,6 +22338,7 @@
       ],
       "nameZh": "尼利亚",
       "nameLat": "Nereus",
+      "sex": "male",
       "aliases": [
         "Nereus",
         "Νηρεύς"
@@ -22136,6 +22384,7 @@
       ],
       "nameZh": "尼利",
       "nameLat": "Neri",
+      "sex": "male",
       "aliases": [
         "Neri",
         "Νηρί"
@@ -22181,6 +22430,7 @@
       ],
       "nameZh": "尼迦挪",
       "nameLat": "Nicanor",
+      "sex": "male",
       "aliases": [
         "Nicanor",
         "Νικάνωρ"
@@ -22226,6 +22476,7 @@
       ],
       "nameZh": "尼哥德慕",
       "nameLat": "Nicodemus",
+      "sex": "male",
       "aliases": [
         "Nicodemus",
         "Νικόδημος"
@@ -22291,6 +22542,7 @@
       ],
       "nameZh": "尼哥拉",
       "nameLat": "Nicolaus",
+      "sex": "male",
       "aliases": [
         "Nicolaus",
         "Νικόλαος"
@@ -22336,6 +22588,7 @@
       ],
       "nameZh": "挪亚",
       "nameLat": "Noah",
+      "sex": "male",
       "aliases": [
         "Noah",
         "Νῶε"
@@ -22420,6 +22673,7 @@
       ],
       "nameZh": "宁法",
       "nameLat": "Nympha",
+      "sex": "female",
       "aliases": [
         "Nympha",
         "Νυμφᾶς"
@@ -22465,6 +22719,7 @@
       ],
       "nameZh": "俄备得",
       "nameLat": "Obed",
+      "sex": "male",
       "aliases": [
         "Obed",
         "Ὠβήδ"
@@ -22516,6 +22771,7 @@
       ],
       "nameZh": "阿林巴",
       "nameLat": "Olympas",
+      "sex": "male",
       "aliases": [
         "Olympas",
         "Ὀλυμπᾶς"
@@ -22561,6 +22817,7 @@
       ],
       "nameZh": "阿尼西谋",
       "nameLat": "Onesimus",
+      "sex": "male",
       "aliases": [
         "Onesimus",
         "Ὀνήσιμος"
@@ -22622,6 +22879,7 @@
       ],
       "nameZh": "阿尼色弗",
       "nameLat": "Onesiphorus",
+      "sex": "male",
       "aliases": [
         "Onesiphorus",
         "Ὀνησίφορος"
@@ -22672,6 +22930,7 @@
       ],
       "nameZh": "巴米拿",
       "nameLat": "Parmenas",
+      "sex": "male",
       "aliases": [
         "Parmenas",
         "Παρμενᾶς"
@@ -22717,6 +22976,7 @@
       ],
       "nameZh": "八罗巴",
       "nameLat": "Patrobas",
+      "sex": "male",
       "aliases": [
         "Patrobas",
         "Πατροβᾶς"
@@ -22762,6 +23022,7 @@
       ],
       "nameZh": "保罗",
       "nameLat": "Paul",
+      "sex": "male",
       "aliases": [
         "Paul",
         "Παῦλος",
@@ -23728,6 +23989,7 @@
       ],
       "nameZh": "法勒",
       "nameLat": "Peleg",
+      "sex": "male",
       "aliases": [
         "Peleg",
         "Φάλεκ"
@@ -23773,6 +24035,7 @@
       ],
       "nameZh": "彼息",
       "nameLat": "Persis",
+      "sex": "female",
       "aliases": [
         "Persis",
         "Περσίς"
@@ -23818,6 +24081,7 @@
       ],
       "nameZh": "彼得",
       "nameLat": "Peter",
+      "sex": "male",
       "aliases": [
         "Peter",
         "Πέτρος",
@@ -24765,6 +25029,7 @@
       ],
       "nameZh": "法内力",
       "nameLat": "Phanuel",
+      "sex": "male",
       "aliases": [
         "Phanuel",
         "Φανουήλ"
@@ -24810,6 +25075,7 @@
       ],
       "nameZh": "腓利门",
       "nameLat": "Philemon",
+      "sex": "male",
       "aliases": [
         "Philemon",
         "Φιλήμων"
@@ -24860,6 +25126,7 @@
       ],
       "nameZh": "腓理徒",
       "nameLat": "Philetus",
+      "sex": "male",
       "aliases": [
         "Philetus",
         "Φίλητος"
@@ -24905,6 +25172,7 @@
       ],
       "nameZh": "腓利",
       "nameLat": "Philip",
+      "sex": "male",
       "aliases": [
         "Philip",
         "Φίλιππος"
@@ -25020,6 +25288,7 @@
       ],
       "nameZh": "腓力",
       "nameLat": "Philip",
+      "sex": "male",
       "aliases": [
         "Philip",
         "Φίλιππος"
@@ -25065,6 +25334,7 @@
       ],
       "nameZh": "腓力",
       "nameLat": "Philip",
+      "sex": "male",
       "aliases": [
         "Philip",
         "Φίλιππος"
@@ -25184,6 +25454,7 @@
       ],
       "nameZh": "腓力",
       "nameLat": "Philip",
+      "sex": "male",
       "aliases": [
         "Philip",
         "Φίλιππος"
@@ -25241,6 +25512,7 @@
       ],
       "nameZh": "非罗罗古",
       "nameLat": "Philologus",
+      "sex": "male",
       "aliases": [
         "Philologus",
         "Φιλόλογος"
@@ -25286,6 +25558,7 @@
       ],
       "nameZh": "弗勒干",
       "nameLat": "Phlegon",
+      "sex": "male",
       "aliases": [
         "Phlegon",
         "Φλέγων"
@@ -25331,6 +25604,7 @@
       ],
       "nameZh": "非比",
       "nameLat": "Phoebe",
+      "sex": "female",
       "aliases": [
         "Phoebe",
         "Φοίβη"
@@ -25376,6 +25650,7 @@
       ],
       "nameZh": "腓吉路",
       "nameLat": "Phygelus",
+      "sex": "male",
       "aliases": [
         "Phygelus",
         "Φύγελλος"
@@ -25421,6 +25696,7 @@
       ],
       "nameZh": "彼拉多",
       "nameLat": "Pilate",
+      "sex": "male",
       "aliases": [
         "Pilate",
         "Πιλᾶτος",
@@ -25732,6 +26008,7 @@
       ],
       "nameZh": "百基拉",
       "nameLat": "Priscilla",
+      "sex": "female",
       "aliases": [
         "Priscilla",
         "Πρίσκιλλα",
@@ -25806,6 +26083,7 @@
       ],
       "nameZh": "伯罗哥罗",
       "nameLat": "Prochorus",
+      "sex": "male",
       "aliases": [
         "Prochorus",
         "Πρόχορος"
@@ -25851,6 +26129,7 @@
       ],
       "nameZh": "部百流",
       "nameLat": "Publius",
+      "sex": "male",
       "aliases": [
         "Publius",
         "Πόπλιος"
@@ -25901,6 +26180,7 @@
       ],
       "nameZh": "布田",
       "nameLat": "Pudens",
+      "sex": "male",
       "aliases": [
         "Pudens",
         "Πούδης"
@@ -25946,6 +26226,7 @@
       ],
       "nameZh": "毕罗斯",
       "nameLat": "Pyrrhus",
+      "sex": "male",
       "aliases": [
         "Pyrrhus",
         "Πύρρος"
@@ -25991,6 +26272,7 @@
       ],
       "nameZh": "括土",
       "nameLat": "Quartus",
+      "sex": "male",
       "aliases": [
         "Quartus",
         "Κούαρτος"
@@ -26036,6 +26318,7 @@
       ],
       "nameZh": "居里扭",
       "nameLat": "Quirinius",
+      "sex": "male",
       "aliases": [
         "Quirinius",
         "Κυρήνιος"
@@ -26081,6 +26364,7 @@
       ],
       "nameZh": "拉结",
       "nameLat": "Rachel",
+      "sex": "female",
       "aliases": [
         "Rachel",
         "Ῥαχήλ"
@@ -26126,6 +26410,7 @@
       ],
       "nameZh": "喇合",
       "nameLat": "Rahab",
+      "sex": "female",
       "aliases": [
         "Rahab",
         "Ῥαάβ",
@@ -26184,6 +26469,7 @@
       ],
       "nameZh": "亚兰",
       "nameLat": "Ram",
+      "sex": "male",
       "aliases": [
         "Ram",
         "Ἀράμ",
@@ -26242,6 +26528,7 @@
       ],
       "nameZh": "利百加",
       "nameLat": "Rebekah",
+      "sex": "female",
       "aliases": [
         "Rebekah",
         "Ῥεβέκκα"
@@ -26287,6 +26574,7 @@
       ],
       "nameZh": "罗波安",
       "nameLat": "Rehoboam",
+      "sex": "male",
       "aliases": [
         "Rehoboam",
         "Ῥοβοάμ"
@@ -26332,6 +26620,7 @@
       ],
       "nameZh": "拉吴",
       "nameLat": "Reu",
+      "sex": "male",
       "aliases": [
         "Reu",
         "Ῥαγαῦ"
@@ -26377,6 +26666,7 @@
       ],
       "nameZh": "利撒",
       "nameLat": "Rhesa",
+      "sex": "male",
       "aliases": [
         "Rhesa",
         "Ῥησά"
@@ -26422,6 +26712,7 @@
       ],
       "nameZh": "罗大",
       "nameLat": "Rhoda",
+      "sex": "female",
       "aliases": [
         "Rhoda",
         "Ῥόδη"
@@ -26467,6 +26758,7 @@
       ],
       "nameZh": "鲁孚",
       "nameLat": "Rufus",
+      "sex": "male",
       "aliases": [
         "Rufus",
         "Ῥοῦφος"
@@ -26512,6 +26804,7 @@
       ],
       "nameZh": "鲁孚",
       "nameLat": "Rufus",
+      "sex": "male",
       "aliases": [
         "Rufus",
         "Ῥοῦφος"
@@ -26557,6 +26850,7 @@
       ],
       "nameZh": "路得",
       "nameLat": "Ruth",
+      "sex": "female",
       "aliases": [
         "Ruth",
         "Ῥούθ"
@@ -26602,6 +26896,7 @@
       ],
       "nameZh": "撒门",
       "nameLat": "Salmon",
+      "sex": "male",
       "aliases": [
         "Salmon",
         "Σαλμών",
@@ -26659,6 +26954,7 @@
       ],
       "nameZh": "撒罗米",
       "nameLat": "Salome",
+      "sex": "female",
       "aliases": [
         "Salome",
         "Σαλώμη"
@@ -26709,6 +27005,7 @@
       ],
       "nameZh": "参孙",
       "nameLat": "Samson",
+      "sex": "male",
       "aliases": [
         "Samson",
         "Σαμψών"
@@ -26754,6 +27051,7 @@
       ],
       "nameZh": "撒母耳",
       "nameLat": "Samuel",
+      "sex": "male",
       "aliases": [
         "Samuel",
         "Σαμουήλ"
@@ -26810,6 +27108,7 @@
       ],
       "nameZh": "撒非喇",
       "nameLat": "Sapphira",
+      "sex": "female",
       "aliases": [
         "Sapphira",
         "Σαπφείρη"
@@ -26855,6 +27154,7 @@
       ],
       "nameZh": "撒拉",
       "nameLat": "Sarah",
+      "sex": "female",
       "aliases": [
         "Sarah",
         "Σάρρα"
@@ -26917,6 +27217,7 @@
       ],
       "nameZh": "扫罗",
       "nameLat": "Saul",
+      "sex": "male",
       "aliases": [
         "Saul",
         "Σαούλ"
@@ -26962,6 +27263,7 @@
       ],
       "nameZh": "士基瓦",
       "nameLat": "Sceva",
+      "sex": "male",
       "aliases": [
         "Sceva",
         "Σκευᾶς"
@@ -27007,6 +27309,7 @@
       ],
       "nameZh": "西公都",
       "nameLat": "Secundus",
+      "sex": "male",
       "aliases": [
         "Secundus",
         "Σεκοῦνδος"
@@ -27052,6 +27355,7 @@
       ],
       "nameZh": "西美",
       "nameLat": "Semein",
+      "sex": "male",
       "aliases": [
         "Semein",
         "Σεμεΐ"
@@ -27097,6 +27401,7 @@
       ],
       "nameZh": "士求·保罗",
       "nameLat": "Sergius_Paulus",
+      "sex": "male",
       "aliases": [
         "Sergius_Paulus",
         "Σέργιος+G3972H«G3972=Παῦλος"
@@ -27142,6 +27447,7 @@
       ],
       "nameZh": "西鹿",
       "nameLat": "Serug",
+      "sex": "male",
       "aliases": [
         "Serug",
         "Σαρούχ"
@@ -27187,6 +27493,7 @@
       ],
       "nameZh": "塞特",
       "nameLat": "Seth",
+      "sex": "male",
       "aliases": [
         "Seth",
         "Σήθ"
@@ -27232,6 +27539,7 @@
       ],
       "nameZh": "撒拉铁",
       "nameLat": "Shealtiel",
+      "sex": "male",
       "aliases": [
         "Shealtiel",
         "Σαλαθιήλ"
@@ -27277,6 +27585,7 @@
       ],
       "nameZh": "撒拉铁",
       "nameLat": "Shealtiel",
+      "sex": "male",
       "aliases": [
         "Shealtiel",
         "Σαλαθιήλ"
@@ -27322,6 +27631,7 @@
       ],
       "nameZh": "沙拉",
       "nameLat": "Shelah",
+      "sex": "male",
       "aliases": [
         "Shelah",
         "Σαλά"
@@ -27367,6 +27677,7 @@
       ],
       "nameZh": "闪",
       "nameLat": "Shem",
+      "sex": "male",
       "aliases": [
         "Shem",
         "Σήμ"
@@ -27412,6 +27723,7 @@
       ],
       "nameZh": "西拉",
       "nameLat": "Silas",
+      "sex": "male",
       "aliases": [
         "Silas",
         "Σίλας",
@@ -27537,6 +27849,7 @@
       ],
       "nameZh": "西面",
       "nameLat": "Simeon",
+      "sex": "male",
       "aliases": [
         "Simeon",
         "Συμεών",
@@ -27583,6 +27896,7 @@
       ],
       "nameZh": "西缅",
       "nameLat": "Simeon",
+      "sex": "male",
       "aliases": [
         "Simeon",
         "Συμεών"
@@ -27628,6 +27942,7 @@
       ],
       "nameZh": "西面",
       "nameLat": "Simeon",
+      "sex": "male",
       "aliases": [
         "Simeon",
         "Συμεών"
@@ -27678,6 +27993,7 @@
       ],
       "nameZh": "西缅",
       "nameLat": "Simeon",
+      "sex": "male",
       "aliases": [
         "Simeon",
         "Συμεών"
@@ -27723,6 +28039,7 @@
       ],
       "nameZh": "西门",
       "nameLat": "Simon",
+      "sex": "male",
       "aliases": [
         "Simon",
         "Σίμων"
@@ -27768,6 +28085,7 @@
       ],
       "nameZh": "Simon",
       "nameLat": "Simon",
+      "sex": "male",
       "aliases": [
         "Σίμων"
       ],
@@ -27827,6 +28145,7 @@
       ],
       "nameZh": "西门",
       "nameLat": "Simon",
+      "sex": "male",
       "aliases": [
         "Simon",
         "Σίμων"
@@ -27887,6 +28206,7 @@
       ],
       "nameZh": "西门",
       "nameLat": "Simon",
+      "sex": "male",
       "aliases": [
         "Simon",
         "Σίμων"
@@ -27947,6 +28267,7 @@
       ],
       "nameZh": "西门",
       "nameLat": "Simon",
+      "sex": "male",
       "aliases": [
         "Simon",
         "Σίμων",
@@ -28011,6 +28332,7 @@
       ],
       "nameZh": "西门",
       "nameLat": "Simon",
+      "sex": "male",
       "aliases": [
         "Simon",
         "Σίμων"
@@ -28062,6 +28384,7 @@
       ],
       "nameZh": "西门",
       "nameLat": "Simon",
+      "sex": "male",
       "aliases": [
         "Simon",
         "Σίμων"
@@ -28113,6 +28436,7 @@
       ],
       "nameZh": "Simon",
       "nameLat": "Simon",
+      "sex": "male",
       "aliases": [
         "Σίμων"
       ],
@@ -28167,6 +28491,7 @@
       ],
       "nameZh": "西门",
       "nameLat": "Simon",
+      "sex": "male",
       "aliases": [
         "Simon",
         "Σίμων"
@@ -28224,6 +28549,7 @@
       ],
       "nameZh": "所罗门",
       "nameLat": "Solomon",
+      "sex": "male",
       "aliases": [
         "Solomon",
         "Σολομών, Σαλωμών"
@@ -28307,6 +28633,7 @@
       ],
       "nameZh": "所巴特",
       "nameLat": "Sopater",
+      "sex": "male",
       "aliases": [
         "Sopater",
         "Σώπατρος"
@@ -28363,6 +28690,7 @@
       ],
       "nameZh": "所西巴德",
       "nameLat": "Sosipater",
+      "sex": "male",
       "aliases": [
         "Sosipater",
         "Σωσίπατρος"
@@ -28419,6 +28747,7 @@
       ],
       "nameZh": "所提尼",
       "nameLat": "Sosthenes",
+      "sex": "male",
       "aliases": [
         "Sosthenes",
         "Σωσθένης"
@@ -28470,6 +28799,7 @@
       ],
       "nameZh": "士大古",
       "nameLat": "Stachys",
+      "sex": "male",
       "aliases": [
         "Stachys",
         "Στάχυς"
@@ -28515,6 +28845,7 @@
       ],
       "nameZh": "司提反",
       "nameLat": "Stephanas",
+      "sex": "male",
       "aliases": [
         "Stephanas",
         "Στεφανᾶς"
@@ -28575,6 +28906,7 @@
       ],
       "nameZh": "司提反",
       "nameLat": "Stephen",
+      "sex": "male",
       "aliases": [
         "Stephen",
         "Στέφανος"
@@ -28650,6 +28982,7 @@
       ],
       "nameZh": "苏撒拿",
       "nameLat": "Susanna",
+      "sex": "female",
       "aliases": [
         "Susanna",
         "Σουσάννα"
@@ -28695,6 +29028,7 @@
       ],
       "nameZh": "循都基",
       "nameLat": "Syntyche",
+      "sex": "female",
       "aliases": [
         "Syntyche",
         "Συντύχη"
@@ -28740,6 +29074,7 @@
       ],
       "nameZh": "大比大",
       "nameLat": "Tabitha",
+      "sex": "female",
       "aliases": [
         "Tabitha",
         "Ταβιθά",
@@ -28796,6 +29131,7 @@
       ],
       "nameZh": "她玛",
       "nameLat": "Tamar",
+      "sex": "female",
       "aliases": [
         "Tamar",
         "Θάμαρ"
@@ -28841,6 +29177,7 @@
       ],
       "nameZh": "他拉",
       "nameLat": "Terah",
+      "sex": "male",
       "aliases": [
         "Terah",
         "Θάρα"
@@ -28886,6 +29223,7 @@
       ],
       "nameZh": "德提",
       "nameLat": "Tertius",
+      "sex": "male",
       "aliases": [
         "Tertius",
         "Τέρτιος"
@@ -28931,6 +29269,7 @@
       ],
       "nameZh": "帖土罗",
       "nameLat": "Tertullus",
+      "sex": "male",
       "aliases": [
         "Tertullus",
         "Τέρτυλλος"
@@ -28981,6 +29320,7 @@
       ],
       "nameZh": "提阿非罗",
       "nameLat": "Theophilus",
+      "sex": "male",
       "aliases": [
         "Theophilus",
         "Θεόφιλος"
@@ -29032,6 +29372,7 @@
       ],
       "nameZh": "杜达",
       "nameLat": "Theudas",
+      "sex": "male",
       "aliases": [
         "Theudas",
         "Θευδᾶς"
@@ -29077,6 +29418,7 @@
       ],
       "nameZh": "多马",
       "nameLat": "Thomas",
+      "sex": "male",
       "aliases": [
         "Thomas",
         "Θωμᾶς",
@@ -29182,6 +29524,7 @@
       ],
       "nameZh": "提庇留",
       "nameLat": "Tiberius",
+      "sex": "male",
       "aliases": [
         "Tiberius",
         "Τιβέριος",
@@ -29286,6 +29629,7 @@
       ],
       "nameZh": "底买",
       "nameLat": "Timaeus",
+      "sex": "male",
       "aliases": [
         "Timaeus",
         "Τιμαῖος"
@@ -29331,6 +29675,7 @@
       ],
       "nameZh": "提门",
       "nameLat": "Timon",
+      "sex": "male",
       "aliases": [
         "Timon",
         "Τίμων"
@@ -29376,6 +29721,7 @@
       ],
       "nameZh": "提摩太",
       "nameLat": "Timothy",
+      "sex": "male",
       "aliases": [
         "Timothy",
         "Τιμόθεος"
@@ -29567,6 +29913,7 @@
       ],
       "nameZh": "提多",
       "nameLat": "Titus",
+      "sex": "male",
       "aliases": [
         "Titus",
         "Τίτος"
@@ -29680,6 +30027,7 @@
       ],
       "nameZh": "特罗非摩",
       "nameLat": "Trophimus",
+      "sex": "male",
       "aliases": [
         "Trophimus",
         "Τρόφιμος"
@@ -29736,6 +30084,7 @@
       ],
       "nameZh": "土非拿",
       "nameLat": "Tryphaena",
+      "sex": "female",
       "aliases": [
         "Tryphaena",
         "Τρύφαινα"
@@ -29781,6 +30130,7 @@
       ],
       "nameZh": "土富撒",
       "nameLat": "Tryphosa",
+      "sex": "female",
       "aliases": [
         "Tryphosa",
         "Τρυφῶσα"
@@ -29826,6 +30176,7 @@
       ],
       "nameZh": "推基古",
       "nameLat": "Tychicus",
+      "sex": "male",
       "aliases": [
         "Tychicus",
         "Τυχικός"
@@ -29905,6 +30256,7 @@
       ],
       "nameZh": "推喇奴",
       "nameLat": "Tyrannus",
+      "sex": "male",
       "aliases": [
         "Tyrannus",
         "Τύραννος"
@@ -29950,6 +30302,7 @@
       ],
       "nameZh": "耳巴奴",
       "nameLat": "Urbanus",
+      "sex": "male",
       "aliases": [
         "Urbanus",
         "Οὐρβανός"
@@ -29995,6 +30348,7 @@
       ],
       "nameZh": "乌利亚",
       "nameLat": "Uriah",
+      "sex": "male",
       "aliases": [
         "Uriah",
         "Οὐρίας"
@@ -30040,6 +30394,7 @@
       ],
       "nameZh": "乌西雅",
       "nameLat": "Uzziah",
+      "sex": "male",
       "aliases": [
         "Uzziah",
         "Ὀζίας"
@@ -30090,6 +30445,7 @@
       ],
       "nameZh": "撒该",
       "nameLat": "Zacchaeus",
+      "sex": "male",
       "aliases": [
         "Zacchaeus",
         "Ζακχαῖος"
@@ -30145,6 +30501,7 @@
       ],
       "nameZh": "撒督",
       "nameLat": "Zadok",
+      "sex": "male",
       "aliases": [
         "Zadok",
         "Σαδώκ"
@@ -30190,6 +30547,7 @@
       ],
       "nameZh": "西庇太",
       "nameLat": "Zebedee",
+      "sex": "male",
       "aliases": [
         "Zebedee",
         "Ζεβεδαῖος"
@@ -30288,6 +30646,7 @@
       ],
       "nameZh": "撒迦利亚",
       "nameLat": "Zechariah",
+      "sex": "male",
       "aliases": [
         "Zechariah",
         "Ζαχαρίας"
@@ -30339,6 +30698,7 @@
       ],
       "nameZh": "撒迦利亚",
       "nameLat": "Zechariah",
+      "sex": "male",
       "aliases": [
         "Zechariah",
         "Ζαχαρίας"
@@ -30424,6 +30784,7 @@
       ],
       "nameZh": "西纳",
       "nameLat": "Zenas",
+      "sex": "male",
       "aliases": [
         "Zenas",
         "Ζηνᾶς"
@@ -30469,6 +30830,7 @@
       ],
       "nameZh": "谢拉",
       "nameLat": "Zerah",
+      "sex": "male",
       "aliases": [
         "Zerah",
         "Ζαρά"
@@ -30514,6 +30876,7 @@
       ],
       "nameZh": "所罗巴伯",
       "nameLat": "Zerubbabel",
+      "sex": "male",
       "aliases": [
         "Zerubbabel",
         "Ζοροβάβελ"
@@ -30564,6 +30927,7 @@
       ],
       "nameZh": "所罗巴伯",
       "nameLat": "Zerubbabel",
+      "sex": "male",
       "aliases": [
         "Zerubbabel",
         "Ζοροβάβελ"

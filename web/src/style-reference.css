@@ -130,7 +130,7 @@ input[type='checkbox'] { width: 16px; height: 16px; margin: 0; accent-color: var
 .drawer-close { display: none; }
 .graph-stage { position: absolute; inset: 138px 0 142px; overflow: hidden; background: var(--canvas) url('/assets/research-grid-paper.png') center/cover no-repeat; }
 .graph-mode-note { position: absolute; z-index: 8; top: 12px; left: 16px; margin: 0; padding: 7px 10px; border: 1px solid rgba(88,112,145,.2); border-radius: 6px; color: #516075; font-size: var(--text-xs); line-height: 1.4; background: rgba(255,255,255,.9); box-shadow: 0 4px 14px rgba(35,54,78,.06); pointer-events: none; }
-#graph { width: 100%; height: 100%; min-height: 440px; }
+#graph { width: 100%; height: 100%; min-height: 0; }
 .zoom-controls { position: absolute; z-index: 9; left: 20px; bottom: 18px; display: flex; gap: 8px; }
 .graph-empty { position: absolute; inset: 36% 22%; }
 .graph-footer { position: absolute; z-index: 9; right: 18px; bottom: 12px; left: 18px; display: grid; grid-template-columns: minmax(300px,1.35fr) minmax(190px,1fr) minmax(110px,.55fr) auto; gap: 14px; align-items: center; min-height: 118px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 7px; }

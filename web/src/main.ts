@@ -25,6 +25,7 @@ type Person = {
   legacyIds?: string[];
   nameZh: string;
   nameLat: string;
+  sex?: 'male' | 'female' | 'mixed' | 'unknown';
   aliases: string[];
   era: string;
   books: string[];
@@ -128,7 +129,7 @@ const evidenceColor: Record<EvidenceLevel, string> = {
 };
 const certaintyLabel = { high: '高', medium: '中', low: '低' } as const;
 const relationshipShortLabel: Record<string, string> = {
-  '亲属关系-父母/祖先': '父系',
+  '亲属关系-父母/祖先': '父母／祖先',
   '亲属关系-子女/后代': '后代',
   '亲属关系-手足': '手足',
   '亲属关系-婚姻/伴侣': '婚姻',
@@ -140,6 +141,14 @@ const relationshipShortLabel: Record<string, string> = {
   '司法行为': '司法',
   '明确敌对': '敌对'
 };
+
+function relationshipDisplayLabel(relationship: Relationship, model?: VisibleModel) {
+  if (relationship.type !== '亲属关系-父母/祖先') return relationshipShortLabel[relationship.type] || relationship.type;
+  const subject = model?.personMap.get(relationship.fromPerson) || originalPersonById.get(relationship.fromPerson);
+  if (subject?.sex === 'male') return '父亲';
+  if (subject?.sex === 'female') return '母亲';
+  return '父母／祖先';
+}
 
 const appRoot = document.getElementById('app');
 if (!appRoot) throw new Error('app container is missing');
@@ -505,22 +514,48 @@ function familyRelationKind(relationship: Relationship) {
   return 'other';
 }
 function familyTreeRelationships(model: VisibleModel) {
-  const parentRelations = model.relationships.filter((relationship) => familyRelationKind(relationship) === 'parent');
-  const parentByChild = new Map<string, Set<string>>();
-  for (const relationship of parentRelations) {
-    const parents = parentByChild.get(relationship.toPerson) || new Set<string>();
-    parents.add(relationship.fromPerson);
-    parentByChild.set(relationship.toPerson, parents);
-  }
-  const sharesVisibleParent = (relationship: Relationship) => {
-    const fromParents = parentByChild.get(relationship.fromPerson) || new Set<string>();
-    const toParents = parentByChild.get(relationship.toPerson) || new Set<string>();
-    return [...fromParents].some((parentId) => toParents.has(parentId));
-  };
   const kindRank = { parent: 0, marriage: 1, sibling: 2, other: 3 } as const;
   return model.relationships
-    .filter((relationship) => familyRelationKind(relationship) !== 'sibling' || !sharesVisibleParent(relationship))
     .sort((a, b) => kindRank[familyRelationKind(a)] - kindRank[familyRelationKind(b)] || relationshipPriority(b) - relationshipPriority(a));
+}
+
+function familyTreeRanks(relationships: Relationship[], nodeIds: Set<string>, topic?: TopicPreset) {
+  const ranks = new Map<string, number>();
+  const parentsByChild = new Map<string, string[]>();
+  const childrenByParent = new Map<string, string[]>();
+  const siblings = new Set<string>();
+  const partners = new Set<string>();
+  for (const relationship of relationships) {
+    const kind = familyRelationKind(relationship);
+    if (kind === 'parent') {
+      const parents = parentsByChild.get(relationship.toPerson) || [];
+      const children = childrenByParent.get(relationship.fromPerson) || [];
+      parents.push(relationship.fromPerson); children.push(relationship.toPerson);
+      parentsByChild.set(relationship.toPerson, parents); childrenByParent.set(relationship.fromPerson, children);
+    }
+    const other = relationship.fromPerson === selectedPersonId ? relationship.toPerson : relationship.fromPerson;
+    if (relationship.fromPerson === selectedPersonId || relationship.toPerson === selectedPersonId) {
+      if (kind === 'sibling') siblings.add(other);
+      if (kind === 'marriage') partners.add(other);
+    }
+  }
+  ranks.set(selectedPersonId, 0);
+  const assignLineage = (initial: string[], step: number, startRank: number) => {
+    const queue = initial.map((personId) => ({ personId, rank: startRank }));
+    while (queue.length) {
+      const { personId, rank } = queue.shift()!;
+      if (!nodeIds.has(personId) || ranks.has(personId)) continue;
+      ranks.set(personId, rank);
+      const next = step < 0 ? (parentsByChild.get(personId) || []) : (childrenByParent.get(personId) || []);
+      next.forEach((nextPersonId) => queue.push({ personId: nextPersonId, rank: rank + step }));
+    }
+  };
+  assignLineage(parentsByChild.get(selectedPersonId) || [], -1, -1);
+  for (const siblingId of siblings) if (nodeIds.has(siblingId)) ranks.set(siblingId, 1);
+  for (const partnerId of partners) if (nodeIds.has(partnerId)) ranks.set(partnerId, 0);
+  assignLineage(childrenByParent.get(selectedPersonId) || [], 1, siblings.size ? 2 : 1);
+  for (const personId of nodeIds) if (!ranks.has(personId)) ranks.set(personId, topic?.personRanks?.[personId] ?? 1);
+  return ranks;
 }
 
 function focusRelationshipRank(relationship: Relationship) {
@@ -638,6 +673,17 @@ function pyramidPositions(
   return positions;
 }
 
+function fitGraphComfortably() {
+  if (!cy) return;
+  const compact = window.innerWidth <= 620;
+  cy.fit(undefined, compact ? 30 : 64);
+  const comfortableMaxZoom = compact ? 0.98 : 1.08;
+  if (cy.zoom() > comfortableMaxZoom) {
+    cy.zoom(comfortableMaxZoom);
+    cy.center();
+  }
+}
+
 function renderGraph() {
   if (!currentModel) return;
   const selected = currentModel.personMap.get(selectedPersonId) || originalPersonById.get(selectedPersonId);
@@ -654,7 +700,7 @@ function renderGraph() {
   graphHeading.textContent = isFamilyTree ? `${topic?.name || '家族'}谱系` : isTopicPyramid ? `${topic?.name || '专题'}关系层级` : `${selectedName}的关系层级`;
   graphModeNote.hidden = false;
   graphModeNote.textContent = isFamilyTree
-    ? '代际视图 · 实线：父母／祖先 · 虚线：婚姻 · 点线：手足'
+    ? '谱系视图 · 年长辈在上 · 手足在下 · 子女／后代更下 · 实线：父母／祖先 · 点线：手足 · 虚线：婚姻'
     : isTopicPyramid ? '专题层级图 · 保留焦点人物所在关系网，按方向分层排列' : '层级关系图 · 上层为指向焦点的关系，下层为焦点发出或并列的关系';
   graphContainer.setAttribute('aria-label', isFamilyTree ? '希律家族代际关系图；点选人物后可在右侧读取全部关系和出处' : isTopicPyramid ? '专题关系层级图；点选人物或路径后可在右侧读取全部关系和出处' : '选中人物的层级关系图；所有关系也可在右侧文字列表读取');
 
@@ -688,10 +734,10 @@ function renderGraph() {
 
   const capped = relationships.length > displayedRelationships.length;
   focusSubtitle.textContent = isFamilyTree
-    ? '按代际排列 · 已省略可由共同父系推知的重复手足线 · 点击人物查看详情'
+    ? '年长辈在上；手足置于焦点下方；子女／后代再下移一层 · 点击人物查看详情'
     : isTopicPyramid ? `${topic?.name || '专题'} · ${relationships.length} 条连通关系 · 按方向分层排列` : `${selected.era} · ${relationships.length} 条当前关系 · 按方向分层排列`;
   evidenceRibbonTitle.textContent = isFamilyTree ? `${topic?.name || '家族'} · ${currentModel.relationships.length} 条已审关系` : `${selectedName} · ${relationships.length} 条关系`;
-  evidenceRibbonMeta.textContent = isFamilyTree ? '实线为父母／祖先，虚线为婚姻，点线为手足；点击关系查看出处。' : isTopicPyramid ? '显示焦点所在的完整连通关系网；人物按关系方向分层，点击路径查看出处。' : '人物按关系方向分层；点击路径查看类型、经文位置和资料来源。';
+  evidenceRibbonMeta.textContent = isFamilyTree ? '实线为父母／祖先，紫色点线为手足，虚线为婚姻；子女／后代比手足更靠下。点击关系查看出处。' : isTopicPyramid ? '显示焦点所在的完整连通关系网；人物按关系方向分层，点击路径查看出处。' : '人物按关系方向分层；点击路径查看类型、经文位置和资料来源。';
   const width = Math.max(graphContainer.clientWidth, 320);
   const visibleStageHeight = graphContainer.parentElement?.clientHeight || graphContainer.clientHeight;
   const height = Math.max(visibleStageHeight, 300);
@@ -703,9 +749,10 @@ function renderGraph() {
 
   if (isFamilyTree) {
     const order = new Map((topic?.personOrder || []).map((personId, index) => [personId, index]));
+    const familyRanks = familyTreeRanks(displayedRelationships, new Set(nodes.map((node) => node.id)), topic);
     const rankGroups = new Map<number, string[]>();
     for (const node of nodes) {
-      const rank = topic?.personRanks?.[node.id] ?? 0;
+      const rank = topic?.personRanks?.[node.id] ?? familyRanks.get(node.id) ?? 0;
       const group = rankGroups.get(rank) || [];
       group.push(node.id);
       rankGroups.set(rank, group);
@@ -726,7 +773,7 @@ function renderGraph() {
   cy?.destroy();
   const relationLabelCount = new Map<string, number>();
   for (const relationship of displayedRelationships) {
-    const label = relationshipShortLabel[relationship.type] || relationship.type;
+    const label = relationshipDisplayLabel(relationship, currentModel || undefined);
     relationLabelCount.set(label, (relationLabelCount.get(label) || 0) + 1);
   }
   const firstLabelledRelation = new Set<string>();
@@ -737,11 +784,12 @@ function renderGraph() {
       ...displayedRelationships.map((relationship) => {
         const sourceArrow = relationship.direction === 'incoming' || relationship.direction === 'bidirectional' ? 'triangle' : 'none';
         const targetArrow = relationship.direction === 'incoming' || relationship.direction === 'undirected' ? 'none' : 'triangle';
-        const shortLabel = relationshipShortLabel[relationship.type] || relationship.type;
+        const shortLabel = relationshipDisplayLabel(relationship, currentModel || undefined);
         const duplicateCount = relationLabelCount.get(shortLabel) || 0;
-        const showSummaryLabel = duplicateCount > 3 && !firstLabelledRelation.has(shortLabel);
+        const compressRepeatedLabels = duplicateCount > 3 && !isFamilyTree;
+        const showSummaryLabel = compressRepeatedLabels && !firstLabelledRelation.has(shortLabel);
         if (showSummaryLabel) firstLabelledRelation.add(shortLabel);
-        return { group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, shortLabel: duplicateCount > 3 ? (showSummaryLabel ? `${shortLabel} × ${duplicateCount}` : '') : shortLabel, passage: relationship.passages[0] || '', direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], relationKind: isFamilyTree ? familyRelationKind(relationship) : 'default', sourceArrow, targetArrow } };
+        return { group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, shortLabel: compressRepeatedLabels ? (showSummaryLabel ? `${shortLabel} × ${duplicateCount}` : '') : shortLabel, passage: relationship.passages[0] || '', direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], relationKind: isFamilyTree ? familyRelationKind(relationship) : 'default', sourceArrow, targetArrow } };
       })
     ],
     style: [
@@ -753,14 +801,16 @@ function renderGraph() {
       { selector: 'node:selected', style: { 'border-color': '#245fae', 'border-width': 3 } },
       { selector: 'node.route-neighbor', style: { 'border-color': '#245fae', 'border-width': 3 } },
       { selector: 'edge', style: { width: (isFamilyTree || isPyramid) ? 1.8 : 1.5, 'curve-style': isFamilyTree ? 'bezier' : 'straight', 'control-point-step-size': isFamilyTree ? 34 : 40, 'line-color': 'data(evidenceColor)', 'line-opacity': (isFamilyTree || isPyramid) ? 0.68 : 0.72, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.62, label: 'data(shortLabel)', color: '#46546a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 10 : 11, 'font-weight': 600, 'text-rotation': isFamilyTree ? 'autorotate' : 'none', 'text-background-color': '#fffefa', 'text-background-opacity': 0.98, 'text-background-padding': '4', 'text-background-shape': 'roundrectangle', 'text-border-color': '#dfe5ec', 'text-border-width': 0.7, 'text-border-opacity': 0.9, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'edge[relationKind = "parent"]', style: { width: 2.2, 'line-color': '#3478d4', 'source-arrow-color': '#3478d4', 'target-arrow-color': '#3478d4' } },
       { selector: 'edge[relationKind = "marriage"]', style: { 'line-style': 'dashed', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
-      { selector: 'edge[relationKind = "sibling"]', style: { 'line-style': 'dotted', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
+      { selector: 'edge[relationKind = "sibling"]', style: { width: 1.6, 'line-style': 'dotted', 'line-color': '#8b62d9', 'source-arrow-color': '#8b62d9', 'target-arrow-color': '#8b62d9', color: '#63439d', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
       { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.72 } },
       { selector: 'edge.is-hovered, edge:selected', style: { width: 3.2, 'line-opacity': 1, 'arrow-scale': 0.72, 'font-size': isCompactGraph ? 11 : 12, 'text-background-opacity': 1, 'underlay-color': '#d9e7fb', 'underlay-opacity': 0.45, 'underlay-padding': 3, 'z-index': 20 } }
     ],
     layout: { name: 'preset', fit: false, animate: false },
     minZoom: 0.25, maxZoom: 2.5, selectionType: 'single'
   });
+  fitGraphComfortably();
   cy.on('tap', 'node', (event) => selectPerson(String(event.target.id()), true));
   cy.on('tap', 'edge', (event) => selectRelationship(String(event.target.id()), true));
   cy.on('mouseover', 'edge', (event) => { const edge = event.target; edge.addClass('is-hovered'); edge.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor'); });
@@ -954,9 +1004,9 @@ zoomOutButton?.addEventListener('click', () => {
   if (!cy) return;
   cy.zoom({ level: Math.max(0.25, cy.zoom() / 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } });
 });
-fitGraphButton?.addEventListener('click', () => cy?.fit(undefined, 56));
-headerFitButton?.addEventListener('click', () => cy?.fit(undefined, 56));
-fitGraphInspectorButton?.addEventListener('click', () => cy?.fit(undefined, 56));
+fitGraphButton?.addEventListener('click', fitGraphComfortably);
+headerFitButton?.addEventListener('click', fitGraphComfortably);
+fitGraphInspectorButton?.addEventListener('click', fitGraphComfortably);
 document.getElementById('show-legend')?.addEventListener('click', () => document.querySelector<HTMLElement>('.graph-footer')?.focus());
 centerFocusButton?.addEventListener('click', () => { const focus = cy?.$id(selectedPersonId); if (focus?.length) cy?.animate({ center: { eles: focus }, zoom: Math.max(cy.zoom(), 0.9), duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220 }); });
 document.addEventListener('keydown', (event) => { if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === 'k') { event.preventDefault(); searchInput.focus(); } });
