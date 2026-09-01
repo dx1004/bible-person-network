@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-08-31T00:00:00Z",
+  "dataset": "curated-relation-corrections",
+  "correction_count": 2,
+  "corrected_assertion_ids": [
+    "asrt-0377",
+    "asrt-10727"
+  ],
+  "ledger_snapshot_sha256": "3730c08e1e5b03ce7706c264fe2c884d4bde51c2e24ca4728dcc1f1d85cafb2f",
+  "invariant": {
+    "preserves_original_assertion_record": true,
+    "deactivates_rejected_relation": true,
+    "requires_active_replacement_relation": false,
+    "three_round_rejection_recorded": true
+  }
+}

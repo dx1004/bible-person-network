@@ -77,8 +77,16 @@ function estimateCrossTestamentPending() {
 }
 
 function otGateBlocks(manifest, needsReview) {
-  const sources = manifest?.source_revisions || [];
-  const blockedSources = sources.filter((source) => source?.status === 'pending').map((source) => source.source_id).filter(Boolean);
+  const catalogSources = readJsonlRows(path.join(DATA_DIR, 'sources.jsonl'));
+  const accessReviews = readJsonlRows(path.join(ROOT, 'editorial', 'source-access-review.jsonl'));
+  const blockedSources = [...new Set([
+    ...catalogSources
+      .filter((source) => source?.status === 'pending')
+      .map((source) => source.source_id),
+    ...accessReviews
+      .filter((source) => source?.release_required !== false && source?.systematic_review_status !== 'completed')
+      .map((source) => source.source_id)
+  ].filter(Boolean))];
   const sourceStatusBlock = blockedSources.length > 0;
 
   const publishedScopeStatus = manifest?.published_scope?.status;

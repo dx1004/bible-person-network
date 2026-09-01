@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-08-29T00:00:00Z",
+  "status": "completed",
+  "sources": {
+    "source:0006": {
+      "coverage_rows": 2720,
+      "hit_rows": 1019,
+      "no_hit_rows": 1701,
+      "round1_rows": 1019,
+      "round2_rows": 1019,
+      "final_rows": 1019,
+      "final_counts": {
+        "accepted": 357,
+        "rejected": 220,
+        "pending": 442
+      },
+      "retained_relationship_evidence": 1165,
+      "review_complete": true,
+      "source_files": [
+        {
+          "source_path": ".sources/josephus-whiston-gutenberg/pg2848.txt",
+          "sha256": "bb2e32da8ba3adc109b7694e6a8f2f11570462af2bedd55798da70b754c6e440"
+        }
+      ]
+    },
+    "source:0007": {
+      "coverage_rows": 2720,
+      "hit_rows": 253,
+      "no_hit_rows": 2467,
+      "round1_rows": 253,
+      "round2_rows": 253,
+      "final_rows": 253,
+      "final_counts": {
+        "accepted": 92,
+        "rejected": 4,
+        "pending": 157
+      },
+      "retained_relationship_evidence": 468,
+      "review_complete": true,
+      "source_files": [
+        {
+          "source_path": ".sources/philo-yonge-1854-55/volume-01.txt",
+          "sha256": "dd3965248ebef988309ee72449400b64e611874978a459280217f9b612407ea7"
+        },
+        {
+          "source_path": ".sources/philo-yonge-1854-55/volume-02.txt",
+          "sha256": "fbe13478cb391c72017ad2863550be615d2f49cc725264c046c3bfe54e91f61b"
+        },
+        {
+          "source_path": ".sources/philo-yonge-1854-55/volume-03.txt",
+          "sha256": "05a0daf7f5bd1e7c132389348ec2e31c19daa67d95449a5819b83d8f4612c944"
+        },
+        {
+          "source_path": ".sources/philo-yonge-1854-55/volume-04.txt",
+          "sha256": "f5e3f6e574e139a109380fa2e886278126d9ccc311999b769258c57edfce7c90"
+        }
+      ]
+    }
+  }
+}

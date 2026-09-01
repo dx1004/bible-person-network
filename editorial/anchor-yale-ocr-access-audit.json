@@ -1,0 +1,32 @@
+{
+  "source_id": "source:0009",
+  "checked_at": "2026-08-30T06:05:00Z",
+  "status": "access_verified_scan_pending",
+  "provider": "Internet Archive controlled digital lending",
+  "access_method": "borrowed_bookreader_direct_page_ocr",
+  "authenticated_account": true,
+  "active_volume_loans": 6,
+  "volumes": [
+    {"volume": 1, "identifier": "anchorbibledicti0001unse_l6c5", "scan_page_max": 1317, "ocr_access_verified": true, "printed_page_one_scan_index": 82},
+    {"volume": 2, "identifier": "anchorbibledicti0002unse", "scan_page_max": 1143, "ocr_access_verified": true, "printed_page_one_scan_index": null},
+    {"volume": 3, "identifier": "anchorbibledicti0003unse_b2a9", "scan_page_max": 1175, "ocr_access_verified": true, "printed_page_one_scan_index": null},
+    {"volume": 4, "identifier": "anchorbibledicti0004unse", "scan_page_max": 1203, "ocr_access_verified": true, "printed_page_one_scan_index": null},
+    {"volume": 5, "identifier": "anchorbibledicti0005unse", "scan_page_max": 1269, "ocr_access_verified": true, "printed_page_one_scan_index": null},
+    {"volume": 6, "identifier": "anchorbibledicti0006unse", "scan_page_max": 1221, "ocr_access_verified": true, "printed_page_one_scan_index": null}
+  ],
+  "verified": {
+    "bookreader_ocr_word_layer_available": true,
+    "exact_scan_index_navigation_verified": true,
+    "toc_page_locator_audit_available": true,
+    "source_text_stored": false,
+    "snippets_stored": false,
+    "screenshots_stored": false
+  },
+  "environment_fault": {
+    "category": "external_provider_search_endpoint_only",
+    "affected_scope": "Internet Archive Search Inside endpoint",
+    "safe_to_continue": "All six borrowed volumes expose direct page OCR; systematic review can continue without Search Inside and without manual page lookup.",
+    "recommended_action": "Calibrate printed-page offsets for volumes 2-6, scan the 1,923 versioned Person headword page ranges, and persist only locators and derived review decisions."
+  },
+  "remaining_gate": "six_volume_direct_page_ocr_systematic_scan"
+}

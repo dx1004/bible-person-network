@@ -8,8 +8,12 @@ import addFormats from 'ajv-formats';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const REVIEW_PATH = path.join(ROOT, 'editorial', 'source-access-review.jsonl');
+const ANCHOR_ENV_AUDIT_PATH = path.join(ROOT, 'editorial', 'anchor-yale-environment-audit.json');
+const ANCHOR_OCR_ACCESS_AUDIT_PATH = path.join(ROOT, 'editorial', 'anchor-yale-ocr-access-audit.json');
+const ISBE_COVERAGE_REPORT_PATH = path.join(ROOT, 'editorial', 'isbe-1915-coverage-review-report.json');
 const SCHEMA_PATH = path.join(ROOT, 'schemas', 'source-access-review.schema.json');
 const VERIFY_LOCAL = process.argv.includes('--verify-local');
+const REQUIRE_COMPLETE = process.argv.includes('--require-complete');
 const SOURCES_ROOT = path.resolve(ROOT, '.sources');
 
 function resolveSourcePath(localPath) {
@@ -36,7 +40,7 @@ addFormats(ajv);
 const validate = ajv.compile(schema);
 const rows = readJsonl(REVIEW_PATH);
 const errors = [];
-const expectedIds = new Set(['source:0006', 'source:0007', 'source:0008', 'source:0009']);
+const expectedIds = new Set(['source:0006', 'source:0007', 'source:0008', 'source:0009', 'source:0010']);
 const seen = new Set();
 
 for (const [index, row] of rows.entries()) {
@@ -61,6 +65,9 @@ for (const [index, row] of rows.entries()) {
   if (row.systematic_review_status !== 'not_started' && !reviewableAccess.has(row.access_status)) {
     errors.push(`${row.source_id}: systematic review cannot start before approved access is verified`);
   }
+  if (REQUIRE_COMPLETE && row.release_required !== false && row.systematic_review_status !== 'completed') {
+    errors.push(`${row.source_id}: systematic review must be completed for release`);
+  }
 
   const resolvedFiles = new Map();
   for (const file of row.files || []) {
@@ -83,6 +90,69 @@ for (const [index, row] of rows.entries()) {
 }
 
 for (const sourceId of expectedIds) if (!seen.has(sourceId)) errors.push(`missing source ${sourceId}`);
+
+const anchorRow = rows.find((row) => row.source_id === 'source:0009');
+const isbeRow = rows.find((row) => row.source_id === 'source:0010');
+if (isbeRow?.systematic_review_status === 'completed') {
+  if (!fs.existsSync(ISBE_COVERAGE_REPORT_PATH)) {
+    errors.push('source:0010: missing ISBE coverage report while review is completed');
+  } else {
+    try {
+      const report = JSON.parse(fs.readFileSync(ISBE_COVERAGE_REPORT_PATH, 'utf8'));
+      if (report.source_id !== 'source:0010' || report.status !== 'completed_coverage_audit' || report.candidate_count !== 2720) errors.push('source:0010: invalid completed coverage report');
+      if (report.relationship_evidence_retained !== 0 || report.copyright_boundary?.source_text_stored !== false) errors.push('source:0010: coverage boundary mismatch');
+    } catch (error) { errors.push(`source:0010: invalid coverage report: ${error.message}`); }
+  }
+}
+if (anchorRow?.systematic_review_status === 'in_progress') {
+  if (!fs.existsSync(ANCHOR_ENV_AUDIT_PATH)) {
+    errors.push('source:0009: missing environment audit while review is in_progress');
+  } else {
+    try {
+      const audit = JSON.parse(fs.readFileSync(ANCHOR_ENV_AUDIT_PATH, 'utf8'));
+      if (audit.source_id !== 'source:0009') errors.push('source:0009: environment audit source_id mismatch');
+      if (!['environment_blocked', 'environment_partially_mitigated'].includes(audit.status)) {
+        errors.push('source:0009: environment audit status is invalid');
+      }
+      if (!audit.environment_fault?.category || !audit.environment_fault?.recommended_action) {
+        errors.push('source:0009: environment audit is missing fault classification or recovery action');
+      }
+      if (audit.verified?.source_text_stored !== false || audit.verified?.screenshots_stored !== false) {
+        errors.push('source:0009: environment audit must preserve the restricted-content boundary');
+      }
+    } catch (error) {
+      errors.push(`source:0009: invalid environment audit: ${error.message}`);
+    }
+  }
+
+  if (!fs.existsSync(ANCHOR_OCR_ACCESS_AUDIT_PATH)) {
+    errors.push('source:0009: missing OCR access audit while review is in_progress');
+  } else {
+    try {
+      const ocrAudit = JSON.parse(fs.readFileSync(ANCHOR_OCR_ACCESS_AUDIT_PATH, 'utf8'));
+      if (ocrAudit.source_id !== 'source:0009') errors.push('source:0009: OCR access audit source_id mismatch');
+      if (ocrAudit.status !== 'access_verified_scan_pending') errors.push('source:0009: OCR access audit status mismatch');
+      if (ocrAudit.active_volume_loans !== 6 || ocrAudit.volumes?.length !== 6) {
+        errors.push('source:0009: OCR access audit must cover six active volume loans');
+      }
+      if (ocrAudit.volumes?.some((volume) => volume.ocr_access_verified !== true || volume.scan_page_max < 1)) {
+        errors.push('source:0009: OCR access audit contains an unverified volume');
+      }
+      if (
+        ocrAudit.verified?.source_text_stored !== false
+        || ocrAudit.verified?.snippets_stored !== false
+        || ocrAudit.verified?.screenshots_stored !== false
+      ) {
+        errors.push('source:0009: OCR access audit must preserve restricted-content boundary');
+      }
+      if (!ocrAudit.environment_fault?.category || !ocrAudit.environment_fault?.recommended_action) {
+        errors.push('source:0009: OCR access audit missing fault classification or recovery action');
+      }
+    } catch (error) {
+      errors.push(`source:0009: invalid OCR access audit: ${error.message}`);
+    }
+  }
+}
 if (errors.length) throw new Error(`source access review failed (${errors.length}):\n${errors.join('\n')}`);
 
 const summary = Object.fromEntries(rows.map((row) => [row.source_id, {
@@ -91,4 +161,4 @@ const summary = Object.fromEntries(rows.map((row) => [row.source_id, {
   systematicReview: row.systematic_review_status,
   files: row.files.length
 }]));
-console.log(JSON.stringify({ status: 'ok', verifyLocal: VERIFY_LOCAL, sources: summary }, null, 2));
+console.log(JSON.stringify({ status: 'ok', verifyLocal: VERIFY_LOCAL, requireComplete: REQUIRE_COMPLETE, sources: summary }, null, 2));

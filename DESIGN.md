@@ -18,6 +18,8 @@ colors:
   muted: '#667085'
   neutral: '#dce1e8'
   info: '#74a8ef'
+  review-confirmed: '#557995'
+  review-uncertain: '#B7791F'
 typography:
   headline-display:
     fontFamily: Inter, Noto Sans SC, PingFang SC, Helvetica Neue, Hiragino Sans GB, Microsoft YaHei, sans-serif
@@ -128,6 +130,10 @@ components:
     backgroundColor: '{colors.neutral}'
   relation-line-strong:
     backgroundColor: '{colors.primary}'
+  relation-line-confirmed:
+    backgroundColor: '{colors.review-confirmed}'
+  relation-line-reviewed-uncertain:
+    backgroundColor: '{colors.review-uncertain}'
   graph-label:
     textColor: '{colors.on-surface}'
     backgroundColor: '{colors.surface}'
@@ -188,7 +194,7 @@ components:
 - 搜索输入使用 `search-height` 与 `search-clear` 尺寸；清除行为即时响应。
 - 顶部选择与按钮尺寸固定于 `control-sm`/`action`。
 - 关系类型、方向、证据层在图形与关系清单中同步显示。
-- 证据层色按蓝/绿/红编码，不与线条本身抢注意力。
+- 证据来源继续按蓝／绿／红编码；关系线按确认程度编码：明确确认使用蓝灰色，已复核但结论不确定使用琥珀色。图例、清单和详情必须同时显示文字状态，不能只靠颜色。家族关系的实线／点线／虚线仍表达父母、手足与婚姻类型，不被确认程度覆盖。
 - reduced-motion 必须可切换。
 
 ## Do's and Don'ts

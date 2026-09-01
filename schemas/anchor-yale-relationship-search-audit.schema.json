@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Anchor Yale relationship search metadata audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_id",
+    "article_title",
+    "locator",
+    "person_headword",
+    "candidate_ids",
+    "audit_scope",
+    "source_text_stored",
+    "snippets_stored",
+    "reviewed_at"
+  ],
+  "properties": {
+    "source_id": {"const": "source:0009"},
+    "article_title": {"type": "string", "minLength": 1},
+    "locator": {"type": "string", "format": "uri"},
+    "person_headword": {"type": "boolean"},
+    "candidate_ids": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^otc-[0-9]{4}$"},
+      "uniqueItems": true
+    },
+    "audit_scope": {
+      "enum": [
+        "bloomsbury_combined_kinship_search_visible_results",
+        "bloomsbury_six_volume_partitioned_kinship_search"
+      ]
+    },
+    "source_text_stored": {"const": false},
+    "snippets_stored": {"const": false},
+    "reviewed_at": {"type": "string", "format": "date-time"}
+  }
+}

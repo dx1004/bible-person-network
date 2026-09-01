@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-08-30T05:20:22.612Z",
+  "status": "completed",
+  "source_id": "source:0009",
+  "official_person_entries": 1923,
+  "by_volume": {
+    "1": 455,
+    "2": 220,
+    "3": 431,
+    "4": 277,
+    "5": 338,
+    "6": 202
+  },
+  "page_locators_complete": true,
+  "copyright_boundary": {
+    "source_text_stored": false,
+    "snippets_stored": false
+  }
+}

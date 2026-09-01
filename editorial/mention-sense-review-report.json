@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-08-31T00:00:00Z",
+  "dataset": "mention-sense-review",
+  "mention_count": 20546,
+  "review_count": 20546,
+  "coverage_complete": true,
+  "accepted_count": 20546,
+  "pending_count": 0,
+  "final_sense_counts": {
+    "person": 15829,
+    "people_group": 2892,
+    "tribe": 889,
+    "nation": 312,
+    "place": 158,
+    "ambiguous": 466
+  },
+  "row_snapshot_sha256": "93b0c2f1748743094cb2491c9dac7a2bede8653543c228347c3fa9e666785e45"
+}

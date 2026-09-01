@@ -1,0 +1,13 @@
+{
+  "generated_at": "2026-08-31T23:59:59.765Z",
+  "mode": "apply",
+  "review_rows": 5700,
+  "accepted_review_rows": 5650,
+  "rejected_review_rows": 50,
+  "already_published": 5641,
+  "would_create": 9,
+  "errors_count": 0,
+  "review_snapshot_sha256": "41a14a732ee65f8354f83c3907a2c613653b06373bf624665604ad6d716c6bf4",
+  "resulting_assertions": 10652,
+  "resulting_active_assertions": 10601
+}

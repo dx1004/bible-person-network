@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-08-30T05:26:37.417Z",
+  "status": "in_progress_restricted_full_text",
+  "accessible_metadata_automation_status": "completed",
+  "source_id": "source:0009",
+  "candidate_coverage": 2720,
+  "identity_counts": {
+    "accepted": 955,
+    "no_direct_headword": 91,
+    "reviewed_inconclusive_homonym": 1639,
+    "not_applicable_rejected_candidate": 35
+  },
+  "official_person_headwords": 1923,
+  "relationship_chapters_reviewed": 2726,
+  "relationship_assertion_coverage": 2912,
+  "relationship_context_matches_retained": 2049,
+  "relationship_context_assertions_matched": 1452,
+  "manual_locator_lookup_required": 0,
+  "limitations": [
+    "Subscription Required blocks full article-body access.",
+    "The official Person list, six-volume table-of-contents locators, and all 2,726 visible kinship-search chapter contexts are automated and complete.",
+    "Context matches are corroborating metadata and do not automatically approve relationship assertions."
+  ],
+  "copyright_boundary": {
+    "source_text_stored": false,
+    "snippets_stored": false
+  }
+}

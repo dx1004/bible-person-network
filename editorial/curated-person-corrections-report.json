@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-08-31T00:00:00Z",
+  "dataset": "curated-person-corrections",
+  "correction_count": 1,
+  "rejected_person_ids": [
+    "person-001235"
+  ],
+  "excluded_mention_count": 2,
+  "deactivated_assertion_count": 2,
+  "ledger_snapshot_sha256": "70b90d5f4b115eff9a6cf2513dc0efd429d80cac9988fa8624e841d34281a1b1",
+  "invariant": {
+    "preserves_records": true,
+    "three_round_rejection_recorded": true,
+    "rejected_people_have_no_active_assertions": true
+  }
+}

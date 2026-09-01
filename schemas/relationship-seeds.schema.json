@@ -10,10 +10,10 @@
     "object_person_id": { "type": "string", "anyOf": [{ "pattern": "^nt-people-\\d{4}$" }, { "pattern": "^person-\\d{6}$" }] },
     "relation_type": {
       "type": "string",
-      "enum": ["kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile", "succession", "alliance", "military", "prophetic_confrontation", "covenant"]
+      "enum": ["kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile", "succession", "alliance", "military", "prophetic_confrontation", "covenant", "friendship"]
     },
     "direction": { "type": "string", "enum": ["directed", "undirected"] },
-    "relation_subtype": { "type": ["null", "string"], "enum": [null, "parent", "child", "sibling", "partner"] },
+    "relation_subtype": { "type": ["null", "string"], "enum": [null, "parent", "child", "sibling", "spouse", "partner", "concubine_partner", "grandparent", "grandchild", "uncle_aunt", "nephew_niece", "cousin", "parent_in_law", "child_in_law", "sibling_in_law", "step_parent", "step_child", "other_specified"] },
     "source_id": { "type": "string", "enum": ["source:0001", "source:0004"] },
     "evidence": {
       "type": "array",

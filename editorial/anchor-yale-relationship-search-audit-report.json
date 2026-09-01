@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-08-30T05:26:37.417Z",
+  "status": "completed_six_volume_partitioned_search",
+  "source_id": "source:0009",
+  "query": "father OR mother OR son OR daughter OR brother OR sister OR wife OR husband",
+  "search_summary": "Six-volume partitioned search: 2726 matching chapters",
+  "visible_result_count": 2726,
+  "result_cap_observed": false,
+  "volume_summaries": [
+    {
+      "docid": "b-9780300261875",
+      "summary": "Found 4970 hit(s) in 607 chapter(s)",
+      "chapters": 607,
+      "url": "https://www.theologyandreligiononline.com/encyclopedia-search?searchterm=father%20OR%20mother%20OR%20son%20OR%20daughter%20OR%20brother%20OR%20sister%20OR%20wife%20OR%20husband&workid=aybdict_reference&title=The%20Anchor%20Yale%20Bible%20Dictionary&docid=b-9780300261875"
+    },
+    {
+      "docid": "b-9780300261882",
+      "summary": "Found 4190 hit(s) in 360 chapter(s)",
+      "chapters": 360,
+      "url": "https://www.theologyandreligiononline.com/encyclopedia-search?searchterm=father%20OR%20mother%20OR%20son%20OR%20daughter%20OR%20brother%20OR%20sister%20OR%20wife%20OR%20husband&workid=aybdict_reference&title=The%20Anchor%20Yale%20Bible%20Dictionary&docid=b-9780300261882"
+    },
+    {
+      "docid": "b-9780300261899",
+      "summary": "Found 5846 hit(s) in 517 chapter(s)",
+      "chapters": 517,
+      "url": "https://www.theologyandreligiononline.com/encyclopedia-search?searchterm=father%20OR%20mother%20OR%20son%20OR%20daughter%20OR%20brother%20OR%20sister%20OR%20wife%20OR%20husband&workid=aybdict_reference&title=The%20Anchor%20Yale%20Bible%20Dictionary&docid=b-9780300261899"
+    },
+    {
+      "docid": "b-9780300261905",
+      "summary": "Found 5712 hit(s) in 420 chapter(s)",
+      "chapters": 420,
+      "url": "https://www.theologyandreligiononline.com/encyclopedia-search?searchterm=father%20OR%20mother%20OR%20son%20OR%20daughter%20OR%20brother%20OR%20sister%20OR%20wife%20OR%20husband&workid=aybdict_reference&title=The%20Anchor%20Yale%20Bible%20Dictionary&docid=b-9780300261905"
+    },
+    {
+      "docid": "b-9780300261912",
+      "summary": "Found 4700 hit(s) in 463 chapter(s)",
+      "chapters": 463,
+      "url": "https://www.theologyandreligiononline.com/encyclopedia-search?searchterm=father%20OR%20mother%20OR%20son%20OR%20daughter%20OR%20brother%20OR%20sister%20OR%20wife%20OR%20husband&workid=aybdict_reference&title=The%20Anchor%20Yale%20Bible%20Dictionary&docid=b-9780300261912"
+    },
+    {
+      "docid": "b-9780300261929",
+      "summary": "Found 3841 hit(s) in 359 chapter(s)",
+      "chapters": 359,
+      "url": "https://www.theologyandreligiononline.com/encyclopedia-search?searchterm=father%20OR%20mother%20OR%20son%20OR%20daughter%20OR%20brother%20OR%20sister%20OR%20wife%20OR%20husband&workid=aybdict_reference&title=The%20Anchor%20Yale%20Bible%20Dictionary&docid=b-9780300261929"
+    }
+  ],
+  "volume_chapter_total": 2726,
+  "official_person_headword_results": 1176,
+  "candidate_ids_with_visible_result": 2311,
+  "relationship_assertions_retained": 0,
+  "limitation": "All 2,726 matching chapters were enumerated through six volume-scoped searches. Visible contexts were inspected transiently; no article text or snippets are stored, and context matches do not automatically approve relationship assertions.",
+  "copyright_boundary": {
+    "source_text_stored": false,
+    "snippets_stored": false
+  }
+}

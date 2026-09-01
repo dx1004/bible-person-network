@@ -1,0 +1,57 @@
+{
+  "source_id": "source:0009",
+  "edition": "David Noel Freedman, ed., Anchor Bible Dictionary, 6 vols., Doubleday, 1992",
+  "status": "environment_partially_mitigated",
+  "checked_at": "2026-08-30T06:05:00Z",
+  "provider": "Internet Archive controlled digital lending",
+  "volume_items": [
+    "anchorbibledicti0001unse_l6c5",
+    "anchorbibledicti0002unse",
+    "anchorbibledicti0003unse_b2a9",
+    "anchorbibledicti0004unse",
+    "anchorbibledicti0005unse",
+    "anchorbibledicti0006unse"
+  ],
+  "verified": {
+    "authenticated_account": true,
+    "exact_1992_six_volume_edition": true,
+    "controlled_lending_access": true,
+    "volume_1_page_count": 1317,
+    "source_text_stored": false,
+    "screenshots_stored": false,
+    "active_volume_loans": 6,
+    "direct_page_ocr_access": true,
+    "exact_scan_index_navigation": true
+  },
+  "environment_fault": {
+    "category": "external_provider_search_endpoint_only",
+    "affected_scope": "Internet Archive Search Inside endpoint only",
+    "search_error": "inside-hocr.py ValueError: not enough values to unpack (expected 6, got 5)",
+    "loan_state": "Authenticated Cloud Xu account and active volume 1 controlled loan verified. Return now, page images, OCR text, page slider, and page navigation are available. Search Inside for Aaron returns the reader message: Sorry, there was an error with your search. Please try again.",
+    "safe_to_continue": "All six borrowed volumes expose direct page OCR; systematic review can continue without Search Inside and without manual locator lookup.",
+    "recommended_action": "Calibrate printed-page offsets for volumes 2-6 and scan the 1,923 versioned Person headword page ranges through direct BookReader OCR. Persist only locators and derived decisions."
+  },
+  "lawful_alternative": {
+    "provider": "Bloomsbury Theology and Religion Online",
+    "resource_id": "aybdict_reference",
+    "url": "https://www.theologyandreligiononline.com/encyclopedia-work?docid=aybdict_reference",
+    "availability_evidence": "https://libraryanswers.fuller.edu/faq/262802",
+    "access_status": "free_metadata_and_search_verified_subscription_body_blocked",
+    "verified_free_scope": {
+      "official_person_headwords": 1923,
+      "candidate_coverage": 2720,
+      "combined_kinship_search_hits": 29259,
+      "combined_kinship_search_chapters": 2726,
+      "visible_results": 2726,
+      "result_cap_observed": false,
+      "source_text_stored": false,
+      "snippets_stored": false,
+      "six_volume_partitioned_search_complete": true,
+      "relationship_assertion_coverage": 2912,
+      "derived_context_rows": 2049,
+      "derived_context_assertions": 1452,
+      "manual_locator_lookup_required": 0
+    }
+  },
+  "publication_decision": "Keep source:0009 in_progress until the six-volume direct-page OCR scan is complete; the Search Inside provider fault no longer blocks automated review."
+}

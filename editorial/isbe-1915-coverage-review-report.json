@@ -1,0 +1,23 @@
+{
+  "source_id": "source:0010",
+  "edition": "International Standard Bible Encyclopedia, James Orr et al., 1915, 5 vols.",
+  "status": "completed_coverage_audit",
+  "candidate_count": 2720,
+  "decision_counts": {
+    "accepted_coverage": 979,
+    "excluded_canonical_candidate": 35,
+    "no_direct_match": 19,
+    "reviewed_inconclusive": 1687
+  },
+  "positive_hit_rows": 2699,
+  "no_hit_rows": 21,
+  "relationship_evidence_retained": 0,
+  "coverage_contract": "All 2,720 OT candidates have a recorded ISBE discovery decision. The source is not used to add or modify public relationship assertions.",
+  "copyright_boundary": {
+    "source_text_stored": false,
+    "snippets_stored": false,
+    "public_output": "locators_and_original_editorial_rationale_only"
+  },
+  "input_sha256": "cbd70cf8246eeb292d4917fd58869121631a2836411e0b98cf803de452bb855e",
+  "output_sha256": "5f1a6887ce7e7f33e8b09fc7aec2cc869d6c9a2b61585dedfaac3ac7e7cbb672"
+}

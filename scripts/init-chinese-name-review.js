@@ -275,8 +275,17 @@ function validateOnly() {
     }
   }
 
-  if (reviews.length !== people.size) {
-    throw new Error(`Review row count ${reviews.length} does not match people count ${people.size}`);
+  // This review corpus covers the NT name-candidate set. The unified people
+  // table also contains OT-only people after the Bible-wide migration, so it
+  // is intentionally valid for reviews to be a strict subset of people.
+  const expectedReviewPeople = new Set(candidates.map((candidate) => candidate.person_id));
+  if (reviews.length !== expectedReviewPeople.size) {
+    throw new Error(`Review row count ${reviews.length} does not match candidate-person count ${expectedReviewPeople.size}`);
+  }
+  for (const personId of expectedReviewPeople) {
+    if (!reviewPeople.has(personId)) {
+      throw new Error(`Missing review row for candidate person_id ${personId}`);
+    }
   }
   if (reviewPeople.size !== reviews.length) {
     throw new Error('Duplicate review rows by person_id detected');

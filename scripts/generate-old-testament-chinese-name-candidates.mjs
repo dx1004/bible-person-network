@@ -93,7 +93,7 @@ function parseVerseMarkers(usfmDir) {
     .sort((a, b) => a.localeCompare(b));
 
   const chapterRe = /^\\c\s+(\d+)/;
-  const verseRe = /^\\v\s+(\d+(?:-\d+)?)/;
+ const verseRe = /(?:^|\s)\\v\s+(\d+(?:-\d+)?)/g;
   const tokenRe = /\\\+?pn\s+(.+?)\\\+?pn\*/g;
 
   for (const file of files) {
@@ -115,18 +115,24 @@ function parseVerseMarkers(usfmDir) {
         passage = null;
         continue;
       }
-      const verseMatch = line.match(verseRe);
-      if (verseMatch && chapter) {
-        passage = `${book} ${chapter}:${verseMatch[1]}`;
-      }
-      if (!passage) continue;
+ const verseMatches = Array.from(line.matchAll(verseRe));
+ const segments = verseMatches.length > 0
+ ? verseMatches.map((match, index) => ({
+ verse: match[1],
+ text: line.slice(match.index, verseMatches[index + 1]?.index ?? line.length),
+ }))
+ : [{ verse: null, text: line }];
 
-      const current = verseTextByPassage.get(passage) || '';
-      verseTextByPassage.set(passage, `${current} ${line}`.trim());
+ for (const segment of segments) {
+ if (segment.verse && chapter) passage = `${book} ${chapter}:${segment.verse}`;
+ if (!passage) continue;
 
-      tokenRe.lastIndex = 0;
-      let match;
-      while ((match = tokenRe.exec(line)) !== null) {
+ const current = verseTextByPassage.get(passage) || '';
+ verseTextByPassage.set(passage, `${current} ${segment.text}`.trim());
+
+ tokenRe.lastIndex = 0;
+ let match;
+ while ((match = tokenRe.exec(segment.text)) !== null) {
         const token = normalizeToken(match[1]);
         if (!token || !/[\u4e00-\u9fff]/.test(token)) continue;
         if (isLikelyGeographicOrTitle(token)) continue;
@@ -138,7 +144,8 @@ function parseVerseMarkers(usfmDir) {
         const set = tokenPassageSet.get(token) ?? new Set();
         set.add(passage);
         tokenPassageSet.set(token, set);
-      }
+ }
+ }
     }
   }
 

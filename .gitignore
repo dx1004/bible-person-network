@@ -1,4 +1,5 @@
 node_modules/
+.DS_Store
 exports/
 reconciliation/
 coverage/
@@ -6,3 +7,5 @@ neo4j/.env
 neo4j/neo4j-data/
 web/dist/
 .sources/
+editorial/direct-relationship-discovery.jsonl
+editorial/multihop-relationship-audit.jsonl

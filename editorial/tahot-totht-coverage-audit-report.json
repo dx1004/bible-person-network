@@ -8,9 +8,9 @@
   "source_file_count": 8,
   "candidate_total": 2720,
   "status_summary": {
-    "covered": 2690,
-    "ambiguous": 14,
-    "unmatched": 16
+    "covered": 2693,
+    "ambiguous": 25,
+    "unmatched": 2
   },
   "books": {
     "total_expected": 39,

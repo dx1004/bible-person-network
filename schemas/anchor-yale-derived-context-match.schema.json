@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Anchor Yale derived context match row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "assertion_id",
+    "article_person_id",
+    "counterpart_person_id",
+    "locator",
+    "matched_counterpart_names",
+    "matched_relation_terms",
+    "derivation",
+    "source_text_stored",
+    "snippets_stored"
+  ],
+  "properties": {
+    "assertion_id": { "type": "string", "pattern": "^asrt-\\d{4,6}$" },
+    "article_person_id": {
+      "type": "string",
+      "anyOf": [{ "pattern": "^person-\\d{6}$" }, { "pattern": "^nt-people-\\d{4}$" }]
+    },
+    "counterpart_person_id": {
+      "type": "string",
+      "anyOf": [{ "pattern": "^person-\\d{6}$" }, { "pattern": "^nt-people-\\d{4}$" }]
+    },
+    "locator": { "type": "string", "minLength": 1 },
+    "matched_counterpart_names": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "matched_relation_terms": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "derivation": { "type": "string", "minLength": 1 },
+    "source_text_stored": { "const": false },
+    "snippets_stored": { "const": false }
+  }
+}

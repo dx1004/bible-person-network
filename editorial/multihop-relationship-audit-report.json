@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-09-01T22:06:50.256Z",
+  "audit_version": "v3",
+  "manifest_created_at": "2026-08-26T00:00:00Z",
+  "input_snapshot": {
+    "manifest_created_at": "2026-08-26T00:00:00Z",
+    "people_total": 2952,
+    "assertions_total": 10896,
+    "assertions_active": 10842,
+    "people_snapshot_sha256": "56198cb22ab161e6a41dbc31a12cb5fecaba2172d50ea831de60a0f449cc404b",
+    "assertions_snapshot_sha256": "58a0cea70241bc2e51eecb453b29d3b10ec9e6db1f3754ff3f81da1362194a4f",
+    "assertions_active_snapshot_sha256": "eb440997d907dcd129b76e45a448ece43cac19f3bf59fb9063744765af5f8a88",
+    "generated_from": "data/assertions.jsonl"
+  },
+  "graph_scope": {
+    "active_people_in_graph": 2134,
+    "active_assertions_in_graph": 4903
+  },
+  "path_counts": {
+    "distance_2": 20189,
+    "distance_3": 46396,
+    "distance_4": 70114,
+    "connection_paths": 130744,
+    "kinship_explanation_paths": 5955,
+    "total_pairs": 136699,
+    "unique_pair_count": 136692
+  },
+  "kinship_labels": {
+    "labelled_pairs": 8393,
+    "unlabelled_pairs": 128306
+  },
+  "invariant": {
+    "uses_active_assertions_only": true,
+    "does_not_modify_assertions": true,
+    "does_not_add_direct_edges": true,
+    "excludes_inferred_composite_shortcuts": true
+  },
+  "output": {
+    "index_written": true,
+    "index_rows_expected": 136699,
+    "index_path": "editorial/multihop-relationship-audit.jsonl",
+    "max_index_rows": 200000,
+    "row_snapshot_sha256": "3d69bba0742edca1dbe8cc311bd31f9c9a1d930e4b9e7845013a216fe0bedcd6",
+    "report_snapshot_sha256": "72db7e68df5c572fb68c976e79309553af3c2b9ea572b652e7e87fef15e80a9d"
+  },
+  "validate": {
+    "mode": "apply",
+    "no_self_pairs": true,
+    "no_unapproved_direct_pair_paths": true,
+    "direct_pair_paths_limited_to_kinship_explanations": true,
+    "shortest_path_only": true,
+    "path_lengths": [
+      2,
+      3,
+      4
+    ],
+    "deterministic_sort": [
+      "source_person_id",
+      "target_person_id",
+      "path_purpose",
+      "explains_assertion_id",
+      "path_length",
+      "derived_record_id"
+    ],
+    "input_file_hashes": [
+      "people.jsonl",
+      "assertions.jsonl",
+      "manifest.json"
+    ]
+  }
+}

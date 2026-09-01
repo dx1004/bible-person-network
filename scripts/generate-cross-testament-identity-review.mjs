@@ -17,10 +17,13 @@ const REPORT_PATH = path.join(EDITORIAL_DIR, 'cross-testament-identity-review-re
 const MANIFEST_PATH = path.join(ROOT, 'data', 'manifest.json');
 const AI_ROUND1_PATH = path.join(EDITORIAL_DIR, 'ai-round1-cross-testament.jsonl');
 const AI_ROUND1_V2_PATH = path.join(EDITORIAL_DIR, 'ai-round1-cross-testament-v2.jsonl');
+const AI_ROUND1_V3_PATH = path.join(EDITORIAL_DIR, 'ai-round1-cross-testament-v3.jsonl');
 const AI_ROUND2_PATH = path.join(EDITORIAL_DIR, 'ai-round2-cross-testament.jsonl');
 const AI_ROUND2_V2_PATH = path.join(EDITORIAL_DIR, 'ai-round2-cross-testament-v2.jsonl');
+const AI_ROUND2_V3_PATH = path.join(EDITORIAL_DIR, 'ai-round2-cross-testament-v3.jsonl');
 const AI_BOARDROOM_PATH = path.join(EDITORIAL_DIR, 'ai-boardroom-cross-testament.jsonl');
 const AI_BOARDROOM_V2_PATH = path.join(EDITORIAL_DIR, 'ai-boardroom-cross-testament-v2.jsonl');
+const AI_BOARDROOM_V3_PATH = path.join(EDITORIAL_DIR, 'ai-boardroom-cross-testament-v3.jsonl');
 const PEOPLE_PATH = path.join(ROOT, 'data', 'people.jsonl');
 
 const SOURCE_ID = 'source:0002';
@@ -220,12 +223,14 @@ function loadDecisions(filePath, stage) {
   return map;
 }
 
-function loadDecisionInputs(primaryPath, overridePath, stage) {
+function loadDecisionInputs(primaryPath, overridePaths, stage) {
   const base = loadDecisions(primaryPath, stage);
-  if (!fs.existsSync(overridePath)) return base;
-  const override = loadDecisions(overridePath, stage);
-  for (const [candidateId, data] of override.entries()) {
-    base.set(candidateId, data);
+  for (const overridePath of overridePaths) {
+    if (!fs.existsSync(overridePath)) continue;
+    const override = loadDecisions(overridePath, stage);
+    for (const [candidateId, data] of override.entries()) {
+      base.set(candidateId, data);
+    }
   }
   return base;
 }
@@ -239,12 +244,14 @@ function loadBoardroomDecisions(filePath) {
   return map;
 }
 
-function loadBoardroomInputs(primaryPath, overridePath) {
+function loadBoardroomInputs(primaryPath, overridePaths) {
   const base = loadBoardroomDecisions(primaryPath);
-  if (!fs.existsSync(overridePath)) return base;
-  const override = loadBoardroomDecisions(overridePath);
-  for (const [candidateId, data] of override.entries()) {
-    base.set(candidateId, data);
+  for (const overridePath of overridePaths) {
+    if (!fs.existsSync(overridePath)) continue;
+    const override = loadBoardroomDecisions(overridePath);
+    for (const [candidateId, data] of override.entries()) {
+      base.set(candidateId, data);
+    }
   }
   return base;
 }
@@ -654,9 +661,9 @@ function main() {
   const identityOptions = readJsonl(IDENTITY_OPTIONS_PATH);
   const manifest = readManifest();
 
-  const round1Inputs = loadDecisionInputs(AI_ROUND1_PATH, AI_ROUND1_V2_PATH, 'round1');
-  const round2Inputs = loadDecisionInputs(AI_ROUND2_PATH, AI_ROUND2_V2_PATH, 'round2');
-  const boardroomInputs = loadBoardroomInputs(AI_BOARDROOM_PATH, AI_BOARDROOM_V2_PATH);
+  const round1Inputs = loadDecisionInputs(AI_ROUND1_PATH, [AI_ROUND1_V2_PATH, AI_ROUND1_V3_PATH], 'round1');
+  const round2Inputs = loadDecisionInputs(AI_ROUND2_PATH, [AI_ROUND2_V2_PATH, AI_ROUND2_V3_PATH], 'round2');
+  const boardroomInputs = loadBoardroomInputs(AI_BOARDROOM_PATH, [AI_BOARDROOM_V2_PATH, AI_BOARDROOM_V3_PATH]);
   const peopleIndex = loadPeople(PEOPLE_PATH);
 
   if (validateOnly) {

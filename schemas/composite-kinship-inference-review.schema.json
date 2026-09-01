@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Composite kinship inference review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_id", "candidate_relation_id", "subject_person_id", "object_person_id", "relation_type", "relation_subtype", "direction", "generation_delta", "premise_assertion_ids", "passages", "rule", "inference_order", "inference_certainty", "counterevidence_review", "round_a", "round_b", "final_decision"],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^ckir-\\d{6}$" },
+    "candidate_relation_id": { "type": "string", "pattern": "^drd-\\d{6}$" },
+    "subject_person_id": { "type": "string", "pattern": "^person-\\d{6}$" },
+    "object_person_id": { "type": "string", "pattern": "^person-\\d{6}$" },
+    "relation_type": { "const": "kinship" },
+    "relation_subtype": { "enum": ["grandparent", "grandchild", "uncle_aunt", "nephew_niece", "cousin", "parent_in_law", "child_in_law", "sibling_in_law"] },
+    "direction": { "enum": ["directed", "undirected"] },
+    "generation_delta": { "type": "integer", "minimum": -2, "maximum": 2 },
+    "premise_assertion_ids": { "type": "array", "minItems": 2, "maxItems": 4, "uniqueItems": true, "items": { "type": "string", "pattern": "^asrt-\\d{4,6}$" } },
+    "passages": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "rule": { "enum": ["grandparent_from_two_direct_parent_edges", "grandchild_from_two_direct_child_edges", "uncle_aunt_from_sibling_and_parent_edges", "nephew_niece_from_sibling_and_parent_edges", "cousin_from_sibling_and_two_parent_edges", "parent_in_law_from_spouse_and_parent_edges", "child_in_law_from_spouse_and_parent_edges", "sibling_in_law_from_spouse_and_sibling_edges"] },
+    "inference_order": { "type": "integer", "minimum": 1, "maximum": 2 },
+    "inference_certainty": { "type": "number", "minimum": 0.65, "maximum": 0.84 },
+    "counterevidence_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity_conflict", "chronology_conflict", "generation_conflict", "scriptural_conflict", "duplicate_direct_assertion", "note"],
+      "properties": {
+        "identity_conflict": { "type": "boolean" },
+        "chronology_conflict": { "type": "boolean" },
+        "generation_conflict": { "type": "boolean" },
+        "scriptural_conflict": { "type": "boolean" },
+        "duplicate_direct_assertion": { "type": "boolean" },
+        "note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "round_a": { "$ref": "#/$defs/decision" },
+    "round_b": { "$ref": "#/$defs/decision" },
+    "final_decision": { "$ref": "#/$defs/decision" }
+  },
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reviewer_mode", "reason"],
+      "properties": {
+        "status": { "enum": ["accepted", "rejected", "pending"] },
+        "reviewer_mode": { "enum": ["editorial", "critic", "boardroom"] },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

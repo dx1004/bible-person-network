@@ -1,0 +1,19 @@
+{
+  "mode": "apply",
+  "total_rows": 289,
+  "accepted_rows": 289,
+  "rejected_rows": 0,
+  "pending_rows": 0,
+  "would_create": 0,
+  "would_blocked": 0,
+  "errors_count": 0,
+  "would_create_ids": [],
+  "input_snapshot_sha256": "f5fef9fe116c2d9da7287b806c76375194c384603cc265e9f10589d72d245247",
+  "row_snapshot_sha256": "c678090ae2434edbbbf5dc0c814e03081cee47afd1b241314dd6261d750189d8",
+  "input_counts": {
+    "assertions": 10759,
+    "active_assertions": 10705,
+    "direct_candidates": 6671
+  },
+  "applied_changes": []
+}

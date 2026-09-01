@@ -3,21 +3,44 @@
   "title": "Assertion",
   "type": "object",
   "additionalProperties": false,
-  "required": ["assertion_id", "subject_person_id", "object_person_id", "relation_type", "direction", "evidence", "status", "confidence", "editorial_status", "created_at", "updated_at"],
+  "required": [
+    "assertion_id",
+    "subject_person_id",
+    "object_person_id",
+    "relation_type",
+    "direction",
+    "evidence",
+    "status",
+    "confidence",
+    "editorial_status",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
-    "assertion_id": { "type": "string", "pattern": "^asrt-\\d{4}$" },
+    "assertion_id": {
+      "type": "string",
+      "pattern": "^asrt-\\d{4,6}$"
+    },
     "subject_person_id": {
       "type": "string",
       "anyOf": [
-        { "pattern": "^nt-people-\\d{4}$" },
-        { "pattern": "^person-\\d{6}$" }
+        {
+          "pattern": "^nt-people-\\d{4}$"
+        },
+        {
+          "pattern": "^person-\\d{6}$"
+        }
       ]
     },
     "object_person_id": {
       "type": "string",
       "anyOf": [
-        { "pattern": "^nt-people-\\d{4}$" },
-        { "pattern": "^person-\\d{6}$" }
+        {
+          "pattern": "^nt-people-\\d{4}$"
+        },
+        {
+          "pattern": "^person-\\d{6}$"
+        }
       ]
     },
     "relation_type": {
@@ -35,7 +58,8 @@
         "alliance",
         "military",
         "prophetic_confrontation",
-        "covenant"
+        "covenant",
+        "friendship"
       ]
     },
     "relation_subtype": {
@@ -44,34 +68,183 @@
         "parent",
         "child",
         "sibling",
-        "partner"
+        "spouse",
+        "partner",
+        "concubine_partner",
+        "grandparent",
+        "grandchild",
+        "uncle_aunt",
+        "nephew_niece",
+        "cousin",
+        "parent_in_law",
+        "child_in_law",
+        "sibling_in_law",
+        "step_parent",
+        "step_child",
+        "other_specified"
       ]
     },
-    "direction": { "type": "string", "enum": ["directed", "undirected"] },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "directed",
+        "undirected"
+      ]
+    },
     "evidence": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["source_id", "passage", "evidence_level", "note"],
+        "required": [
+          "source_id",
+          "passage",
+          "evidence_level",
+          "note"
+        ],
         "properties": {
-          "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
-          "passage": { "type": "string", "minLength": 1 },
+          "source_id": {
+            "type": "string",
+            "pattern": "^source:\\d{4}$"
+          },
+          "passage": {
+            "type": "string",
+            "minLength": 1
+          },
           "evidence_level": {
             "type": "string",
-            "enum": ["nt_text", "ot_text", "ancient_text", "reference", "modern_reference", "editorial"]
+            "enum": [
+              "nt_text",
+              "ot_text",
+              "ancient_text",
+              "reference",
+              "modern_reference",
+              "editorial",
+              "inference"
+            ]
           },
-          "note": { "type": "string" },
-          "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
+          "note": {
+            "type": "string"
+          },
+          "certainty": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
         }
       }
     },
-    "status": { "type": "string", "enum": ["active", "inactive", "superseded"] },
-    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
-    "editorial_status": { "type": "string", "enum": ["conservative", "common_tradition", "pending"] },
-    "editor_note": { "type": "string" },
-    "created_at": { "type": "string", "format": "date-time" },
-    "updated_at": { "type": "string", "format": "date-time" }
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "superseded"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "editorial_status": {
+      "type": "string",
+      "enum": [
+        "conservative",
+        "common_tradition",
+        "pending"
+      ]
+    },
+    "editor_note": {
+      "type": "string"
+    },
+    "inference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule",
+        "premise_assertion_ids",
+        "counterevidence_review",
+        "certainty",
+        "review_status"
+      ],
+      "properties": {
+        "rule": {
+          "type": "string",
+          "enum": [
+            "sibling_from_shared_direct_parent",
+            "grandparent_from_two_direct_parent_edges",
+            "grandchild_from_two_direct_child_edges",
+            "uncle_aunt_from_sibling_and_parent_edges",
+            "nephew_niece_from_sibling_and_parent_edges",
+            "cousin_from_sibling_and_two_parent_edges",
+            "parent_in_law_from_spouse_and_parent_edges",
+            "child_in_law_from_spouse_and_parent_edges",
+            "sibling_in_law_from_spouse_and_sibling_edges"
+          ]
+        },
+        "premise_assertion_ids": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^asrt-\\d{4,6}$"
+          }
+        },
+        "counterevidence_review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "identity_conflict",
+            "chronology_conflict",
+            "generation_conflict",
+            "scriptural_conflict",
+            "note"
+          ],
+          "properties": {
+            "identity_conflict": {
+              "type": "boolean"
+            },
+            "chronology_conflict": {
+              "type": "boolean"
+            },
+            "generation_conflict": {
+              "type": "boolean"
+            },
+            "scriptural_conflict": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "certainty": {
+          "type": "number",
+          "minimum": 0.65,
+          "maximum": 0.84
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "two_round_accepted",
+            "three_round_accepted",
+            "rejected",
+            "pending"
+          ]
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
   }
 }

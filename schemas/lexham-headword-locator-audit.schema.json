@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lexham Bible Dictionary headword locator audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_id", "latinized", "candidate_ids", "locator_status", "article_title", "locator", "audit_method", "reviewed_at"],
+  "properties": {
+    "source_id": { "const": "source:0008" },
+    "latinized": { "type": "string", "minLength": 1 },
+    "candidate_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^otc-[0-9]{4}$" }
+    },
+    "locator_status": { "type": "string", "enum": ["direct_hit", "no_direct_hit", "env_error"] },
+    "article_title": { "type": ["string", "null"] },
+    "locator": { "type": ["string", "null"] },
+    "audit_method": { "const": "logos_official_deep_link_title_check" },
+    "reviewed_at": { "type": "string", "format": "date-time" }
+  }
+}

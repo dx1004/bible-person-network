@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-08-30T00:00:00Z",
+  "assertion_snapshot_sha256": "cbb58f870ab20d7773f7e42f11bdf72d8d06dffd14aa04b56930535085ad3274",
+  "existing_assertions_reaudited": 4571,
+  "existing_active_retained": 4517,
+  "existing_inactive_or_invalid_retained_unpublished": 54,
+  "inference_candidates": 396,
+  "inference_accepted": 386,
+  "inference_rejected": 10,
+  "inference_rule": "sibling_from_shared_direct_parent",
+  "review_rows_sha256": "46f74c08b88bf48f0baa35ed9261f8dac26ba57d5a3b7f89598d862842748321"
+}

@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-08-31T00:00:00Z",
+  "dataset": "mention-sense-explicit-person-proposals",
+  "source_dataset": "mention-sense-review",
+  "proposal_count": 0,
+  "mention_status_filter": "accepted",
+  "decision_filter": "final_decision= pending",
+  "by_book": {},
+  "rationale_sample": []
+}

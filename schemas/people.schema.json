@@ -19,7 +19,10 @@
     "latinized": { "type": "string", "minLength": 1 },
     "sex": { "type": "string", "enum": ["male", "female", "mixed", "unknown"] },
     "status": { "type": "string", "enum": ["provisional", "accepted", "pending", "rejected"] },
-    "identity_group": { "type": ["string", "null"], "pattern": "^nt-idgrp-\\d{4}$" },
+    "identity_group": {
+      "type": ["string", "null"],
+      "pattern": "^(?:nt-idgrp-\\d{4}|ot-idgrp-otc-\\d{4})$"
+    },
     "legacy_ids": { "type": "array", "items": { "type": "string" } },
     "testaments": { "type": "array", "items": { "type": "string", "enum": ["nt", "ot", "bible"] } },
     "editor_note": { "type": "string" },

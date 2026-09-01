@@ -12,7 +12,7 @@ const ACCESS_REVIEW_PATH = path.join(ROOT, 'editorial', 'source-access-review.js
 const SCHEMA_PATH = path.join(ROOT, 'schemas', 'historical-source-person-hit.schema.json');
 const OUTPUT_PATH = path.join(ROOT, 'editorial', 'historical-source-person-hits.jsonl');
 const REPORT_PATH = path.join(ROOT, 'editorial', 'historical-source-person-hits-report.json');
-const SOURCE_IDS = ['source:0006', 'source:0007'];
+const SOURCE_IDS = ['source:0006', 'source:0007', 'source:0010'];
 const LOCATOR_CAP = 25;
 const VALIDATE_ONLY = process.argv.includes('--validate-only');
 const COMMON_WORDS = new Set(['adore', 'all', 'as', 'ash', 'barak', 'beer', 'cheer', 'day', 'eden', 'gad', 'ham', 'job', 'no', 'on', 'omer', 'ram', 'reed', 'salt', 'sheba', 'shelah', 'shua', 'teman', 'zerah']);
@@ -139,7 +139,7 @@ function scan(sources, queryIndex, chunks, coverage) {
             if (entry.candidateIds.length > 1) row.risks.add('ambiguous_name_shared_by_candidates');
             if (entry.query.replace(/[^A-Za-z]/g, '').length <= 3) row.risks.add('short_query');
             if (COMMON_WORDS.has(entry.query.toLowerCase())) row.risks.add('common_english_word_query');
-            if (source.sourceId === 'source:0007') row.risks.add('ocr_requires_page_scan_confirmation');
+            if (source.sourceId === 'source:0007' || source.sourceId === 'source:0010') row.risks.add('ocr_requires_page_scan_confirmation');
             if (source.sourceId === 'source:0006' && !josephus.body) row.risks.add('front_matter_or_toc_hit');
           }
         }
@@ -210,7 +210,7 @@ function createReport(rows, candidates, sources, jsonl) {
     hit_rows: rows.filter((row) => row.hit_count > 0).length, no_hit_rows: rows.filter((row) => row.hit_count === 0).length, locator_cap: LOCATOR_CAP,
     source_files: sources.flatMap((source) => source.files.map((file) => ({ source_id: source.sourceId, source_path: file.local_path, sha256: file.sha256, bytes: file.bytes, line_count: file.line_count }))),
     per_source: Object.fromEntries(SOURCE_IDS.map((sourceId) => [sourceId, sourceSummary(rows, sourceId)])),
-    limitations: ['Name hits are discovery candidates, not identity or relationship evidence.', 'Shared, short, and ordinary-word names can produce false positives.', 'Philo OCR locators require confirmation against the public-domain page scans.', 'Locator lists are capped; hit_count retains the complete occurrence count.', 'No source text or snippets are stored in the generated artifacts.']
+    limitations: ['Name hits are discovery candidates, not identity or relationship evidence.', 'Shared, short, and ordinary-word names can produce false positives.', 'Philo and ISBE OCR locators require confirmation against the public-domain page scans before source-derived evidence is published.', 'Locator lists are capped; hit_count retains the complete occurrence count.', 'No source text or snippets are stored in the generated artifacts.']
   };
 }
 

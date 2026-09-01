@@ -2,7 +2,8 @@ import './style-reference.css';
 import './phosphor.css';
 import cytoscape from 'cytoscape';
 
-type EvidenceLevel = 'nt_text' | 'ot_text' | 'ancient' | 'modern';
+type EvidenceLevel = 'nt_text' | 'ot_text' | 'ancient' | 'modern' | 'inference';
+type ReviewState = 'confirmed' | 'reviewed_uncertain';
 type IdentityPreset = 'conservative' | 'traditional' | 'custom';
 type MobilePanel = 'people' | 'graph' | 'details';
 
@@ -50,6 +51,7 @@ type Relationship = {
   rawEvidenceLevel?: string;
   evidenceLevels?: EvidenceLevel[];
   evidenceLevel: EvidenceLevel;
+  reviewState?: ReviewState;
   book: string;
   books: string[];
   testaments?: Array<'nt' | 'ot'>;
@@ -57,6 +59,36 @@ type Relationship = {
   sources: string[];
   passages: string[];
   identityGuards?: Array<{ personId: string; allowedIdentityOptions: string[] }>;
+};
+
+type PathStep = {
+  fromPersonId: string;
+  toPersonId: string;
+  relationshipId: string;
+  relationType: string | null;
+  relationSubtype: string | null;
+  relationDirection: string;
+  traversalDirection: 'forward' | 'reverse';
+  relationLabel: string;
+  evidenceLevel: EvidenceLevel;
+  certainty: 'high' | 'medium' | 'low';
+  reviewState: ReviewState;
+  passages: string[];
+  source?: string | null;
+};
+
+type PathRoute = {
+  id: string;
+  sourcePersonId: string;
+  targetPersonId: string;
+  pathLength: number;
+  sourceLabel: string;
+  targetLabel: string;
+  steps: PathStep[];
+  kinshipLabel?: { label: string } | null;
+  pathPurpose: 'connection' | 'kinship_explanation';
+  explainsRelationshipId?: string | null;
+  routeDistance: 2 | 3 | 4;
 };
 
 type Source = { id: string; label: string; kind: EvidenceLevel; url?: string };
@@ -114,25 +146,63 @@ type VisibleModel = {
 
 const GRAPH_EDGE_LIMIT = 12;
 const SEARCH_RESULT_LIMIT = 80;
-const ALL_EVIDENCE: EvidenceLevel[] = ['nt_text', 'ot_text', 'ancient', 'modern'];
+const ALL_EVIDENCE: EvidenceLevel[] = ['nt_text', 'ot_text', 'ancient', 'modern', 'inference'];
+const DEFAULT_SHOW_DIRECT_EDGES = true;
+const DEFAULT_SHOW_PATH_EDGES = false;
+const BASIC_KINSHIP_SUBTYPES = new Set(['parent', 'child', 'sibling', 'spouse', 'partner', 'concubine_partner']);
+const EXPLAINABLE_KINSHIP_SUBTYPES = new Set(['grandparent', 'grandchild', 'uncle_aunt', 'nephew_niece', 'cousin', 'parent_in_law', 'child_in_law', 'sibling_in_law']);
+const pathDistanceColor: Record<PathRoute['routeDistance'], string> = {
+  2: '#d08a1e',
+  3: '#2f7f49',
+  4: '#8b62d9'
+};
 const evidenceLabel: Record<EvidenceLevel, string> = {
   nt_text: '新约经文',
   ot_text: '旧约经文',
   ancient: '古代原始史料',
-  modern: '现代权威工具书'
+  modern: '现代权威工具书',
+  inference: '推论关系'
+};
+const reviewStateLabel: Record<ReviewState, string> = {
+  confirmed: '已确认关系',
+  reviewed_uncertain: '已复核但结论不确定'
 };
 const evidenceColor: Record<EvidenceLevel, string> = {
   nt_text: '#3478d4',
   ot_text: '#8b62d9',
   ancient: '#2f7f49',
-  modern: '#df6159'
+  modern: '#df6159',
+  inference: '#a06b22'
+};
+const reviewStateColor: Record<ReviewState, string> = {
+  confirmed: '#557995',
+  reviewed_uncertain: '#B7791F'
 };
 const certaintyLabel = { high: '高', medium: '中', low: '低' } as const;
+function inferReviewState(relationship: Relationship): ReviewState {
+  if (relationship.evidenceLevel === 'inference' || relationship.evidenceLevels?.includes('inference')) return 'reviewed_uncertain';
+  if (relationship.certainty === 'low') return 'reviewed_uncertain';
+  return 'confirmed';
+}
+function relationshipTypeClass(relationship: Relationship) {
+  const raw = String(relationship.rawRelationType || '').split(':')[0];
+  return `relation-type-${raw.replace(/[^a-z0-9_-]/g, '') || 'other'}`;
+}
 const relationshipShortLabel: Record<string, string> = {
-  '亲属关系-父母/祖先': '父母／祖先',
-  '亲属关系-子女/后代': '后代',
+  '亲属关系-父母': '父母',
+  '亲属关系-子女': '子女',
   '亲属关系-手足': '手足',
-  '亲属关系-婚姻/伴侣': '婚姻',
+  '亲属关系-配偶': '配偶',
+  '亲属关系-祖父母': '祖父母',
+  '亲属关系-孙辈': '孙辈',
+  '亲属关系-叔伯姑舅姨': '叔伯姑舅姨',
+  '亲属关系-侄甥': '侄甥',
+  '亲属关系-堂表亲': '堂表亲',
+  '亲属关系-岳父母/公婆': '岳父母／公婆',
+  '亲属关系-儿媳/女婿': '儿媳／女婿',
+  '亲属关系-姻亲手足': '姻亲手足',
+  '亲属关系-继父母': '继父母',
+  '亲属关系-继子女': '继子女',
   '亲属关系-其他': '亲属',
   '长期同工': '同工',
   '师徒': '师徒',
@@ -143,11 +213,11 @@ const relationshipShortLabel: Record<string, string> = {
 };
 
 function relationshipDisplayLabel(relationship: Relationship, model?: VisibleModel) {
-  if (relationship.type !== '亲属关系-父母/祖先') return relationshipShortLabel[relationship.type] || relationship.type;
+  if (relationship.rawRelationSubType !== 'parent') return relationshipShortLabel[relationship.type] || relationship.type;
   const subject = model?.personMap.get(relationship.fromPerson) || originalPersonById.get(relationship.fromPerson);
   if (subject?.sex === 'male') return '父亲';
   if (subject?.sex === 'female') return '母亲';
-  return '父母／祖先';
+  return '父母';
 }
 
 const appRoot = document.getElementById('app');
@@ -205,9 +275,13 @@ appRoot.innerHTML = `
       <section class="graph-pane" aria-labelledby="graph-heading">
         <div class="graph-filterbar">
           <div class="topic-strip"><strong>专题视图：</strong><div id="topic-shortcuts" class="topic-shortcuts" aria-label="专题快捷选择"></div></div>
-          <div class="evidence-filter-row"><strong>证据层（可多选）</strong><div class="evidence-controls" role="group" aria-label="证据层筛选">
+        <div class="evidence-filter-row"><strong>证据层（可多选）</strong><div class="evidence-controls" role="group" aria-label="证据层筛选">
             ${ALL_EVIDENCE.map((level) => `<label class="evidence-toggle evidence-${level}"><input type="checkbox" value="${level}" checked><i class="ph ph-check-square" aria-hidden="true"></i>${evidenceLabel[level]}</label>`).join('')}
           </div><span id="evidence-summary-text" class="sr-only">全部</span><button id="show-legend" class="legend-button" type="button" data-onclick="direct" aria-label="查看图例说明"><i class="ph ph-info" aria-hidden="true"></i>图例说明</button></div>
+        <div class="evidence-filter-row"><strong>关系显示</strong><div class="evidence-controls" role="group" aria-label="关系显示类型">
+            <label class="evidence-toggle"><input type="checkbox" id="show-direct-edges" ${DEFAULT_SHOW_DIRECT_EDGES ? 'checked' : ''}><i class="ph ph-link-simple-horizontal" aria-hidden="true"></i>直连关系</label>
+            <label class="evidence-toggle"><input type="checkbox" id="show-path-edges" ${DEFAULT_SHOW_PATH_EDGES ? 'checked' : ''}><i class="ph ph-path" aria-hidden="true"></i>联系路径（2-4度）</label>
+          </div></div>
         </div>
         <div class="graph-toolbar">
           <div class="focus-heading reading-surface"><p class="eyebrow">当前焦点 · 一度关系</p><h2 id="graph-heading" tabindex="-1">选择人物查看一度关系</h2><p id="focus-subtitle">点击人物节点切换焦点</p></div>
@@ -226,7 +300,7 @@ appRoot.innerHTML = `
           </div>
         </div>
         <div class="graph-footer reading-surface" tabindex="-1" aria-live="polite">
-          <div class="legend-block"><strong>关系线与证据图例</strong><span class="legend-line evidence-nt_text">新约经文</span><span class="legend-line evidence-ot_text">旧约经文</span><span class="legend-line evidence-ancient">古代原始史料</span><span class="legend-line evidence-modern">现代权威工具书</span></div>
+          <div class="legend-block"><strong>关系确认程度</strong><span class="legend-line review-confirmed">明确确认</span><span class="legend-line review-reviewed_uncertain">已复核／结论不确定</span><strong>线段类型</strong><span class="legend-line direct-relationship">直连关系（按证据与确认状态）</span><span class="legend-line path-edge">联系路径（2-4 度）</span><strong>证据来源</strong><span class="legend-line evidence-nt_text">新约经文</span><span class="legend-line evidence-ot_text">旧约经文</span><span class="legend-line evidence-ancient">古代原始史料</span><span class="legend-line evidence-modern">现代权威工具书</span><span class="legend-line evidence-inference">推论关系</span><strong>路径长度</strong><span class="legend-line path-distance-2">2 度路径</span><span class="legend-line path-distance-3">3 度路径</span><span class="legend-line path-distance-4">4 度路径</span></div>
           <div class="ribbon-heading"><span>当前选择</span><strong id="evidence-ribbon-title">选择一条关系线查看出处</strong><small id="evidence-ribbon-meta">人物关系及出处会显示在这里。</small></div>
           <p id="graph-status">正在载入关系图…</p>
           <button type="button" class="ribbon-action" data-onclick="delegated" data-drawer-target="details">查看完整资料 <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
@@ -272,6 +346,8 @@ const focusSubtitle = document.getElementById('focus-subtitle')!;
 const evidenceRibbonTitle = document.getElementById('evidence-ribbon-title')!;
 const evidenceRibbonMeta = document.getElementById('evidence-ribbon-meta')!;
 const evidenceSummaryText = document.getElementById('evidence-summary-text')!;
+const showDirectEdgesInput = document.getElementById('show-direct-edges') as HTMLInputElement | null;
+const showPathEdgesInput = document.getElementById('show-path-edges') as HTMLInputElement | null;
 const inspectorContent = document.getElementById('inspector-content')!;
 const reviewWarning = document.getElementById('review-warning') as HTMLDivElement;
 const graphToolbarActions = document.querySelector('.graph-toolbar-actions') as HTMLDivElement;
@@ -288,6 +364,10 @@ let cy: cytoscape.Core | null = null;
 let currentModel: VisibleModel | null = null;
 let selectedPersonId = '';
 let selectedRelationId = '';
+let visiblePathRows: PathRoute[] = [];
+let selectedPathId = '';
+let showDirectEdges = DEFAULT_SHOW_DIRECT_EDGES;
+let showPathEdges = DEFAULT_SHOW_PATH_EDGES;
 let identityPreset: IdentityPreset = 'conservative';
 let mobilePanel: MobilePanel = 'graph';
 let searchTimer: number | undefined;
@@ -390,7 +470,9 @@ function computeMergeMapping() {
 function relationMatchesFilters(relationship: Relationship, mappedPersonIncludes: Set<string>, personMap: Map<string, Person>) {
   const books = relationship.books?.length ? relationship.books : [relationship.book].filter(Boolean);
   if (filters.books.size && !books.some((book) => filters.books.has(book))) return false;
-  if (filters.relations.size && !filters.relations.has(relationship.type)) return false;
+  const familyTopicAcceptsKinship = (filters.topic === 'family' || filters.topic === 'herodFamily')
+    && (relationship.rawRelationType === 'kinship' || relationship.rawRelationType?.startsWith('kinship:'));
+  if (filters.relations.size && !filters.relations.has(relationship.type) && !familyTopicAcceptsKinship) return false;
   if (filters.eras.size) {
     const fromEra = personMap.get(relationship.fromPerson)?.era;
     const toEra = personMap.get(relationship.toPerson)?.era;
@@ -478,7 +560,9 @@ function markFiltersCustom() {
   topicSelect.value = 'custom';
 }
 function syncEvidenceControls() {
-  document.querySelectorAll<HTMLInputElement>('.evidence-toggle input').forEach((input) => { input.checked = filters.evidences.has(input.value as EvidenceLevel); });
+  document.querySelectorAll<HTMLInputElement>('.evidence-toggle input[type="checkbox"][value]').forEach((input) => {
+    if (ALL_EVIDENCE.includes(input.value as EvidenceLevel)) input.checked = filters.evidences.has(input.value as EvidenceLevel);
+  });
   evidenceSummaryText.textContent = filters.evidences.size === ALL_EVIDENCE.length ? '全部' : filters.evidences.size === 0 ? '未选择' : `${filters.evidences.size} 项已选`;
 }
 function renderTopicControls() {
@@ -505,12 +589,193 @@ function renderPeopleList() {
   peopleList.innerHTML = shown.map((person) => { const relationCount = currentModel?.relationships.filter((relationship) => relationship.fromPerson === person.id || relationship.toPerson === person.id).length || 0; const displayName = personDisplayName(person); const hasContextLabel = displayName !== person.nameZh; const aliasPreview = [hasContextLabel ? person.nameZh : '', ...person.aliases.slice(0, 2)].filter(Boolean).join(' · ') || person.nameLat; return `<button type="button" data-onclick="delegated" class="person-row${hasContextLabel ? ' topic-disambiguated' : ''}" data-person-id="${escapeHtml(person.id)}" aria-pressed="${person.id === selectedPersonId}"><i class="ph ph-user-circle person-icon" aria-hidden="true"></i><span class="person-row-copy"><span class="person-name-line"><strong>${escapeHtml(displayName)}</strong><span class="era-badge">${escapeHtml(person.era)}</span></span><small>${escapeHtml(aliasPreview)}</small></span><span class="relation-count" aria-label="${relationCount} 条当前关系">${relationCount}</span></button>`; }).join('');
   if (matches.length > SEARCH_RESULT_LIMIT) peopleList.insertAdjacentHTML('beforeend', `<p class="list-limit-note">另有 ${matches.length - SEARCH_RESULT_LIMIT} 项；继续输入可缩小范围。</p>`);
 }
-function relationshipPriority(relationship: Relationship) { return ({ nt_text: 30, ot_text: 28, ancient: 20, modern: 10 }[relationship.evidenceLevel]) + ({ high: 3, medium: 2, low: 1 }[relationship.certainty]); }
+function relationshipPriority(relationship: Relationship) {
+  const kinshipPriority = relationship.type.startsWith('亲属关系') ? 100 : 0;
+  return kinshipPriority + ({ nt_text: 30, ot_text: 28, ancient: 20, modern: 10, inference: 8 }[relationship.evidenceLevel]) + ({ high: 3, medium: 2, low: 1 }[relationship.certainty]);
+}
 function focusRelationships(model: VisibleModel) { return model.relationships.filter((relationship) => relationship.fromPerson === selectedPersonId || relationship.toPerson === selectedPersonId).sort((a, b) => relationshipPriority(b) - relationshipPriority(a) || a.type.localeCompare(b.type, 'zh-Hans')); }
+
+function primaryRelationshipsForGraph(relationships: Relationship[]) {
+  const primaryByPair = new Map<string, Relationship>();
+  for (const relationship of relationships) {
+    const pairKey = [relationship.fromPerson, relationship.toPerson].sort().join('|');
+    const current = primaryByPair.get(pairKey);
+    if (!current || relationshipPriority(relationship) > relationshipPriority(current)) {
+      primaryByPair.set(pairKey, relationship);
+    }
+  }
+  return [...primaryByPair.values()].sort((a, b) => relationshipPriority(b) - relationshipPriority(a) || a.id.localeCompare(b.id));
+}
+
+function buildPathRoutes(model: VisibleModel, sourcePersonId: string): PathRoute[] {
+  if (!model.personMap.has(sourcePersonId)) return [];
+  type QueueItem = { personId: string; depth: number; steps: PathStep[] };
+  const adjacency = new Map<string, Array<{ to: string; relationship: Relationship; traversalDirection: 'forward' | 'reverse' }>>();
+  const addEdge = (fromPersonId: string, toPersonId: string, relationship: Relationship, traversalDirection: 'forward' | 'reverse') => {
+    const existing = adjacency.get(fromPersonId) || [];
+    existing.push({ to: toPersonId, relationship, traversalDirection });
+    adjacency.set(fromPersonId, existing);
+  };
+  const connect = (relationship: Relationship) => {
+    addEdge(relationship.fromPerson, relationship.toPerson, relationship, 'forward');
+    addEdge(relationship.toPerson, relationship.fromPerson, relationship, 'reverse');
+  };
+  model.relationships.forEach(connect);
+  for (const edges of adjacency.values()) {
+    edges.sort((a, b) => a.to.localeCompare(b.to) || a.relationship.id.localeCompare(b.relationship.id));
+  }
+  const sourceLabel = personDisplayName(model.personMap.get(sourcePersonId));
+  const shortestDepth = new Map<string, number>([[sourcePersonId, 0]]);
+  const byTarget = new Map<string, PathStep[]>();
+  const queue: QueueItem[] = [{ personId: sourcePersonId, depth: 0, steps: [] }];
+  for (let i = 0; i < queue.length; i += 1) {
+    const { personId, depth, steps } = queue[i];
+    if (depth >= 4) continue;
+    for (const edge of adjacency.get(personId) || []) {
+      const nextDepth = depth + 1;
+      if (nextDepth > 4) continue;
+      const existingDepth = shortestDepth.get(edge.to);
+      if (existingDepth !== undefined && existingDepth <= nextDepth) continue;
+      const relationStep: PathStep = {
+        fromPersonId: personId,
+        toPersonId: edge.to,
+        relationshipId: edge.relationship.id,
+        relationType: edge.relationship.type || null,
+        relationSubtype: edge.relationship.rawRelationSubType || edge.relationship.rawRelationType || null,
+        relationDirection: edge.relationship.direction,
+        traversalDirection: edge.traversalDirection,
+        relationLabel: relationshipDisplayLabel(edge.relationship, model),
+        evidenceLevel: edge.relationship.evidenceLevel,
+        certainty: edge.relationship.certainty,
+        reviewState: edge.relationship.reviewState || inferReviewState(edge.relationship),
+        passages: edge.relationship.passages,
+        source: personDisplayName(model.personMap.get(edge.relationship.fromPerson))
+      };
+      const nextSteps = steps.concat([relationStep]);
+      if (nextDepth >= 2) byTarget.set(edge.to, nextSteps);
+      shortestDepth.set(edge.to, nextDepth);
+      queue.push({ personId: edge.to, depth: nextDepth, steps: nextSteps });
+    }
+  }
+  const rows: PathRoute[] = [];
+  for (const [targetPersonId, steps] of byTarget) {
+    if (steps.length < 2 || steps.length > 4) continue;
+    const targetPerson = model.personMap.get(targetPersonId);
+    const targetLabel = personDisplayName(targetPerson);
+    const routeDistance = steps.length as 2 | 3 | 4;
+    if (!targetPerson || !targetLabel) continue;
+    if (targetPersonId === sourcePersonId) continue;
+    rows.push({
+      id: `path-${sourcePersonId}-${targetPersonId}-${steps.length}`,
+      sourcePersonId,
+      targetPersonId,
+      sourceLabel,
+      targetLabel,
+      pathLength: steps.length,
+      steps,
+      routeDistance,
+      kinshipLabel: null,
+      pathPurpose: 'connection',
+      explainsRelationshipId: null
+    });
+  }
+
+  for (const directRelationship of model.relationships) {
+    if (directRelationship.fromPerson !== sourcePersonId && directRelationship.toPerson !== sourcePersonId) continue;
+    if (!EXPLAINABLE_KINSHIP_SUBTYPES.has(directRelationship.rawRelationSubType || '')) continue;
+    const targetPersonId = directRelationship.fromPerson === sourcePersonId ? directRelationship.toPerson : directRelationship.fromPerson;
+    const queue: QueueItem[] = [{ personId: sourcePersonId, depth: 0, steps: [] }];
+    const bestDepth = new Map<string, number>([[sourcePersonId, 0]]);
+    let explanationSteps: PathStep[] | null = null;
+    for (let index = 0; index < queue.length && !explanationSteps; index += 1) {
+      const item = queue[index];
+      if (item.depth >= 4) continue;
+      for (const edge of adjacency.get(item.personId) || []) {
+        if (edge.relationship.id === directRelationship.id) continue;
+        if (!BASIC_KINSHIP_SUBTYPES.has(edge.relationship.rawRelationSubType || '')) continue;
+        const nextDepth = item.depth + 1;
+        if (edge.to === sourcePersonId || item.steps.some((step) => step.toPersonId === edge.to)) continue;
+        if (edge.to === targetPersonId && nextDepth === 1) continue;
+        const nextStep: PathStep = {
+          fromPersonId: item.personId,
+          toPersonId: edge.to,
+          relationshipId: edge.relationship.id,
+          relationType: edge.relationship.type || null,
+          relationSubtype: edge.relationship.rawRelationSubType || edge.relationship.rawRelationType || null,
+          relationDirection: edge.relationship.direction,
+          traversalDirection: edge.traversalDirection,
+          relationLabel: relationshipDisplayLabel(edge.relationship, model),
+          evidenceLevel: edge.relationship.evidenceLevel,
+          certainty: edge.relationship.certainty,
+          reviewState: edge.relationship.reviewState || inferReviewState(edge.relationship),
+          passages: edge.relationship.passages,
+          source: personDisplayName(model.personMap.get(edge.relationship.fromPerson))
+        };
+        const nextSteps = item.steps.concat([nextStep]);
+        if (edge.to === targetPersonId && nextDepth >= 2 && nextDepth <= 4) {
+          explanationSteps = nextSteps;
+          break;
+        }
+        const previousDepth = bestDepth.get(edge.to);
+        if (previousDepth !== undefined && previousDepth <= nextDepth) continue;
+        bestDepth.set(edge.to, nextDepth);
+        queue.push({ personId: edge.to, depth: nextDepth, steps: nextSteps });
+      }
+    }
+    if (!explanationSteps) continue;
+    const targetPerson = model.personMap.get(targetPersonId);
+    if (!targetPerson) continue;
+    const routeDistance = explanationSteps.length as 2 | 3 | 4;
+    rows.push({
+      id: `path-explain-${directRelationship.id}-${sourcePersonId}-${targetPersonId}`,
+      sourcePersonId,
+      targetPersonId,
+      sourceLabel,
+      targetLabel: personDisplayName(targetPerson),
+      pathLength: explanationSteps.length,
+      steps: explanationSteps,
+      routeDistance,
+      kinshipLabel: { label: relationshipDisplayLabel(directRelationship, model) },
+      pathPurpose: 'kinship_explanation',
+      explainsRelationshipId: directRelationship.id
+    });
+  }
+
+  rows.sort((a, b) => Number(b.pathPurpose === 'kinship_explanation') - Number(a.pathPurpose === 'kinship_explanation') || a.pathLength - b.pathLength || a.targetLabel.localeCompare(b.targetLabel, 'zh-Hans'));
+  return rows;
+}
+function pathRouteSummaryLabel(route: PathRoute) {
+  if (!route.steps.length) return '';
+  const chain = route.steps.map((step) => step.relationLabel || step.relationType || '关系').join(' → ');
+  return route.pathPurpose === 'kinship_explanation' ? `构成${route.kinshipLabel?.label || '亲属关系'}：${chain}` : chain;
+}
+
+function pathDisplayElements(route: PathRoute) {
+  return route.steps.map((step, index) => ({
+    source: step.fromPersonId,
+    target: step.toPersonId,
+    id: `${route.id}-step-${index}`,
+    relationLabel: index === 0 ? `路径 ${route.routeDistance} 度` : '',
+    pathDistance: route.routeDistance,
+    pathId: route.id,
+    shortLabel: route.steps.length > 1 ? `第${index + 1}/${route.steps.length}步` : (step.relationLabel || '路径'),
+    sourceArrow: step.relationDirection === 'bidirectional'
+      ? 'triangle'
+      : step.relationDirection === 'undirected'
+        ? 'none'
+        : ((step.relationDirection === 'outgoing') === (step.traversalDirection === 'reverse') ? 'triangle' : 'none'),
+    targetArrow: step.relationDirection === 'bidirectional'
+      ? 'triangle'
+      : step.relationDirection === 'undirected'
+        ? 'none'
+        : ((step.relationDirection === 'outgoing') === (step.traversalDirection === 'forward') ? 'triangle' : 'none')
+  }));
+}
+
 function familyRelationKind(relationship: Relationship) {
-  if (relationship.type.includes('父母/祖先') || relationship.type.includes('子女/后代')) return 'parent';
-  if (relationship.type.includes('婚姻/伴侣')) return 'marriage';
-  if (relationship.type.includes('手足')) return 'sibling';
+  if (['parent', 'child', 'grandparent', 'grandchild', 'step_parent', 'step_child'].includes(relationship.rawRelationSubType || '')) return 'parent';
+  if (['spouse', 'partner', 'concubine_partner'].includes(relationship.rawRelationSubType || '')) return 'marriage';
+  if (relationship.rawRelationType === 'kinship' || relationship.rawRelationType?.startsWith('kinship:')) return 'sibling';
   return 'other';
 }
 function familyTreeRelationships(model: VisibleModel) {
@@ -711,14 +976,33 @@ function renderGraph() {
       : familyTreeRelationships(currentModel)
     : isTopicPyramid ? connectedTopicRelationships(currentModel) : focusRelationships(currentModel);
 
+  const allowPathRoutes = showPathEdges;
+  visiblePathRows = allowPathRoutes ? buildPathRoutes(currentModel, selectedPersonId) : [];
+  const selectedPath = visiblePathRows.find((route) => route.id === selectedPathId);
+  const pathRowsForRender = selectedPath
+    ? [selectedPath]
+    : showPathEdges && visiblePathRows.length
+      ? [visiblePathRows[0]]
+      : [];
+
+  const canShowDirect = isFamilyTree || showDirectEdges;
+  const allDirectRelationships = canShowDirect ? relationships : [];
+  const renderDirect = primaryRelationshipsForGraph(allDirectRelationships);
+  const foldedRelationshipCount = allDirectRelationships.length - renderDirect.length;
+  const hasDirect = renderDirect.length > 0;
+  const hasPath = pathRowsForRender.length > 0;
+  const hasRenderable = hasDirect || hasPath;
+
   graphHeading.textContent = isFamilyTree ? `${topic?.name || '家族'}谱系` : isTopicPyramid ? `${topic?.name || '专题'}关系层级` : `${selectedName}的关系层级`;
   graphModeNote.hidden = false;
   graphModeNote.textContent = isFamilyTree
     ? '谱系视图 · 年长辈在上 · 手足在下 · 子女／后代更下 · 实线：父母／祖先 · 点线：手足 · 虚线：婚姻'
-    : isTopicPyramid ? '专题层级图 · 保留焦点人物所在关系网，按方向分层排列' : '层级关系图 · 上层为指向焦点的关系，下层为焦点发出或并列的关系';
-  graphContainer.setAttribute('aria-label', isFamilyTree ? '家族代际关系图；点选人物后可在右侧读取全部关系和出处' : isTopicPyramid ? '专题关系层级图；点选人物或路径后可在右侧读取全部关系和出处' : '选中人物的层级关系图；所有关系也可在右侧文字列表读取');
+    : isTopicPyramid
+      ? '专题关系层级图 · 保留焦点人物所在关系网，按方向分层排列'
+      : '层级关系图 · 直连关系与路径（2-4 度）并列显示';
+  graphContainer.setAttribute('aria-label', isFamilyTree ? '家族代际关系图；点选人物后可在右侧读取全部关系和出处' : '焦点人物视图；点击关系或路径后可在右侧读取类型与出处');
 
-  if (!relationships.length) {
+  if (!hasRenderable) {
     if (cy) {
       cy.destroy();
       cy = null;
@@ -727,10 +1011,10 @@ function renderGraph() {
     graphToolbarActions.hidden = true;
     zoomControls.hidden = true;
     graphEmpty.hidden = false;
-    focusSubtitle.textContent = `${selected.era} · ${relationships.length} 条当前关系`;
-    evidenceRibbonTitle.textContent = `${selectedName} · ${relationships.length} 条关系`;
-    evidenceRibbonMeta.textContent = '当前筛选下无可显示关系，图谱已隐藏。可开启更多证据层、重置筛选，或更换焦点人物。';
-    graphStatus.textContent = '当前筛选下无可显示关系。';
+    focusSubtitle.textContent = `${selected.era} · 无可显示边`;
+    evidenceRibbonTitle.textContent = `${selectedName} · 无可显示边`;
+    evidenceRibbonMeta.textContent = '当前筛选下无可显示关系或路径，图谱已隐藏。可开启更多证据层、打开关系类型开关，或更换焦点人物。';
+    graphStatus.textContent = '当前筛选下无可显示边。';
     return;
   }
 
@@ -740,30 +1024,46 @@ function renderGraph() {
   graphEmpty.hidden = true;
 
   const isCompactGraph = window.innerWidth <= 620;
-  const edgeLimit = isFamilyTree ? (isFamilyTopic ? (isCompactGraph ? 12 : 20) : (isCompactGraph ? 6 : 10)) : isTopicPyramid ? (isCompactGraph ? 10 : 24) : (isCompactGraph ? 6 : GRAPH_EDGE_LIMIT);
-  const displayedRelationships = relationships.slice(0, edgeLimit);
-  const nodeIds = new Set<string>([selectedPersonId]);
-  displayedRelationships.forEach((relationship) => { nodeIds.add(relationship.fromPerson); nodeIds.add(relationship.toPerson); });
+  const edgeLimit = isFamilyTree
+    ? (isFamilyTopic ? (isCompactGraph ? 12 : 20) : (isCompactGraph ? 6 : 10))
+    : isTopicPyramid ? (isCompactGraph ? 10 : 24) : (isCompactGraph ? 6 : GRAPH_EDGE_LIMIT);
+  const directRelationships = renderDirect.slice(0, edgeLimit);
+  const directRelationNodes = new Set<string>([selectedPersonId]);
+  directRelationships.forEach((relationship) => { directRelationNodes.add(relationship.fromPerson); directRelationNodes.add(relationship.toPerson); });
+  const pathNodes = new Set<string>();
+  pathRowsForRender.forEach((route) => {
+    pathNodes.add(route.targetPersonId);
+    for (const step of route.steps) pathNodes.add(step.toPersonId);
+  });
+  const nodeIds = new Set([...directRelationNodes, ...pathNodes, selectedPersonId]);
   const nodes = [...nodeIds].map((personId) => currentModel?.personMap.get(personId) || originalPersonById.get(personId)).filter((person): person is Person => Boolean(person));
 
-  const capped = relationships.length > displayedRelationships.length;
-  focusSubtitle.textContent = isFamilyTree
-    ? '年长辈在上；手足置于焦点下方；子女／后代再下移一层 · 点击人物查看详情'
-    : isTopicPyramid ? `${topic?.name || '专题'} · ${relationships.length} 条连通关系 · 按方向分层排列` : `${selected.era} · ${relationships.length} 条当前关系 · 按方向分层排列`;
-  evidenceRibbonTitle.textContent = isFamilyTree ? `${topic?.name || '家族'} · ${currentModel.relationships.length} 条已审关系` : `${selectedName} · ${relationships.length} 条关系`;
-  evidenceRibbonMeta.textContent = isFamilyTree ? '实线为父母／祖先，紫色点线为手足，虚线为婚姻；子女／后代比手足更靠下。点击关系查看出处。' : isTopicPyramid ? '显示焦点所在的完整连通关系网；人物按关系方向分层，点击路径查看出处。' : '人物按关系方向分层；点击路径查看类型、经文位置和资料来源。';
   const width = Math.max(graphContainer.clientWidth, 320);
   const visibleStageHeight = graphContainer.parentElement?.clientHeight || graphContainer.clientHeight;
   const height = Math.max(visibleStageHeight, 300);
+  const hasPathSection = hasPath;
   graphStatus.textContent = isFamilyTree
-    ? `家族图显示 ${displayedRelationships.length}/${currentModel.relationships.length} 条结构关系；重复手足线已折叠，点选人物可查看全部关系。`
-    : capped ? `层级图显示 ${displayedRelationships.length}/${relationships.length} 条关系；右侧列表保留全部 ${relationships.length} 条。` : `当前显示 ${nodes.length} 人 · ${relationships.length} 条关系。`;
+    ? `家族图显示 ${directRelationships.length}/${currentModel.relationships.length} 条结构关系；重复手足线已折叠，点选人物可查看全部关系。`
+    : hasPathSection
+      ? `层级图显示 ${directRelationships.length} 条直接关系 + ${pathRowsForRender.length} 条路径；路径长度为 2–4 度。`
+      : `当前显示 ${nodes.length} 人 · ${directRelationships.length} 条主要直接关系${foldedRelationshipCount ? ` · ${foldedRelationshipCount} 条并行关系可在详情展开` : ''}。`;
+  focusSubtitle.textContent = isFamilyTree
+    ? '年长辈在上；手足置于焦点下方；子女／后代再下移一层 · 点击人物查看详情'
+    : isTopicPyramid
+      ? `${topic?.name || '专题'} · ${renderDirect.length} 条连通关系 ${hasPathSection ? `，${pathRowsForRender.length} 条路径` : ''}`
+      : `${selected.era} · ${renderDirect.length} 条当前关系 ${hasPathSection ? `，${pathRowsForRender.length} 条路径` : ''}`;
+  evidenceRibbonTitle.textContent = isFamilyTree
+    ? `${topic?.name || '家族'} · ${currentModel.relationships.length} 条已审关系`
+    : `${selectedName} · ${renderDirect.length} 条直接关系 + ${pathRowsForRender.length} 条路径`;
+  evidenceRibbonMeta.textContent = isFamilyTree
+    ? '实线为父母／祖先，紫色点线为手足，虚线为婚姻；子女／后代比手足更靠下。点击关系查看出处。'
+    : '路径仅用于显示连接方式，不表示新增关系；点击路径可查看链路。';
+
   const center = { x: width * 0.5, y: height * (isCompactGraph ? 0.46 : 0.48) };
   let positions = new Map<string, { x: number; y: number }>();
-
   if (isFamilyTree) {
     const order = new Map((topic?.personOrder || []).map((personId, index) => [personId, index]));
-    const familyRanks = familyTreeRanks(displayedRelationships, new Set(nodes.map((node) => node.id)), topic);
+    const familyRanks = familyTreeRanks(directRelationships, new Set(nodes.map((node) => node.id)), topic);
     const rankGroups = new Map<number, string[]>();
     for (const node of nodes) {
       const rank = topic?.personRanks?.[node.id] ?? familyRanks.get(node.id) ?? 0;
@@ -781,21 +1081,47 @@ function renderGraph() {
       });
     });
   } else if (isPyramid) {
-    positions = pyramidPositions(displayedRelationships, width, height, isCompactGraph, isTopicPyramid);
+    positions = pyramidPositions(directRelationships, width, height, isCompactGraph, isTopicPyramid);
   }
 
-  cy?.destroy();
+  [...nodes].forEach((node, index) => {
+    if (positions.has(node.id)) return;
+    const angle = (index / Math.max(nodes.length, 1)) * Math.PI * 2;
+    positions.set(node.id, { x: center.x + Math.cos(angle) * Math.min(width, height) * 0.36, y: center.y + Math.sin(angle) * Math.min(width, height) * 0.24 });
+  });
+
   const relationLabelCount = new Map<string, number>();
-  for (const relationship of displayedRelationships) {
+  for (const relationship of directRelationships) {
     const label = relationshipDisplayLabel(relationship, currentModel || undefined);
     relationLabelCount.set(label, (relationLabelCount.get(label) || 0) + 1);
   }
   const firstLabelledRelation = new Set<string>();
+  const pathEdgeElements = pathRowsForRender.flatMap((route) =>
+    pathDisplayElements(route).map((pathEdge) => ({
+      group: 'edges' as const,
+      data: {
+        id: pathEdge.id,
+        source: pathEdge.source,
+        target: pathEdge.target,
+        label: pathEdge.relationLabel,
+        shortLabel: pathEdge.shortLabel,
+        edgeType: 'path',
+        pathEdge: 1,
+        pathId: pathEdge.pathId,
+        pathDistance: String(pathEdge.pathDistance),
+        pathColor: pathDistanceColor[pathEdge.pathDistance],
+        sourceArrow: pathEdge.sourceArrow,
+        targetArrow: pathEdge.targetArrow
+      }
+    }))
+  );
+
+  cy?.destroy();
   cy = cytoscape({
     container: graphContainer,
     elements: [
       ...nodes.map((person) => ({ group: 'nodes' as const, data: { id: person.id, label: personDisplayName(person), era: person.era, isFocus: person.id === selectedPersonId ? 1 : 0 }, position: positions.get(person.id) })),
-      ...displayedRelationships.map((relationship) => {
+      ...directRelationships.map((relationship) => {
         const sourceArrow = relationship.direction === 'incoming' || relationship.direction === 'bidirectional' ? 'triangle' : 'none';
         const targetArrow = relationship.direction === 'incoming' || relationship.direction === 'undirected' ? 'none' : 'triangle';
         const shortLabel = relationshipDisplayLabel(relationship, currentModel || undefined);
@@ -803,8 +1129,19 @@ function renderGraph() {
         const compressRepeatedLabels = duplicateCount > 3 && !isFamilyTree;
         const showSummaryLabel = compressRepeatedLabels && !firstLabelledRelation.has(shortLabel);
         if (showSummaryLabel) firstLabelledRelation.add(shortLabel);
-        return { group: 'edges' as const, data: { id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type, shortLabel: compressRepeatedLabels ? (showSummaryLabel ? `${shortLabel} × ${duplicateCount}` : '') : shortLabel, passage: relationship.passages[0] || '', direction: relationship.direction, certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], relationKind: isFamilyTree ? familyRelationKind(relationship) : 'default', sourceArrow, targetArrow } };
-      })
+        const reviewState = relationship.reviewState || inferReviewState(relationship);
+        return {
+          group: 'edges' as const,
+          data: {
+            id: relationship.id, source: relationship.fromPerson, target: relationship.toPerson, label: relationship.type,
+            shortLabel: compressRepeatedLabels ? (showSummaryLabel ? `${shortLabel} × ${duplicateCount}` : '') : shortLabel,
+            passage: relationship.passages[0] || '', direction: relationship.direction,
+            certainty: relationship.certainty, evidenceColor: evidenceColor[relationship.evidenceLevel], reviewColor: reviewStateColor[reviewState], reviewState,
+            relationKind: isFamilyTree ? familyRelationKind(relationship) : 'default', sourceArrow, targetArrow, edgeType: 'direct'
+          }
+        };
+      }),
+      ...pathEdgeElements
     ],
     style: [
       { selector: 'node', style: { label: 'data(label)', shape: 'round-rectangle', color: '#16233a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 13 : 15, 'font-weight': 700, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': (isFamilyTree || isPyramid) ? '104px' : '86px', 'background-color': '#f4f7fb', 'background-opacity': 1, 'border-color': '#6b98d8', 'border-width': 1.5, width: (isFamilyTree || isPyramid) ? (isCompactGraph ? 92 : 112) : (isCompactGraph ? 82 : 98), height: (isFamilyTree || isPyramid) ? (isCompactGraph ? 48 : 54) : (isCompactGraph ? 44 : 50), 'overlay-opacity': 0, 'underlay-opacity': 0 } },
@@ -814,25 +1151,58 @@ function renderGraph() {
       { selector: 'node[isFocus = 1]', style: { color: '#ffffff', 'background-color': '#3478d4', 'border-color': '#9fc4f3', 'border-width': 4, width: (isFamilyTree || isPyramid) ? (isCompactGraph ? 104 : 128) : (isCompactGraph ? 98 : 116), height: (isFamilyTree || isPyramid) ? (isCompactGraph ? 56 : 64) : (isCompactGraph ? 52 : 60), 'font-size': (isFamilyTree || isPyramid) ? (isCompactGraph ? 14 : 17) : (isCompactGraph ? 15 : 18), 'underlay-opacity': 0 } },
       { selector: 'node:selected', style: { 'border-color': '#245fae', 'border-width': 3 } },
       { selector: 'node.route-neighbor', style: { 'border-color': '#245fae', 'border-width': 3 } },
-      { selector: 'edge', style: { width: (isFamilyTree || isPyramid) ? 1.8 : 1.5, 'curve-style': isFamilyTree ? 'bezier' : 'straight', 'control-point-step-size': isFamilyTree ? 34 : 40, 'line-color': 'data(evidenceColor)', 'line-opacity': (isFamilyTree || isPyramid) ? 0.68 : 0.72, 'source-arrow-color': 'data(evidenceColor)', 'target-arrow-color': 'data(evidenceColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.62, label: 'data(shortLabel)', color: '#46546a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 10 : 11, 'font-weight': 600, 'text-rotation': isFamilyTree ? 'autorotate' : 'none', 'text-background-color': '#fffefa', 'text-background-opacity': 0.98, 'text-background-padding': '4', 'text-background-shape': 'roundrectangle', 'text-border-color': '#dfe5ec', 'text-border-width': 0.7, 'text-border-opacity': 0.9, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
-      { selector: 'edge[relationKind = "parent"]', style: { width: 2.2, 'line-color': '#3478d4', 'source-arrow-color': '#3478d4', 'target-arrow-color': '#3478d4' } },
+      { selector: 'edge', style: { width: (isFamilyTree || isPyramid) ? 1.8 : 1.5, 'curve-style': isFamilyTree ? 'bezier' : 'straight', 'control-point-step-size': isFamilyTree ? 34 : 40, 'line-color': 'data(reviewColor)', 'line-opacity': (isFamilyTree || isPyramid) ? 0.68 : 0.72, 'source-arrow-color': 'data(reviewColor)', 'target-arrow-color': 'data(reviewColor)', 'source-arrow-shape': 'data(sourceArrow)' as any, 'target-arrow-shape': 'data(targetArrow)' as any, 'arrow-scale': 0.62, label: 'data(shortLabel)', color: '#46546a', 'font-family': 'Inter, PingFang SC, Noto Sans CJK SC, sans-serif', 'font-size': isCompactGraph ? 10 : 11, 'font-weight': 600, 'text-rotation': isFamilyTree ? 'autorotate' : 'none', 'text-background-color': '#fffefa', 'text-background-opacity': 0.98, 'text-background-padding': '4', 'text-background-shape': 'roundrectangle', 'text-border-color': '#dfe5ec', 'text-border-width': 0.7, 'text-border-opacity': 0.9, 'overlay-opacity': 0, 'underlay-opacity': 0 } },
+      { selector: 'edge[pathEdge = 1]', style: { 'line-color': 'data(pathColor)', 'source-arrow-color': 'data(pathColor)', 'target-arrow-color': 'data(pathColor)', width: 1.8, 'line-style': 'dashed', 'line-opacity': 0.8 } },
+      { selector: 'edge[edgeType = "path"]', style: { 'line-style': 'dashed', 'width': 2.0 } },
+      { selector: 'edge[edgeType = "direct"]', style: { 'line-style': 'solid', 'width': 1.8 } },
+      { selector: 'edge[pathEdge = 1][pathDistance = "2"]', style: { width: 2.0 } },
+      { selector: 'edge[pathEdge = 1][pathDistance = "3"]', style: { width: 1.8, 'line-style': 'dotted' } },
+      { selector: 'edge[pathEdge = 1][pathDistance = "4"]', style: { width: 1.6, 'line-style': 'solid' } },
+      { selector: 'edge[relationKind = "parent"]', style: { width: 2.2 } },
       { selector: 'edge[relationKind = "marriage"]', style: { 'line-style': 'dashed', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
-      { selector: 'edge[relationKind = "sibling"]', style: { width: 1.6, 'line-style': 'dotted', 'line-color': '#8b62d9', 'source-arrow-color': '#8b62d9', 'target-arrow-color': '#8b62d9', color: '#63439d', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
-      { selector: 'edge[certainty = "low"]', style: { 'line-style': 'dashed', 'line-opacity': 0.72 } },
-      { selector: 'edge.is-hovered, edge:selected', style: { width: 3.2, 'line-opacity': 1, 'arrow-scale': 0.72, 'font-size': isCompactGraph ? 11 : 12, 'text-background-opacity': 1, 'underlay-color': '#d9e7fb', 'underlay-opacity': 0.45, 'underlay-padding': 3, 'z-index': 20 } }
+      { selector: 'edge[relationKind = "sibling"]', style: { width: 1.6, 'line-style': 'dotted', 'target-arrow-shape': 'none', 'source-arrow-shape': 'none' } },
+      { selector: 'edge[certainty = "low"]', style: { 'line-opacity': 0.72 } },
+      { selector: 'edge[reviewState = "reviewed_uncertain"][relationKind = "default"]', style: { 'line-style': 'dashed' } },
+      { selector: 'edge[reviewState = "reviewed_uncertain"][relationKind = "parent"]', style: { 'line-style': 'solid' } },
+      { selector: 'edge[reviewState = "reviewed_uncertain"][relationKind = "sibling"]', style: { 'line-style': 'dotted' } },
+      { selector: 'edge.is-hovered, edge:selected, edge.path-selected', style: { width: 3.2, 'line-opacity': 1, 'arrow-scale': 0.72, 'font-size': isCompactGraph ? 11 : 12, 'text-background-opacity': 1, 'underlay-color': '#d9e7fb', 'underlay-opacity': 0.45, 'underlay-padding': 3, 'z-index': 20 } }
     ],
     layout: { name: 'preset', fit: false, animate: false },
-    minZoom: 0.25, maxZoom: 2.5, selectionType: 'single'
+    minZoom: 0.25,
+    maxZoom: 2.5,
+    selectionType: 'single'
   });
   fitGraphComfortably();
   cy.on('tap', 'node', (event) => selectPerson(String(event.target.id()), true));
-  cy.on('tap', 'edge', (event) => selectRelationship(String(event.target.id()), true));
-  cy.on('mouseover', 'edge', (event) => { const edge = event.target; edge.addClass('is-hovered'); edge.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor'); });
-  cy.on('mouseout', 'edge', (event) => { const edge = event.target; edge.removeClass('is-hovered'); if (!edge.selected()) edge.connectedNodes().not('[isFocus = 1]').removeClass('route-neighbor'); });
-  if (selectedRelationId) {
+  cy.on('tap', 'edge', (event) => {
+    const edge = event.target;
+    if (!edge) return;
+    const pathId = edge.data('pathId');
+    if (edge.data('pathEdge') === 1 || edge.data('pathEdge') === '1') {
+      selectPath(String(pathId || ''), true);
+      return;
+    }
+    if (typeof pathId === 'string') selectPath(pathId, true);
+    else selectRelationship(String(edge.id()), true);
+  });
+  cy.on('mouseover', 'edge', (event) => {
+    const edge = event.target;
+    edge.addClass('is-hovered');
+    edge.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor');
+  });
+  cy.on('mouseout', 'edge', (event) => {
+    const edge = event.target;
+    edge.removeClass('is-hovered');
+    const isPathEdge = edge.data('pathEdge') === 1 || edge.data('pathEdge') === '1';
+    if (!edge.selected() && !isPathEdge) edge.connectedNodes().not('[isFocus = 1]').removeClass('route-neighbor');
+  });
+
+  if (selectedRelationId && !selectedRelationId.startsWith('path-')) {
     const selectedEdge = cy.$id(selectedRelationId);
     selectedEdge.select();
     selectedEdge.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor');
+  } else if (selectedPathId) {
+    cy.$(`edge[pathId="${selectedPathId}"]`).addClass('path-selected');
   }
 }
 
@@ -849,6 +1219,7 @@ function renderInspector() {
   if (!currentModel) return; const person = currentModel.personMap.get(selectedPersonId) || originalPersonById.get(selectedPersonId);
   if (!person) { inspectorContent.innerHTML = '<div class="empty-state"><strong>请选择人物</strong><p>可从左侧索引或图中节点进入。</p></div>'; return; }
   const relationships = focusRelationships(currentModel); const identityPerson = originalPersonById.get(person.id) || person; const selectedIdentity = getSelectedIdentity(identityPerson); const selectedRelationship = relationships.find((relationship) => relationship.id === selectedRelationId);
+  const selectedPath = visiblePathRows.find((path) => path.id === selectedPathId);
   const selectedRelationshipHtml = selectedRelationship ? (() => {
     const otherId = selectedRelationship.fromPerson === person.id ? selectedRelationship.toPerson : selectedRelationship.fromPerson; const other = currentModel?.personMap.get(otherId) || originalPersonById.get(otherId);
     const from = currentModel?.personMap.get(selectedRelationship.fromPerson) || originalPersonById.get(selectedRelationship.fromPerson);
@@ -856,17 +1227,28 @@ function renderInspector() {
     const headline = selectedRelationship.direction === 'undirected' || selectedRelationship.direction === 'bidirectional'
       ? `${personDisplayName(from)} ↔ ${personDisplayName(to)}`
       : `${personDisplayName(from)} → ${personDisplayName(to)}`;
-    return `<section class="selected-relation" aria-label="选中关系"><div class="section-kicker"><i class="ph ph-circle evidence-dot evidence-${selectedRelationship.evidenceLevel}" aria-hidden="true"></i>${escapeHtml(evidenceLabel[selectedRelationship.evidenceLevel])}</div><h3>${escapeHtml(headline)}</h3><p>${escapeHtml(selectedRelationship.type)} · ${escapeHtml(relationshipDirection(selectedRelationship, person.id))} · ${certaintyLabel[selectedRelationship.certainty]}确定度</p><div class="passage-list">${selectedRelationship.passages.map((passage) => `<code>${escapeHtml(passage)}</code>`).join('')}</div><div class="source-links">${selectedRelationship.sources.map(sourceLink).join('')}</div>${other ? `<button type="button" data-onclick="delegated" class="secondary-button" data-go-person="${escapeHtml(other.id)}">转到${escapeHtml(personDisplayName(other))}</button>` : ''}</section>`;
+    const selectedReviewState = selectedRelationship.reviewState || inferReviewState(selectedRelationship);
+    return `<section class="selected-relation" aria-label="选中关系"><div class="section-kicker"><i class="ph ph-circle evidence-dot evidence-${selectedRelationship.evidenceLevel}" aria-hidden="true"></i>${escapeHtml(evidenceLabel[selectedRelationship.evidenceLevel])}<span class="relation-type-chip ${relationshipTypeClass(selectedRelationship)}">${escapeHtml(selectedRelationship.type)}</span><span class="relation-review-chip review-${selectedReviewState}">${escapeHtml(reviewStateLabel[selectedReviewState])}</span></div><h3>${escapeHtml(headline)}</h3><p>${escapeHtml(relationshipDirection(selectedRelationship, person.id))} · ${certaintyLabel[selectedRelationship.certainty]}确定度</p><div class="passage-list">${selectedRelationship.passages.map((passage) => `<code>${escapeHtml(passage)}</code>`).join('')}</div><div class="source-links">${selectedRelationship.sources.map(sourceLink).join('')}</div>${other ? `<button type="button" data-onclick="delegated" class="secondary-button" data-go-person="${escapeHtml(other.id)}">转到${escapeHtml(personDisplayName(other))}</button>` : ''}</section>`;
   })() : '';
   if (selectedRelationship) {
     const from = currentModel.personMap.get(selectedRelationship.fromPerson) || originalPersonById.get(selectedRelationship.fromPerson);
     const to = currentModel.personMap.get(selectedRelationship.toPerson) || originalPersonById.get(selectedRelationship.toPerson);
+    const selectedReviewState = selectedRelationship.reviewState || inferReviewState(selectedRelationship);
     evidenceRibbonTitle.textContent = `${personDisplayName(from) || selectedRelationship.fromPerson} · ${selectedRelationship.type} · ${personDisplayName(to) || selectedRelationship.toPerson}`;
-    evidenceRibbonMeta.textContent = `${evidenceLabel[selectedRelationship.evidenceLevel]} · ${certaintyLabel[selectedRelationship.certainty]}确定度 · ${selectedRelationship.passages.join('、') || '出处待补'}`;
+    evidenceRibbonMeta.textContent = `${evidenceLabel[selectedRelationship.evidenceLevel]} · ${reviewStateLabel[selectedReviewState]} · ${certaintyLabel[selectedRelationship.certainty]}确定度 · ${selectedRelationship.passages.join('、') || '出处待补'}`;
+  }
+  const selectedPathHtml = selectedPath ? (() => {
+    const pathKind = selectedPath.pathPurpose === 'kinship_explanation' ? '亲属构成路径' : '联系路径';
+    return `<section class="selected-relation" aria-label="选中路径"><div class="section-kicker"><i class="ph ph-git-branch"></i>${pathKind}（${selectedPath.routeDistance} 度）</div><h3>${escapeHtml(`${selectedPath.sourceLabel} → ${selectedPath.targetLabel}`)}</h3><p>${escapeHtml(pathRouteSummaryLabel(selectedPath))}</p><button type="button" data-onclick="delegated" class="secondary-button" data-go-person="${escapeHtml(selectedPath.targetPersonId)}">跳转到 ${escapeHtml(selectedPath.targetLabel)}</button></section>`;
+  })() : '';
+  if (selectedPath) {
+    evidenceRibbonTitle.textContent = `${selectedPath.sourceLabel} → ${selectedPath.targetLabel}`;
+    evidenceRibbonMeta.textContent = `路径长度：${selectedPath.routeDistance} 度 · 节点数：${selectedPath.steps.length + 1} · ${selectedPath.steps.map((step) => step.relationLabel || step.relationType || '关系').join(' → ')}`;
   }
   const relationRows = relationships.map((relationship) => {
     const otherId = relationship.fromPerson === person.id ? relationship.toPerson : relationship.fromPerson; const other = currentModel?.personMap.get(otherId) || originalPersonById.get(otherId);
-    return `<button type="button" data-onclick="delegated" class="relation-row evidence-border-${relationship.evidenceLevel}" data-relation-id="${escapeHtml(relationship.id)}" aria-pressed="${relationship.id === selectedRelationId}"><span class="relation-row-main"><strong>${escapeHtml(personDisplayName(other) || otherId)}</strong><small>${escapeHtml(relationship.type)} · ${escapeHtml(relationshipDirection(relationship, person.id))}</small></span><span class="relation-row-meta"><span>${escapeHtml(evidenceLabel[relationship.evidenceLevel])}</span><span>${relationship.passages.length} 处</span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`;
+    const relationshipState = relationship.reviewState || inferReviewState(relationship);
+    return `<button type="button" data-onclick="delegated" class="relation-row evidence-border-${relationship.evidenceLevel} review-${relationshipState}" data-relation-id="${escapeHtml(relationship.id)}" aria-pressed="${relationship.id === selectedRelationId}"><span class="relation-row-main"><strong>${escapeHtml(personDisplayName(other) || otherId)}</strong><small><span class="relation-type-chip ${relationshipTypeClass(relationship)}">${escapeHtml(relationship.type)}</span>${escapeHtml(relationshipDirection(relationship, person.id))}</small></span><span class="relation-row-meta"><span>${escapeHtml(evidenceLabel[relationship.evidenceLevel])}</span><span>${escapeHtml(reviewStateLabel[relationshipState])}</span><span>${relationship.passages.length} 处</span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`;
   }).join('');
   const scopedMentions = person.mentions.filter((mention) => {
     if (filters.scope === 'bible') return true;
@@ -882,10 +1264,13 @@ function renderInspector() {
     : filters.scope === 'ot'
       ? (hasNT && hasOT ? '<div class="alias-line"><button type="button" class="secondary-button" data-go-scope="nt">查看其新约出处</button></div>' : '')
       : '';
+  const pathRows = visiblePathRows.map((path) => `<button type="button" data-onclick="delegated" class="relation-row path-row${path.pathPurpose === 'kinship_explanation' ? ' kinship-explanation-row' : ''}" data-path-id="${escapeHtml(path.id)}" aria-pressed="${path.id === selectedPathId}"><span class="relation-row-main"><strong>${escapeHtml(path.targetLabel)}</strong><small>${escapeHtml(pathRouteSummaryLabel(path))}</small></span><span class="relation-row-meta"><span>${path.pathPurpose === 'kinship_explanation' ? '亲属构成' : '联系'} ${path.routeDistance} 度</span><span>${path.steps.length + 1} 节点</span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`).join('');
   inspectorContent.innerHTML = `
       <section class="person-summary"><div class="person-title-row"><i class="ph ph-user-circle large-person-icon" aria-hidden="true"></i><div><p class="eyebrow">选中人物</p><h3>${escapeHtml(personDisplayName(person))}</h3><p>${escapeHtml(person.nameLat || '')}</p></div></div><div class="person-era-line"><span class="era-badge prominent">${escapeHtml(person.era)}</span>${person.era === '旧约背景' ? '<span>此人物生活在旧约时期，但因被新约点名而收录。</span>' : ''}</div><div class="alias-line">${personDisplayName(person) !== person.nameZh ? `<span>${escapeHtml(person.nameZh)}</span>` : ''}${person.aliases.slice(0, 8).map((alias) => `<span>${escapeHtml(alias)}</span>`).join('')}</div><label class="identity-field" for="person-identity"><span>身份选项</span><select id="person-identity" ${identityPerson.identityOptions.length < 2 ? 'disabled' : ''}>${identityPerson.identityOptions.map((option) => `<option value="${escapeHtml(option.id)}" ${option.id === selectedIdentity?.id ? 'selected' : ''}>${escapeHtml(option.label)} · ${escapeHtml(option.status)}</option>`).join('')}</select></label>${person.notes ? `<p class="editor-note"><i class="ph ph-info" aria-hidden="true"></i>${escapeHtml(person.notes)}</p>` : ''}</section>
     <section class="inspector-section"><div class="section-heading"><h3>关系总览</h3><span>${relationships.length}</span></div><div class="relation-list">${relationRows || '<div class="empty-state compact"><strong>无匹配关系</strong><p>可调整专题或证据层。</p></div>'}</div></section>
+    <section class="inspector-section"><div class="section-heading"><h3>路径总览</h3><span>${visiblePathRows.length}</span></div><div class="relation-list">${pathRows || '<div class="empty-state compact"><strong>无可视路径</strong><p>可打开路径显示后查看 2-4 度关系链。</p></div>'}</div></section>
     ${selectedRelationshipHtml}
+    ${selectedPathHtml}
     <details class="mention-details"><summary>${mentionScopeTitle}出现位置 <span>${scopedMentions.length}</span></summary><ul class="mention-list">${mentionRows}</ul>${moreMentions ? `<p class="list-limit-note">另有 ${moreMentions} 处；完整位置保存在公开数据文件中。</p>` : ''}</details>${scopeSwitcher}`;
   const identitySelect = document.getElementById('person-identity') as HTMLSelectElement | null; if (identitySelect) identitySelect.onchange = () => applyPersonIdentity(person.id, identitySelect.value);
 }
@@ -895,8 +1280,11 @@ function renderCountsAndMeta() {
 function renderDataViews() {
   if (!data) return; const mappedSelected = computeMergeMapping().get(selectedPersonId); if (mappedSelected) selectedPersonId = mappedSelected; currentModel = buildVisibleModel();
   if (!currentModel.people.some((person) => person.id === selectedPersonId)) { const fallback = currentModel.people[0] || data.people.find((person) => person.nameZh === '保罗') || data.people[0]; selectedPersonId = fallback?.id || ''; currentModel = buildVisibleModel(); }
-  if (selectedRelationId && !focusRelationships(currentModel).some((relationship) => relationship.id === selectedRelationId)) selectedRelationId = '';
-  if (!selectedRelationId) selectedRelationId = focusRelationships(currentModel)[0]?.id || '';
+  const directRelationships = focusRelationships(currentModel);
+  if (selectedRelationId && !directRelationships.some((relationship) => relationship.id === selectedRelationId)) selectedRelationId = '';
+  if (!selectedRelationId && showDirectEdges) selectedRelationId = directRelationships[0]?.id || '';
+  if (!showDirectEdges) selectedRelationId = '';
+  if (!showPathEdges) selectedPathId = '';
   renderTopicControls(); renderAdvancedFilters(); renderPeopleList(); renderGraph(); renderInspector(); syncEvidenceControls(); syncUrlState();
 }
 function selectPerson(personId: string, switchPanel = false) {
@@ -904,9 +1292,32 @@ function selectPerson(personId: string, switchPanel = false) {
   const resolved = resolvePersonId(personId);
   const mapped = currentModel.mergedTo.get(resolved) || resolved;
   if (!currentModel.personMap.has(mapped) && !originalPersonById.has(mapped)) return;
-  selectedPersonId = mapped; selectedRelationId = focusRelationships(currentModel)[0]?.id || ''; renderPeopleList(); renderGraph(); renderInspector(); syncUrlState(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('graph', true); else if (switchPanel) setDrawer('none');
+  selectedPersonId = mapped; selectedRelationId = focusRelationships(currentModel)[0]?.id || ''; selectedPathId = ''; renderPeopleList(); renderGraph(); renderInspector(); syncUrlState(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('graph', true); else if (switchPanel) setDrawer('none');
 }
-function selectRelationship(relationshipId: string, switchPanel = false) { selectedRelationId = relationshipId; cy?.elements().unselect(); cy?.nodes().removeClass('route-neighbor'); const edge = cy?.$id(relationshipId); edge?.select(); edge?.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor'); renderInspector(); if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('details', true); }
+function selectRelationship(relationshipId: string, switchPanel = false) {
+  selectedRelationId = relationshipId;
+  selectedPathId = '';
+  cy?.$('[pathId]').removeClass('path-selected');
+  cy?.elements().unselect();
+  cy?.nodes().removeClass('route-neighbor');
+  const edge = cy?.$id(relationshipId);
+  edge?.select();
+  edge?.connectedNodes().not('[isFocus = 1]').addClass('route-neighbor');
+  renderInspector();
+  if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('details', true);
+}
+function selectPath(pathId: string, switchPanel = false) {
+  if (!pathId) return;
+  selectedPathId = pathId;
+  selectedRelationId = '';
+  cy?.$('[pathId]').removeClass('path-selected');
+  cy?.elements().unselect();
+  cy?.nodes().removeClass('route-neighbor');
+  renderGraph();
+  cy?.$(`edge[pathId="${pathId}"]`).addClass('path-selected');
+  renderInspector();
+  if (switchPanel && window.matchMedia('(max-width: 900px)').matches) setMobilePanel('details', true);
+}
 function setMobilePanel(panel: MobilePanel, focusPanel = false) {
   mobilePanel = panel; shell.dataset.mobilePanel = panel; document.querySelectorAll<HTMLButtonElement>('[data-mobile-target]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.mobileTarget === panel)));
   if (!focusPanel || !window.matchMedia('(max-width: 900px)').matches) return;
@@ -933,6 +1344,8 @@ function syncUrlState() {
   set('identity', identityPreset, 'conservative');
   set('person', selectedPersonId);
   set('scope', filters.scope, 'bible');
+  set('direct', showDirectEdges ? '1' : '0', '1');
+  set('paths', showPathEdges ? '1' : '0', '0');
   set('evidence', evidenceValue, [...ALL_EVIDENCE].sort().join(','));
   const persistManualFilters = filters.topic === 'custom';
   set('eras', persistManualFilters ? [...filters.eras].sort().join(',') : '');
@@ -947,6 +1360,10 @@ function loadUrlState() {
   const rawScope = params.get('scope');
   filters.scope = rawScope === 'nt' || rawScope === 'ot' || rawScope === 'bible' ? rawScope : 'bible';
   scopeSelect.value = filters.scope;
+  showDirectEdges = params.get('direct') !== '0';
+  showPathEdges = params.get('paths') === '1';
+  if (showDirectEdgesInput) showDirectEdgesInput.checked = showDirectEdges;
+  if (showPathEdgesInput) showPathEdgesInput.checked = showPathEdges;
   const eras = params.get('eras')?.split(',').filter(Boolean); const books = params.get('books')?.split(',').filter(Boolean); const types = params.get('types')?.split(',').filter(Boolean); if (initialTopic === 'all' && (eras?.length || books?.length || types?.length)) { filters.eras = new Set(eras || []); filters.books = new Set(books || []); filters.relations = new Set(types || []); markFiltersCustom(); }
   const preset = params.get('identity'); setIdentityPreset(preset === 'traditional' ? 'traditional' : 'conservative', false);
   const requestedPerson = params.get('person');
@@ -957,7 +1374,21 @@ function renderLoadError(message: string) {
 }
 async function loadGraphData() {
   shell.setAttribute('aria-busy', 'true');
-  try { const response = await fetch('./data/graph.json', { cache: 'no-store' }); if (!response.ok) throw new Error(`HTTP ${response.status}`); data = await response.json() as GraphData; rebuildIndexes(); loadUrlState(); renderCountsAndMeta(); renderDataViews(); shell.setAttribute('aria-busy', 'false'); }
+  try {
+    const response = await fetch('./data/graph.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const loadedData = (await response.json()) as Omit<GraphData, 'relationships'> & { relationships: Relationship[] };
+    const hydratedRelationships = loadedData.relationships.map((relationship) => ({
+      ...relationship,
+      reviewState: relationship.reviewState || inferReviewState(relationship)
+    }));
+    data = { ...loadedData, relationships: hydratedRelationships };
+    rebuildIndexes();
+    loadUrlState();
+    renderCountsAndMeta();
+    renderDataViews();
+    shell.setAttribute('aria-busy', 'false');
+  }
   catch (error) { renderLoadError(error instanceof Error ? error.message : '未知错误'); }
 }
 function updateSearch(value: string) { filters.search = value.trim(); searchInput.value = value; peopleSearchInput.value = value; clearSearchButton.hidden = !filters.search; renderPeopleList(); if (filters.search && !window.matchMedia('(max-width: 900px)').matches) setDrawer('people'); syncUrlState(); }
@@ -985,9 +1416,11 @@ peopleList.addEventListener('keydown', (event) => {
 });
 inspectorContent.addEventListener('click', (event) => {
   const relationButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-relation-id]');
+  const pathButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-path-id]');
   const personButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-go-person]');
   const scopeButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-go-scope]');
   if (relationButton?.dataset.relationId) selectRelationship(relationButton.dataset.relationId);
+  if (pathButton?.dataset.pathId) selectPath(pathButton.dataset.pathId);
   if (personButton?.dataset.goPerson) selectPerson(personButton.dataset.goPerson);
   if (scopeButton?.dataset.goScope === 'nt' || scopeButton?.dataset.goScope === 'ot') {
     filters.scope = scopeButton.dataset.goScope;
@@ -996,7 +1429,27 @@ inspectorContent.addEventListener('click', (event) => {
     renderDataViews();
   }
 });
-document.querySelector('.evidence-controls')?.addEventListener('change', (event) => { const input = (event.target as HTMLElement).closest<HTMLInputElement>('input[type="checkbox"]'); if (!input) return; const level = input.value as EvidenceLevel; if (input.checked) filters.evidences.add(level); else filters.evidences.delete(level); markFiltersCustom(); renderDataViews(); });
+document.querySelector('.evidence-controls')?.addEventListener('change', (event) => {
+  const input = (event.target as HTMLElement).closest<HTMLInputElement>('input[type="checkbox"]');
+  if (!input || !(ALL_EVIDENCE.includes(input.value as EvidenceLevel))) return;
+  const level = input.value as EvidenceLevel;
+  if (input.checked) filters.evidences.add(level);
+  else filters.evidences.delete(level);
+  markFiltersCustom();
+  renderDataViews();
+});
+showDirectEdgesInput?.addEventListener('change', (event) => {
+  if (!showDirectEdgesInput) return;
+  showDirectEdges = showDirectEdgesInput.checked;
+  selectedRelationId = showDirectEdges ? selectedRelationId : '';
+  renderDataViews();
+});
+showPathEdgesInput?.addEventListener('change', (event) => {
+  if (!showPathEdgesInput) return;
+  showPathEdges = showPathEdgesInput.checked;
+  selectedPathId = '';
+  renderDataViews();
+});
 document.querySelector('.advanced-filters')?.addEventListener('change', (event) => { const input = (event.target as HTMLElement).closest<HTMLInputElement>('input[data-filter-kind]'); if (!input) return; const targetSet = input.dataset.filterKind === 'book' ? filters.books : input.dataset.filterKind === 'era' ? filters.eras : filters.relations; if (input.checked) targetSet.add(input.value); else targetSet.delete(input.value); markFiltersCustom(); renderDataViews(); });
 document.getElementById('clear-eras')?.addEventListener('click', () => { filters.eras.clear(); markFiltersCustom(); renderDataViews(); });
 document.getElementById('clear-books')?.addEventListener('click', () => { filters.books.clear(); markFiltersCustom(); renderDataViews(); });

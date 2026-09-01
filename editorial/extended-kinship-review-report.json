@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-08-31T00:00:00Z",
+  "dataset": "extended-kinship-review",
+  "candidate_snapshot_sha256": "daf4e7c2fdd613b708e5974780af5f286a8ab11f6050614388b5444737c83be0",
+  "review_snapshot_sha256": "41a14a732ee65f8354f83c3907a2c613653b06373bf624665604ad6d716c6bf4",
+  "counts": {
+    "total": 5700,
+    "accepted": 5650,
+    "rejected": 50,
+    "uncle_aunt_accepted": 2798,
+    "cousin_accepted": 2852,
+    "second_order_accepted": 0
+  },
+  "invariants": {
+    "every_candidate_reviewed": true,
+    "three_round_decisions_present": true,
+    "accepted_rows_have_no_structural_defects": true,
+    "does_not_modify_assertions": true,
+    "does_not_publish_review_rows": true
+  }
+}

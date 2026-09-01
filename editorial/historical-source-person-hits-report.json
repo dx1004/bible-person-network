@@ -6,10 +6,10 @@
   "candidate_count": 2720,
   "candidate_sha256": "02e1ac555c421cba1be2531bfa691cebc8d4459c5dc4aad31fdc987338a1aafe",
   "output_path": "editorial/historical-source-person-hits.jsonl",
-  "output_sha256": "0b300b72959b9feff498d5383d9dba7df34c53d816e7d49f81caaa53d3df9a24",
-  "row_count": 5440,
-  "hit_rows": 1272,
-  "no_hit_rows": 4168,
+  "output_sha256": "cbd70cf8246eeb292d4917fd58869121631a2836411e0b98cf803de452bb855e",
+  "row_count": 8160,
+  "hit_rows": 3971,
+  "no_hit_rows": 4189,
   "locator_cap": 25,
   "source_files": [
     {
@@ -46,6 +46,41 @@
       "sha256": "f5e3f6e574e139a109380fa2e886278126d9ccc311999b769258c57edfce7c90",
       "bytes": 1389497,
       "line_count": 28680
+    },
+    {
+      "source_id": "source:0010",
+      "source_path": ".sources/isbe-1915/volume-01.txt",
+      "sha256": "f5f08cf0d5bd2fdb45fc66a0067545f23e9903740f19c2544d56fb151bef044f",
+      "bytes": 4773682,
+      "line_count": 121143
+    },
+    {
+      "source_id": "source:0010",
+      "source_path": ".sources/isbe-1915/volume-02.txt",
+      "sha256": "f2f691344d13caed2a8edffacea821d417140a76a36f260a1493227982f074ce",
+      "bytes": 5291189,
+      "line_count": 131675
+    },
+    {
+      "source_id": "source:0010",
+      "source_path": ".sources/isbe-1915/volume-03.txt",
+      "sha256": "1d5691a433bc510b0a82695ae1a62cae48209ff0a1dee4ed9cbab0ebef356aec",
+      "bytes": 5521596,
+      "line_count": 137929
+    },
+    {
+      "source_id": "source:0010",
+      "source_path": ".sources/isbe-1915/volume-04.txt",
+      "sha256": "2ae0e531f11a987c81dd28b78476187be6acb10b2d6871c1ea3b4933f73885be",
+      "bytes": 5443142,
+      "line_count": 134954
+    },
+    {
+      "source_id": "source:0010",
+      "source_path": ".sources/isbe-1915/volume-05.txt",
+      "sha256": "85a698731e339d22076607fb80be903909d6aee8b6515b2bcc3ba404c466c4c2",
+      "bytes": 3847119,
+      "line_count": 133756
     }
   ],
   "per_source": {
@@ -62,12 +97,19 @@
       "no_hit_rows": 2467,
       "total_hits": 12775,
       "capped_rows": 37
+    },
+    "source:0010": {
+      "coverage_rows": 2720,
+      "hit_rows": 2699,
+      "no_hit_rows": 21,
+      "total_hits": 161014,
+      "capped_rows": 861
     }
   },
   "limitations": [
     "Name hits are discovery candidates, not identity or relationship evidence.",
     "Shared, short, and ordinary-word names can produce false positives.",
-    "Philo OCR locators require confirmation against the public-domain page scans.",
+    "Philo and ISBE OCR locators require confirmation against the public-domain page scans before source-derived evidence is published.",
     "Locator lists are capped; hit_count retains the complete occurrence count.",
     "No source text or snippets are stored in the generated artifacts."
   ]

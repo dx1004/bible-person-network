@@ -5,9 +5,9 @@
   "source_id": "source:0002",
   "report_path": "editorial/old-testament-person-review-report.json",
   "output_path": "editorial/old-testament-person-review.jsonl",
-  "pending": 1008,
-  "accepted": 1702,
-  "rejected": 10,
-  "evidence_audit_passed": 1702,
+  "pending": 0,
+  "accepted": 2684,
+  "rejected": 36,
+  "evidence_audit_passed": 2705,
   "total_candidates": 2720
 }

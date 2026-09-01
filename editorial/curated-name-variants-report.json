@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-08-31T00:00:00Z",
+  "dataset": "curated-name-variants",
+  "variant_count": 2,
+  "name_ids": [
+    "name-9145",
+    "name-9146"
+  ],
+  "person_ids": [
+    "person-000135"
+  ],
+  "invariant": {
+    "accepted_people_only": true,
+    "stable_ids": true,
+    "idempotent": true
+  }
+}

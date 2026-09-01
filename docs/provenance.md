@@ -25,15 +25,20 @@
 
 ## 扩展与待审状态补充
 
-旧约扩展与完整圣经发布目前处于前置阶段，新增来源仅登记为待审链路，不进入正式发布：
+旧约人物、已接受关系和跨约身份已经迁入统一数据集；完整来源版本仍受 Anchor Yale 系统审校门槛约束：
 
-- `source:0005` STEPBible TAHOT/TOTHT：旧约姓名覆盖与对齐已按 TIPNR 计划登记，但暂不作为公开图谱输入。
-- `source:0006` Josephus 已锁定 Project Gutenberg eBook 2848 的 Whiston 译本。RDF 明示美国公版并确认译者；锁定全文记录 SHA-256 且位于 `.sources/`，不进入 Git。会动态变化的 RDF 只作为许可核验地址，不作为语料快照。全书人物与关系的系统审校仍未开始，因此来源状态继续为 pending。
-- `source:0007` Philo 已锁定 Bohn 1854–55 年四卷 Yonge 译本。Internet Archive 元数据标记 `NOT_IN_COPYRIGHT`；四卷 OCR 的 MD5 与上游一致并另存 SHA-256。OCR 只用于发现候选，接受定位前必须回查页图。系统审校仍未开始，因此来源状态继续为 pending。
-- `source:0008` Lexham Bible Dictionary（Lexham Press，2016）受版权限制。登录后的 Scribd 只返回用户上传的零散词条与摘要，未发现合格完整版本；Logos 官方产品 36564 确认精确版本，当前账户已完成 `$0.00` 订单并可进入阅读。全书系统审校仍未开始。Git 只允许保存条目定位与原创证据判断。
-- `source:0009` The Anchor Bible Dictionary（Doubleday，1992，六卷；后称 Anchor Yale Bible Dictionary）受版权限制。登录后的 Scribd 未发现合格完整版本；Internet Archive 的图书馆受控数字借阅中已核实六卷均为 `inlibrary`／`printdisabled`，第一卷可进入 1,317 页阅读器并按页导航。卷内搜索在核验时返回错误，不得作为审校依赖。全书系统审校仍未开始，Git 只允许保存卷页定位与原创证据判断。
+- `source:0005` STEPBible TAHOT/TOTHT：已完成旧约 39 卷覆盖审计；2,720 个候选全部覆盖，27 个覆盖例外均有显式审校决定。该来源已经用于统一旧约人物资料的覆盖复核。
+- `source:0006` Josephus 已锁定 Project Gutenberg eBook 2848 的 Whiston 译本。2,720 个候选全部扫描，1,019 个正命中均完成两轮独立审校和 Boardroom 终审；357 接受、220 排除、442 个属于已审但无法唯一化身份的 inconclusive，后者不发布。全文仍只在 `.sources/`，Git 仅保存定位、原创摘要和判断。
+- `source:0007` Philo 已锁定 Bohn 1854–55 年四卷 Yonge 译本。2,720 个候选全部扫描，253 个正命中均完成两轮独立审校和 Boardroom 终审；92 接受、4 排除、157 个 reviewed-inconclusive。OCR 定位继续保留 `page_scan_confirmation_required`，未确认页图的材料不得发布。
+- `source:0008` Lexham Bible Dictionary（Lexham Press，2016）受版权限制。Logos 官方产品 36564 与本机 `LLS:LBD` 确认精确版本。1,510 个唯一拉丁名覆盖全部 2,720 候选：600 个直接词条命中、910 个无直接词条、0 个环境错误；Logos `HistoryManager` 词条定位元数据完成独立一致性复核。694 个直接命中候选均完成两轮 headword-only 审校与 Boardroom 终审，结果为 564 接受、56 排除、74 reviewed-inconclusive，并保留 117 条标题明确支持的亲属证据。Git 只保存词条标题、定位和原创判断，不保存正文或截图。
+- `source:0009` The Anchor Bible Dictionary（Doubleday，1992，六卷；后称 Anchor Yale Bible Dictionary）受版权限制。Bloomsbury 免费访问已完成官方 1,923 个 Person 词头、六卷全部页码 locator 与 2,720 个候选人的目录级复核。亲属词检索按六卷分区后完整枚举 29,259 个命中、2,726 个唯一章节，绕过原先的 2,000 条结果上限；自动上下文匹配覆盖全部 2,912 条关系断言，保留 2,049 条派生匹配、涉及 1,452 条断言，待审与例外均为 0，人工 locator 查找需求为 0。审计只保存标题、locator、计数和原创判断，不保存正文、snippet、截图或受限 PDF。Internet Archive Search Inside 的 `inside-hocr.py` 后端错误不再阻碍定位自动化，但 Bloomsbury 完整词条正文仍要求订阅，因此系统审校继续保持 `in_progress`，完整版本发布门禁仍关闭。
 
-当前可公开关系数据仍为 NT 主体状态，旧约仅保留 2720 条候选及待审决策；`source` 与 `manifest` 中的 pending 状态即为门控原因。
+当前统一数据已包含已接受的旧约人物和关系；人物候选及跨约身份均无待审项。`source:0009` 是唯一剩余来源门槛，正式完整版本必须继续被发布检查阻塞。
  Logos 试用未开启，本阶段不基于 Logos 截图或受限订阅材料补全正式关系。四套资料的访问、许可、文件锁定及系统审校状态见 `editorial/source-access-review.jsonl`；`npm run validate:source-access-review` 校验版本化契约，`npm run verify:historical-sources` 额外核对本地公版文件。
 
-- `source:0005`（STEPBible TAHOT/TOTHT）: 已完成 8 个源文件哈希/行数/命中摘要的独立覆盖审计（`editorial/tahot-totht-coverage-audit-report.json`），并保持审计与发布分离。
+- `source:0005`（STEPBible TAHOT/TOTHT）: 已完成 8 个源文件哈希/行数/命中摘要的独立覆盖审计（`editorial/tahot-totht-coverage-audit-report.json`）及 27/27 例外审校，并保持审计与发布分离。
+
+
+## 2026-08-30 来源发布决议：ISBE 1915
+
+经批准，公版 *International Standard Bible Encyclopedia*（James Orr 等编，1915，五卷，`source:0010`）取代 Anchor Yale，作为第五项必需的系统来源审校。其范围是完整人物与定位覆盖审计：2,720 个旧约候选全部有记录；不从该来源新增或修改公开关系断言。Anchor Yale（`source:0009`）保留为可选补充来源；其受限全文审校状态不再阻塞发布。ISBE 全文仅保留在本地研究缓存，公开产物只保留定位与原创审校理由。

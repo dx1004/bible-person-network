@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-08-26T00:00:00Z",
+  "accepted_people": 2684,
+  "raw_relationship_tokens": 9950,
+  "placeholder_tokens": 1187,
+  "unresolved_tokens": 473,
+  "self_loops_excluded": 0,
+  "candidate_relationships": 4207,
+  "relation_subtypes": {
+    "parent": 1642,
+    "sibling": 2467,
+    "partner": 98
+  }
+}

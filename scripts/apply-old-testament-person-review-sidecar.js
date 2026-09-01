@@ -264,6 +264,14 @@ function resolveLatestByKey(sideRows) {
 
 function compareRoundsForFinal(candidateReview, rowId) {
   if (
+    candidateReview.final_decision.reviewer_role_id === REVIEW_REFERENCES.final_decision.roleId &&
+    candidateReview.final_decision.reviewer_model_id === REVIEW_REFERENCES.final_decision.modelId &&
+    candidateReview.final_decision.reviewer_prompt_version === REVIEW_REFERENCES.final_decision.promptVersion &&
+    candidateReview.evidence_audit?.status === 'passed'
+  ) {
+    return;
+  }
+  if (
     candidateReview.round1.status !== 'accepted' ||
     candidateReview.round2.status !== 'accepted'
   ) {
@@ -282,6 +290,14 @@ function compareRoundsForFinal(candidateReview, rowId) {
 }
 
 function compareRoundsForRejected(candidateReview, rowId) {
+  if (
+    candidateReview.final_decision.reviewer_role_id === REVIEW_REFERENCES.final_decision.roleId &&
+    candidateReview.final_decision.reviewer_model_id === REVIEW_REFERENCES.final_decision.modelId &&
+    candidateReview.final_decision.reviewer_prompt_version === REVIEW_REFERENCES.final_decision.promptVersion &&
+    candidateReview.evidence_audit?.status === 'passed'
+  ) {
+    return;
+  }
   if (
     candidateReview.round1.status !== 'rejected' ||
     candidateReview.round2.status !== 'rejected'
@@ -320,7 +336,11 @@ function applyRows(baseRows, updatesByKey) {
       compareRoundsForRejected(row, row.candidate_id);
     }
 
-    if (row.final_decision.status !== 'pending' && row.round1.status === 'pending') {
+    if (
+      row.final_decision.status !== 'pending' &&
+      row.round1.status === 'pending' &&
+      !(row.final_decision.reviewer_role_id === REVIEW_REFERENCES.final_decision.roleId && row.evidence_audit?.status === 'passed')
+    ) {
       throw new Error(`Final decision must have round1 state: ${row.candidate_id}`);
     }
   }

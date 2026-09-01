@@ -1,0 +1,332 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Anchor Yale relationship review audit row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_id",
+    "assertion_id",
+    "subject_person_id",
+    "object_person_id",
+    "relation_type",
+    "direction",
+    "subject_candidate_ids",
+    "object_candidate_ids",
+    "subject_headword_status",
+    "object_headword_status",
+    "search_overlap",
+    "review_status",
+    "review_basis",
+    "needs_manual_review_reason",
+    "source_text_stored",
+    "snippets_stored",
+    "reviewed_at",
+    "derived_context_matches"
+  ],
+  "properties": {
+    "source_id": {
+      "const": "source:0009"
+    },
+    "assertion_id": {
+      "type": "string",
+      "pattern": "^asrt-\\d{4,6}$"
+    },
+    "subject_person_id": {
+      "type": "string",
+      "anyOf": [
+        {
+          "pattern": "^person-\\d{6}$"
+        },
+        {
+          "pattern": "^nt-people-\\d{4}$"
+        }
+      ]
+    },
+    "object_person_id": {
+      "type": "string",
+      "anyOf": [
+        {
+          "pattern": "^person-\\d{6}$"
+        },
+        {
+          "pattern": "^nt-people-\\d{4}$"
+        }
+      ]
+    },
+    "relation_type": {
+      "type": "string",
+      "enum": [
+        "kinship",
+        "teacher_student",
+        "collegial",
+        "commission",
+        "host",
+        "political",
+        "legal",
+        "hostile",
+        "succession",
+        "alliance",
+        "military",
+        "prophetic_confrontation",
+        "covenant",
+        "friendship"
+      ]
+    },
+    "relation_subtype": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "directed",
+        "undirected"
+      ]
+    },
+    "subject_candidate_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^otc-\\d{4}$"
+      },
+      "uniqueItems": true
+    },
+    "object_candidate_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^otc-\\d{4}$"
+      },
+      "uniqueItems": true
+    },
+    "subject_headword_status": {
+      "type": "string",
+      "enum": [
+        "mapped_direct",
+        "mapped_ambiguous",
+        "no_headword_match",
+        "unknown_person"
+      ]
+    },
+    "object_headword_status": {
+      "type": "string",
+      "enum": [
+        "mapped_direct",
+        "mapped_ambiguous",
+        "no_headword_match",
+        "unknown_person"
+      ]
+    },
+    "search_overlap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject_candidate_matches",
+        "object_candidate_matches",
+        "shared_candidate_ids",
+        "shared_locators",
+        "shared_locator_count",
+        "subject_locator_count",
+        "object_locator_count"
+      ],
+      "properties": {
+        "subject_candidate_matches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "article_title",
+              "locator",
+              "candidate_ids"
+            ],
+            "properties": {
+              "article_title": {
+                "type": "string"
+              },
+              "locator": {
+                "type": "string"
+              },
+              "candidate_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^otc-\\d{4}$"
+                },
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        "object_candidate_matches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "article_title",
+              "locator",
+              "candidate_ids"
+            ],
+            "properties": {
+              "article_title": {
+                "type": "string"
+              },
+              "locator": {
+                "type": "string"
+              },
+              "candidate_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^otc-\\d{4}$"
+                },
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        "shared_candidate_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^otc-\\d{4}$"
+          },
+          "uniqueItems": true
+        },
+        "shared_locators": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "shared_locator_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "subject_locator_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "object_locator_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "review_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed_no_evidence",
+        "reviewed_inconclusive",
+        "reviewed_not_applicable",
+        "context_match",
+        "pending_exception"
+      ]
+    },
+    "review_basis": {
+      "type": "string",
+      "const": "candidate-headword-and-search-metadata-only"
+    },
+    "needs_manual_review_reason": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "no_headword_match",
+          "ambiguous_candidate",
+          "no_subject_mapping",
+          "no_object_mapping",
+          "metadata_not_corroborated",
+          "multi_match"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "source_text_stored": {
+      "const": false
+    },
+    "snippets_stored": {
+      "const": false
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "derived_context_matches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "assertion_id",
+          "article_person_id",
+          "counterpart_person_id",
+          "locator",
+          "matched_counterpart_names",
+          "matched_relation_terms",
+          "derivation",
+          "source_text_stored",
+          "snippets_stored"
+        ],
+        "properties": {
+          "assertion_id": {
+            "type": "string",
+            "pattern": "^asrt-\\d{4,6}$"
+          },
+          "article_person_id": {
+            "type": "string",
+            "anyOf": [
+              {
+                "pattern": "^person-\\d{6}$"
+              },
+              {
+                "pattern": "^nt-people-\\d{4}$"
+              }
+            ]
+          },
+          "counterpart_person_id": {
+            "type": "string",
+            "anyOf": [
+              {
+                "pattern": "^person-\\d{6}$"
+              },
+              {
+                "pattern": "^nt-people-\\d{4}$"
+              }
+            ]
+          },
+          "locator": {
+            "type": "string"
+          },
+          "matched_counterpart_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "matched_relation_terms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "derivation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_text_stored": {
+            "const": false
+          },
+          "snippets_stored": {
+            "const": false
+          }
+        }
+      }
+    }
+  }
+}

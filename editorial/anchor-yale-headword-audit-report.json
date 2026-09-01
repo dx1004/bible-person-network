@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-08-30T04:35:00Z",
+  "status": "completed_locator_audit",
+  "source_id": "source:0009",
+  "official_person_headwords": 1923,
+  "unique_candidate_names": 1510,
+  "candidate_coverage": 2720,
+  "direct_name_hits": 1402,
+  "direct_candidate_coverage": 2602,
+  "no_direct_name_hit": 108,
+  "method": "official_person_list_exact_normalized_title_match",
+  "content_boundary": {
+    "subscription_required": true,
+    "source_text_stored": false,
+    "snippets_stored": false
+  }
+}

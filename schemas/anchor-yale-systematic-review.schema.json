@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Anchor Yale headword-only candidate review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_id", "candidate_id", "latinized", "candidate_decision", "headword_status", "matches", "identity_review", "relationship_review", "basis", "source_text_stored", "reviewed_at"],
+  "properties": {
+    "source_id": {"const": "source:0009"},
+    "candidate_id": {"type": "string", "pattern": "^otc-[0-9]{4}$"},
+    "latinized": {"type": "string", "minLength": 1},
+    "candidate_decision": {"type": "string", "enum": ["accepted", "rejected"]},
+    "headword_status": {"type": "string", "enum": ["direct_hit", "no_direct_hit"]},
+    "matches": {"type": "array", "items": {"type": "object"}},
+    "identity_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "rationale"],
+      "properties": {
+        "status": {"type": "string", "enum": ["accepted", "reviewed_inconclusive_homonym", "no_direct_headword", "not_applicable_rejected_candidate"]},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    },
+    "relationship_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "retained_evidence"],
+      "properties": {
+        "status": {"const": "not_retained_headword_only"},
+        "retained_evidence": {"type": "array", "maxItems": 0}
+      }
+    },
+    "basis": {"const": "official_person_list_title_and_locator_only"},
+    "source_text_stored": {"const": false},
+    "reviewed_at": {"type": "string", "format": "date-time"}
+  }
+}

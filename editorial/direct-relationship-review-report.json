@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-08-26T00:00:00Z",
+  "dataset": "direct-relationship-review",
+  "candidate_count": 6588,
+  "reviewed_count": 6588,
+  "coverage_complete": true,
+  "round_a_count": 6588,
+  "round_b_count": 6588,
+  "boardroom_count": 6588,
+  "final_status_counts": {
+    "rejected_pair_not_stated": 2316,
+    "rejected_collective_reference": 356,
+    "covered_existing": 3383,
+    "rejected_non_pair_commission": 34,
+    "rejected_weak_trigger": 435,
+    "rejected_prior_superseded": 16,
+    "rejected_non_pair_prophetic": 6,
+    "rejected_ambiguous_identity": 42
+  },
+  "priority_counts": {
+    "closed": 3205,
+    "covered": 3383
+  },
+  "proposed_new_assertions": 0,
+  "invariant": {
+    "lexical_trigger_is_not_direct_relation_proof": true,
+    "paths_do_not_create_direct_assertions": true,
+    "active_assertions_not_duplicated": true
+  },
+  "row_snapshot_sha256": "888a3b410708262945a46aebc6f1596d94e9b4c0e6d0b5375d32017fa6a936cc"
+}

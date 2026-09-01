@@ -12,6 +12,7 @@ const EDITORIAL_DIR = path.join(ROOT, 'editorial');
 const SCHEMA_PATH = path.join(ROOT, 'schemas', 'relationship-review.schema.json');
 
 const ASSERTIONS_PATH = path.join(DATA_DIR, 'assertions.jsonl');
+const LEGACY_NT_ASSERTION_MAX = 355;
 const SOURCES_PATH = path.join(DATA_DIR, 'sources.jsonl');
 const REVIEW_PATH = path.join(EDITORIAL_DIR, 'relationship-review.jsonl');
 const OUTPUT_PATH = ASSERTIONS_PATH;
@@ -66,6 +67,21 @@ function stableStringify(value) {
 
 function evidenceMatches(a, b) {
   return stableStringify(a) === stableStringify(b);
+}
+
+function legacyNtAssertions(assertions) {
+  return assertions.filter((assertion) => {
+    const match = /^asrt-(\d+)$/.exec(assertion.assertion_id || '');
+    return Boolean(match) && Number(match[1]) <= LEGACY_NT_ASSERTION_MAX;
+  });
+}
+
+function mergeEvidence(decisionEvidence, currentEvidence) {
+  const merged = decisionEvidence.map((ref) => ({ ...ref }));
+  for (const ref of currentEvidence || []) {
+    if (!merged.some((existing) => evidenceMatches(existing, ref))) merged.push({ ...ref });
+  }
+  return merged;
 }
 
 function parseArgsDecisionRefs(rawRefs, sourceSet) {
@@ -152,7 +168,7 @@ function validateDecision(name, decision, sourceSet) {
     return { ...d, decision_evidence_refs: refs };
   }
 
-  if (!d.decision_relation_type || !['kinship', 'teacher_student', 'collegial', 'commission', 'host', 'political', 'legal', 'hostile', 'succession', 'alliance', 'military', 'prophetic_confrontation', 'covenant'].includes(d.decision_relation_type)) {
+  if (!d.decision_relation_type || !['kinship', 'teacher_student', 'collegial', 'commission', 'host', 'political', 'legal', 'hostile', 'succession', 'alliance', 'military', 'prophetic_confrontation', 'covenant', 'friendship'].includes(d.decision_relation_type)) {
     throw new Error(`${name}: accepted decision_relation_type invalid`);
   }
   if (!d.decision_direction || !['directed', 'undirected'].includes(d.decision_direction)) {
@@ -185,6 +201,7 @@ function applyRelationshipReviews({ check, dryRun }) {
   if (!fs.existsSync(SCHEMA_PATH)) throw new Error(`Missing schema: ${SCHEMA_PATH}`);
 
   const assertions = readJsonl(ASSERTIONS_PATH);
+  const reviewableAssertions = legacyNtAssertions(assertions);
   const sources = readJsonl(SOURCES_PATH);
   const reviews = readJsonl(REVIEW_PATH);
   const sourceSet = new Set(sources.map((s) => s.source_id));
@@ -194,8 +211,8 @@ function applyRelationshipReviews({ check, dryRun }) {
   addFormats(ajv);
   const validate = ajv.compile(schema);
 
-  if (reviews.length !== assertions.length) {
-    throw new Error(`review row count ${reviews.length} does not match assertions count ${assertions.length}`);
+  if (reviews.length !== reviewableAssertions.length) {
+    throw new Error(`review row count ${reviews.length} does not match legacy NT assertion count ${reviewableAssertions.length}`);
   }
 
   const reviewMap = buildMap(reviews);
@@ -257,7 +274,7 @@ function applyRelationshipReviews({ check, dryRun }) {
     }
 
     const current = assertion;
-    const updatedEvidence = finalDecision.decision_evidence_refs.map((ref) => ({ ...ref }));
+    const updatedEvidence = mergeEvidence(finalDecision.decision_evidence_refs, assertion.evidence);
     const { relation_subtype: _previousSubtype, ...currentWithoutSubtype } = current;
     const next = {
       ...currentWithoutSubtype,
@@ -281,8 +298,8 @@ function applyRelationshipReviews({ check, dryRun }) {
     }
   }
 
-  if (seenAssertionIds.size !== assertions.length) {
-    const missingAssertionIds = assertions
+  if (seenAssertionIds.size !== reviewableAssertions.length) {
+    const missingAssertionIds = reviewableAssertions
       .map((assertion) => assertion.assertion_id)
       .filter((id) => !seenAssertionIds.has(id));
     throw new Error(`Missing review rows for assertions: ${missingAssertionIds.join(',')}`);

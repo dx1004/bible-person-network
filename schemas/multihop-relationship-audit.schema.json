@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Multihop relationship audit report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "generated_at",
+    "audit_version",
+    "manifest_created_at",
+    "input_snapshot",
+    "graph_scope",
+    "path_counts",
+    "kinship_labels",
+    "invariant",
+    "output",
+    "validate"
+  ],
+  "properties": {
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "audit_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "manifest_created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "input_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_created_at",
+        "people_total",
+        "assertions_total",
+        "assertions_active",
+        "people_snapshot_sha256",
+        "assertions_snapshot_sha256",
+        "assertions_active_snapshot_sha256",
+        "generated_from"
+      ],
+      "properties": {
+        "manifest_created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "people_total": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "assertions_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assertions_active": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "people_snapshot_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "assertions_snapshot_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "assertions_active_snapshot_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "generated_from": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "graph_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "active_people_in_graph",
+        "active_assertions_in_graph"
+      ],
+      "properties": {
+        "active_people_in_graph": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_assertions_in_graph": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "path_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "distance_2",
+        "distance_3",
+        "distance_4",
+        "connection_paths",
+        "kinship_explanation_paths",
+        "total_pairs",
+        "unique_pair_count"
+      ],
+      "properties": {
+        "distance_2": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "distance_3": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "distance_4": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "connection_paths": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kinship_explanation_paths": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_pairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unique_pair_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "kinship_labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "labelled_pairs",
+        "unlabelled_pairs"
+      ],
+      "properties": {
+        "labelled_pairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unlabelled_pairs": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "invariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uses_active_assertions_only",
+        "does_not_modify_assertions",
+        "does_not_add_direct_edges",
+        "excludes_inferred_composite_shortcuts"
+      ],
+      "properties": {
+        "uses_active_assertions_only": {
+          "type": "boolean"
+        },
+        "does_not_modify_assertions": {
+          "type": "boolean"
+        },
+        "does_not_add_direct_edges": {
+          "type": "boolean"
+        },
+        "excludes_inferred_composite_shortcuts": {
+          "type": "boolean"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "index_written",
+        "index_rows_expected",
+        "index_path",
+        "max_index_rows",
+        "row_snapshot_sha256",
+        "report_snapshot_sha256"
+      ],
+      "properties": {
+        "index_written": {
+          "type": "boolean"
+        },
+        "index_rows_expected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "index_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_index_rows": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "row_snapshot_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "report_snapshot_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "validate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "no_self_pairs",
+        "no_unapproved_direct_pair_paths",
+        "direct_pair_paths_limited_to_kinship_explanations",
+        "shortest_path_only",
+        "path_lengths",
+        "deterministic_sort",
+        "input_file_hashes"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["apply", "check"]
+        },
+        "no_self_pairs": {
+          "type": "boolean"
+        },
+        "no_unapproved_direct_pair_paths": {
+          "type": "boolean"
+        },
+        "direct_pair_paths_limited_to_kinship_explanations": {
+          "type": "boolean"
+        },
+        "shortest_path_only": {
+          "type": "boolean"
+        },
+        "path_lengths": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 4
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "deterministic_sort": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "input_file_hashes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      }
+    }
+  }
+}

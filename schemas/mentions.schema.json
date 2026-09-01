@@ -5,7 +5,7 @@
   "additionalProperties": false,
   "required": ["mention_id", "person_id", "source_id", "passage", "location", "status", "created_at", "updated_at"],
   "properties": {
-    "mention_id": { "type": "string", "pattern": "^mnt-\\d{4}$" },
+    "mention_id": { "type": "string", "pattern": "^mnt-\\d{4,6}$" },
     "person_id": {
       "type": "string",
       "anyOf": [
@@ -16,7 +16,8 @@
     "source_id": { "type": "string", "pattern": "^source:\\d{4}$" },
     "passage": { "type": "string", "pattern": "^[1-3]?[A-Z]{2,4}\\s+\\d{1,3}:\\d{1,3}(-\\d{1,3})?$" },
     "location": { "type": "string", "minLength": 1 },
-    "status": { "type": "string", "enum": ["accepted", "pending", "excluded"] },
+  "status": { "type": "string", "enum": ["accepted", "pending", "excluded"] },
+  "mention_sense": { "type": "string", "enum": ["person", "people_group", "tribe", "nation", "place", "ambiguous"] },
     "testament": { "type": "string", "enum": ["nt", "ot"] },
     "notes": { "type": "string" },
     "editorial_rationale": { "type": "string" },

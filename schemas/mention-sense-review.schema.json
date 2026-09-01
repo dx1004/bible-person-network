@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mention sense review row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_id", "mention_id", "person_id", "person_label", "passage", "mention_snapshot_sha256", "round_a", "round_b", "final_decision"],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^msr-\\d{6}$" },
+    "mention_id": { "type": "string", "pattern": "^mnt-\\d{4,6}$" },
+    "person_id": { "type": "string", "pattern": "^person-\\d{6}$" },
+    "person_label": { "type": "string", "minLength": 1 },
+    "passage": { "type": "string", "minLength": 1 },
+    "mention_snapshot_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "round_a": { "$ref": "#/$defs/decision" },
+    "round_b": { "$ref": "#/$defs/decision" },
+    "final_decision": { "$ref": "#/$defs/decision" }
+  },
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "mention_sense", "mode", "reason_code", "note", "reviewed_at"],
+      "properties": {
+        "status": { "enum": ["pending", "accepted"] },
+        "mention_sense": { "type": ["string", "null"], "enum": [null, "person", "people_group", "tribe", "nation", "place", "ambiguous"] },
+        "mode": { "enum": ["editorial", "critic", "boardroom"] },
+        "reason_code": { "type": "string", "minLength": 1 },
+        "note": { "type": "string", "minLength": 1 },
+        "reviewed_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    }
+  }
+}

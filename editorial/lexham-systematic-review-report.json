@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-08-30T00:30:00Z",
+  "status": "completed",
+  "source_id": "source:0008",
+  "edition": "John D. Barry et al., eds., Lexham Bible Dictionary, Lexham Press, 2016",
+  "resource_id": "LLS:LBD",
+  "locator_audit": {
+    "unique_latinized_names": 1510,
+    "candidate_coverage": 2720,
+    "direct_headword_hits": 600,
+    "no_direct_headword": 910,
+    "environment_errors": 0,
+    "method": "official_logosres_deep_link_and_history_metadata_reconciliation"
+  },
+  "systematic_review": {
+    "covered_candidates": 694,
+    "round1_rows": 694,
+    "round2_rows": 694,
+    "final_rows": 694,
+    "final_counts": {
+      "accepted": 564,
+      "rejected": 56,
+      "pending_reviewed_inconclusive": 74
+    },
+    "retained_headword_relationship_evidence": 117,
+    "basis": "headword_only"
+  },
+  "copyright_boundary": {
+    "source_text_stored": false,
+    "screenshots_stored": false,
+    "publication_mode": "locator_and_original_summary_only"
+  }
+}

@@ -1,0 +1,464 @@
+{
+  "generated_at": "2026-08-26T00:00:00Z",
+  "manifest_created_at": "2026-08-26T00:00:00Z",
+  "dataset": "direct-relationship-discovery",
+  "source_id": "source:0003",
+  "source_snapshot": {
+    "manifest_created_at": "2026-08-26T00:00:00Z",
+    "input_snapshot": {
+      "people_snapshot_sha256": "4f4657524ac373e0ca2b48fc16ebf2b4474f4db2300b9968297c1dfbccf4c945",
+      "names_snapshot_sha256": "37b501be1a7e9b5d4730ad36aa64e4dfda8f3aa13233eb0186f64a9419fc53d9",
+      "mentions_snapshot_sha256": "23b30146f01cc39147d4973592ab5e551c6a4929bc0036643f0623a72674caf7",
+      "assertions_snapshot_sha256": "23a0886abfe086581eb9719c1a676cd5d7d425a17836d0c15ce1077e34b96899",
+      "source_id": "source:0003",
+      "source_text_license": "public_domain",
+      "scope": "bible_chinese_auxiliary",
+      "files": [
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/02-GENcmn-cu89s.usfm",
+          "sha256": "f1a293082587059d2d9565b6719c90c59f44e52e7550063b82e8d992b954b7a0",
+          "bytes": 197901
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/03-EXOcmn-cu89s.usfm",
+          "sha256": "0968acf2391a29e934f89fbb3ef964ef50ffb9bcdca2f009b5d6930c248188cb",
+          "bytes": 147687
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/04-LEVcmn-cu89s.usfm",
+          "sha256": "db1c56cc49b5f8f0c2b4491c8837f65f86516454c80bed9af3184e5e7f19aaf9",
+          "bytes": 100518
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/05-NUMcmn-cu89s.usfm",
+          "sha256": "642f348f0ec3946ddb8ff75fde9b03c365012487d391dc6c7b19e5348630f487",
+          "bytes": 159229
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/06-DEUcmn-cu89s.usfm",
+          "sha256": "b71cd0b303203513c8d466d82961feaba32063af5bb34a081bbc9765c39d57b5",
+          "bytes": 128448
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/07-JOScmn-cu89s.usfm",
+          "sha256": "a8fe7a444d472c51150041d2b150c161416d47833c13fbb7a426f322ea50abad",
+          "bytes": 101440
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/08-JDGcmn-cu89s.usfm",
+          "sha256": "7d28191db8990989c91572b899dee434aa4c544abc87bed7f66a01a642e71a6c",
+          "bytes": 94867
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/09-RUTcmn-cu89s.usfm",
+          "sha256": "6fcfbb3f739573d2951f505d221860b2b833f43872581fcc9a0484f73fbfe5a7",
+          "bytes": 12899
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/10-1SAcmn-cu89s.usfm",
+          "sha256": "e1714028720ee8fae3d084924d33ce7ea50ea3c2f77a9f855314977931c00018",
+          "bytes": 124337
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/11-2SAcmn-cu89s.usfm",
+          "sha256": "505ae975683a3913f41eb0095dbd6e6363cec5e0678b5d6fc7d26ad941ebf319",
+          "bytes": 106056
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/12-1KIcmn-cu89s.usfm",
+          "sha256": "0da984024633d0b815c0a4a88a43d84af36ca2377a2cf1b630d42ea0a98f0f43",
+          "bytes": 117362
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/13-2KIcmn-cu89s.usfm",
+          "sha256": "d0462deb843c44898b169a4229e3e36d40600ab5d580236cd75131777269ab02",
+          "bytes": 115677
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/14-1CHcmn-cu89s.usfm",
+          "sha256": "32849f5a7d6b15b61972db50230b614ca85bc1d1ec41f36534bb35751ca37bad",
+          "bytes": 130936
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/15-2CHcmn-cu89s.usfm",
+          "sha256": "c9d964afc87999a53780405ebe791502cbb4407038ae374a210cf83729d3318c",
+          "bytes": 129072
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/16-EZRcmn-cu89s.usfm",
+          "sha256": "6b7ea0240d45e9669f9440c0ab81f013dbd50f7b1e333aafe20f4e44a280bb7a",
+          "bytes": 39566
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/17-NEHcmn-cu89s.usfm",
+          "sha256": "5063b598f68569c4aef0ce495dcfe47e75113922a38d219d38186749620b3d18",
+          "bytes": 57385
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/18-ESTcmn-cu89s.usfm",
+          "sha256": "65e0e7b4fb2dc68b3f6beda341b4cb48d28d2c4c0fcc7c7979f4c05fc9077e58",
+          "bytes": 25197
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/19-JOBcmn-cu89s.usfm",
+          "sha256": "907f2d15d3d03e8f4784cb4ebcb008165092416b1f0cb51175089a4a30d69860",
+          "bytes": 98208
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/20-PSAcmn-cu89s.usfm",
+          "sha256": "6b53bdd6357091a07e9c825f84c7e961bfbdf288954205a6e2a23337087a834e",
+          "bytes": 260909
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/21-PROcmn-cu89s.usfm",
+          "sha256": "9f7a8906aecdb263ecbf47b5e6be8eafbe4a319f6ba2de994a14d95503bdae26",
+          "bytes": 80853
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/22-ECCcmn-cu89s.usfm",
+          "sha256": "3adb1dc4513fc466951914cbfdd607e51442317a6492e35d9f9f6b27208acd2d",
+          "bytes": 25399
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/23-SNGcmn-cu89s.usfm",
+          "sha256": "6381964603e9890b3db9abfbbf89592a70079ded8c978e55d89b3e69fca8ac50",
+          "bytes": 17067
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/24-ISAcmn-cu89s.usfm",
+          "sha256": "4b428f149c640d8b28885d2457d703dc013e77328c3b9c9f189df69a5a80c866",
+          "bytes": 202550
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/25-JERcmn-cu89s.usfm",
+          "sha256": "3aea28d99764c85410f178587b2526efc303d6bd948871dd2e8b18fc70396d5a",
+          "bytes": 222174
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/26-LAMcmn-cu89s.usfm",
+          "sha256": "ee06a50522d86498578639b43d1f34facb70f38d79f17e71f1b4179633abd1d2",
+          "bytes": 19419
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/27-EZKcmn-cu89s.usfm",
+          "sha256": "598e87061febdc677f0fe13a862b664d647978289b8f26f0347af0b7d339573d",
+          "bytes": 175369
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/28-DANcmn-cu89s.usfm",
+          "sha256": "26c276f1c16c4adbabaf22fd1cacc7f318be41c3fd110b74cc636ff8daa4e5fc",
+          "bytes": 52776
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/29-HOScmn-cu89s.usfm",
+          "sha256": "029c4eee40884573fa469ba719bbedf596357c4e92d95a3ab6fd2c6749f5fa5a",
+          "bytes": 31430
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/30-JOLcmn-cu89s.usfm",
+          "sha256": "bb7c3e7e2b3e65daf15d3f47fe3366a8bb32957f35d86020deb6b5f8d11e0497",
+          "bytes": 10910
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/31-AMOcmn-cu89s.usfm",
+          "sha256": "1751d132a8ab63287be574922ca333d51be82983d9ac34ba022e0b4c3b44b049",
+          "bytes": 22817
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/32-OBAcmn-cu89s.usfm",
+          "sha256": "58fa0975bc25077e3df9562b88c9be10bd617e0ceb9e76029a537601fcee5661",
+          "bytes": 3797
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/33-JONcmn-cu89s.usfm",
+          "sha256": "9383213ef35d052e4cbc04b9bb880292091df38be27bddb38bf6bd5fab83f334",
+          "bytes": 6325
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/34-MICcmn-cu89s.usfm",
+          "sha256": "13d3bd17cf3d8d5ade18b1f3b2ad5a8cc9955df91c7c4ed866fc08054137e313",
+          "bytes": 18152
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/35-NAMcmn-cu89s.usfm",
+          "sha256": "de1388b8100dcb88e86d63d4ff61951400db6237a6814194c921d76b4db35fab",
+          "bytes": 7170
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/36-HABcmn-cu89s.usfm",
+          "sha256": "6a2f688c4f4fc207d2a552f1b33f12ab6b02d8cacbf908ef6bb0d15c2a415bd5",
+          "bytes": 8156
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/37-ZEPcmn-cu89s.usfm",
+          "sha256": "281a500e9f2befe456f8e403fb779e60d15345acbd8f3acc07fc697851b50358",
+          "bytes": 9016
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/38-HAGcmn-cu89s.usfm",
+          "sha256": "c8b23777d46467de1881cbd95db4ff896ada02eaea087b26c78acbddd941a8d3",
+          "bytes": 5672
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/39-ZECcmn-cu89s.usfm",
+          "sha256": "641e2647195f2e0d8b363a84eb6e6462f7c2af0f191081c181cce652b77ccb89",
+          "bytes": 30841
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/40-MALcmn-cu89s.usfm",
+          "sha256": "f48c730ce821190868111ce09974acf4ef611bc5ee8916853e89a5370b2592f6",
+          "bytes": 9413
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/70-MATcmn-cu89s.usfm",
+          "sha256": "36dfbde40e2d3eea994b564d765a8344d7d0831f6f95c39aa39b0fc3735c8e38",
+          "bytes": 124914
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/71-MRKcmn-cu89s.usfm",
+          "sha256": "e7a42ed7a7f9eb9f8d454e390b2fc10af67f2196036260b3142d53aea5ed67e0",
+          "bytes": 79273
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/72-LUKcmn-cu89s.usfm",
+          "sha256": "29c31cd729e9a1451cefda2695e6743ec722de5198b70c4505e48c5b884f1306",
+          "bytes": 135209
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/73-JHNcmn-cu89s.usfm",
+          "sha256": "185606287b3e513f7abbaac3a36981d722c2b8cd117c261d978eb6f23aacc369",
+          "bytes": 100659
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/74-ACTcmn-cu89s.usfm",
+          "sha256": "c4d6154bf8bcf44bc7d2fefb4164210a45bde3c9bbc3b0dbcb66904cad09673b",
+          "bytes": 126018
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/75-ROMcmn-cu89s.usfm",
+          "sha256": "5abe27dafeab376a222f8b847be7cc4b97519d018c47346274ecda1aac95ba35",
+          "bytes": 50541
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/76-1COcmn-cu89s.usfm",
+          "sha256": "3f0ec03e60e7974b7079420b3a4554713d2e3eb63eb3610adef79af3a8a98a46",
+          "bytes": 48917
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/77-2COcmn-cu89s.usfm",
+          "sha256": "6da1856535b608c731696f0af6bb8701f202ebcc44f617998a2e67ef2493202a",
+          "bytes": 31799
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/78-GALcmn-cu89s.usfm",
+          "sha256": "3590cb825a93e62dc0119fc05dea851b249672c351e30e9dfa57c6e038d88122",
+          "bytes": 17282
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/79-EPHcmn-cu89s.usfm",
+          "sha256": "b75216938f7c63f9e75ed53663ccd81650160e1cbec7846c308e82c8e89c8279",
+          "bytes": 16191
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/80-PHPcmn-cu89s.usfm",
+          "sha256": "ce8f59b04f74ebaf46300491fdf67317f0ec23caab58bf9fc19e7a6caa7838d9",
+          "bytes": 11911
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/81-COLcmn-cu89s.usfm",
+          "sha256": "91a489cf2e5fa0f5d766e0fccb2ae0ab59fcc2ccf800ab1215f2c19c142b6a49",
+          "bytes": 11618
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/82-1THcmn-cu89s.usfm",
+          "sha256": "fd9fadfc1c93d7f69d015270656e11a7f6e5fd9f76481b75d3f75d15f1facbb4",
+          "bytes": 10462
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/83-2THcmn-cu89s.usfm",
+          "sha256": "80dcc678a0bb6b11c3000b40f51b398454d940a22b3071a7d2be840d58a8819a",
+          "bytes": 5713
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/84-1TIcmn-cu89s.usfm",
+          "sha256": "f4eb40242ec28802b168874434805bfe5bc363724a61e36378cca54cb84ecf50",
+          "bytes": 12625
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/85-2TIcmn-cu89s.usfm",
+          "sha256": "5fc53b4969a10c9eb5fd3e29118ff864f0c1256b84753580a440af7f6c1a2f58",
+          "bytes": 9483
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/86-TITcmn-cu89s.usfm",
+          "sha256": "96f95a199e5c094a8cc5e0da7b93763ccf35c754babb4f124d6da54e5f3c9918",
+          "bytes": 5519
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/87-PHMcmn-cu89s.usfm",
+          "sha256": "7ab93bb0caf551735f593dae70e432cdf1fc3262d09a2cf4724e58f3d268750b",
+          "bytes": 2785
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/88-HEBcmn-cu89s.usfm",
+          "sha256": "5bea430132d4419943702dd443d2808d5e22c5a90e37800c13093c1958888b4f",
+          "bytes": 36574
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/89-JAScmn-cu89s.usfm",
+          "sha256": "62e9b4a61a4ea7da3d439c07246058f752517867a6b749fe5644952b0018facf",
+          "bytes": 12276
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/90-1PEcmn-cu89s.usfm",
+          "sha256": "909374388e2a32988397b7dce851a84d31b91c665a6e56cb2239c7515cabcff1",
+          "bytes": 13701
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/91-2PEcmn-cu89s.usfm",
+          "sha256": "550a4761a389f998f16c072cc1af69bee8bf355e3846660738e1d9b6f4fc0064",
+          "bytes": 8120
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/92-1JNcmn-cu89s.usfm",
+          "sha256": "7d4aa6237bf4b558fba3ec0087eb877b076d56fd768c511621a2c3c15fcd58de",
+          "bytes": 13231
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/93-2JNcmn-cu89s.usfm",
+          "sha256": "9650078f710f10fed51d554362b0ba4326e9bd57a25337e99b6ccf1cdece5fa0",
+          "bytes": 1731
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/94-3JNcmn-cu89s.usfm",
+          "sha256": "3cc8a68b79d5b1dcd9c3f5185dcc074d5d52b20e8590df0d2e70dabb7897ea56",
+          "bytes": 1853
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/95-JUDcmn-cu89s.usfm",
+          "sha256": "07c0c86bfac6ed175baa038a324db56eb7bc923e3a49f48e1d751f8bdc227cff",
+          "bytes": 3693
+        },
+        {
+          "source_id": "source:0003",
+          "source_path": ".sources/cmn-cu89s-usfm/96-REVcmn-cu89s.usfm",
+          "sha256": "fc505c7c1ef5bc131f05b0410061ba01208c723fd2e9414629fed5dd3cbcc2cf",
+          "bytes": 54501
+        }
+      ]
+    }
+  },
+  "snapshot_counts": {
+    "direct_candidate_rows": 6588,
+    "direct_relation_rows": 10872,
+    "path_contexts_total": 12830
+  },
+  "relation_type_counts": {
+    "kinship": 6168,
+    "teacher_student": 96,
+    "collegial": 45,
+    "commission": 358,
+    "host": 69,
+    "political": 1451,
+    "legal": 139,
+    "hostile": 489,
+    "succession": 349,
+    "alliance": 22,
+    "military": 300,
+    "prophetic_confrontation": 398,
+    "covenant": 145
+  },
+  "coverage": {
+    "cuv_passages": 12711,
+    "passages_with_pn_tokens": 12711,
+    "passages_with_accepted_persons": 3649,
+    "passages_with_hints": 2724,
+    "eligible_passages": 2724,
+    "candidate_covered_passages": 2724,
+    "uncovered_eligible_passages": 0,
+    "mention_gate_blocked": 0,
+    "mention_gate_recovered": 588,
+    "no_name_match": 1970,
+    "total_hypotheses": 4010
+  },
+  "invariant": {
+    "does_not_modify_assertions": true,
+    "does_not_publish_new_assertions": true,
+    "does_not_create_direct_edges": true,
+    "path_views_do_not_modify_graph": true,
+    "eligible_passage_coverage_complete": true
+  },
+  "output": {
+    "output_path": "editorial/direct-relationship-discovery.jsonl",
+    "row_snapshot_sha256": "0e981b46a34fef292d7594d4c5a5930845e58f1a1fc22ce2ada54076bb599f03"
+  },
+  "notes": [
+    "路径条目（path_contexts）用于复核查看 A→B→C 结构，不做直接关系发布。",
+    "候选边仅来自同一经文共现 + 关系触发词，不与现有 assertions 相加，不能直接入库。"
+  ]
+}

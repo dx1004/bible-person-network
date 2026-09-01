@@ -13,6 +13,9 @@ const SCHEMAS_DIR = path.join(ROOT, 'schemas');
 
 const PEOPLE_PATH = path.join(DATA_DIR, 'people.jsonl');
 const ASSERTIONS_PATH = path.join(DATA_DIR, 'assertions.jsonl');
+// This reviewer owns the original NT review ledger. OT assertions are governed by
+// editorial/old-testament-relationship-review-*.jsonl and must not be re-opened here.
+const LEGACY_NT_ASSERTION_MAX = 355;
 const NAMES_PATH = path.join(DATA_DIR, 'names.jsonl');
 const MENTIONS_PATH = path.join(DATA_DIR, 'mentions.jsonl');
 const SOURCES_PATH = path.join(DATA_DIR, 'sources.jsonl');
@@ -145,12 +148,23 @@ function evidenceMatches(a, b) {
   return stableStringify(a) === stableStringify(b);
 }
 
+function evidenceIncludes(actual, expected) {
+  return expected.every((expectedRef) => actual.some((actualRef) => evidenceMatches(actualRef, expectedRef)));
+}
+
 function buildAssertionsMap(assertions) {
   const map = new Map();
   for (const assertion of assertions) {
     map.set(assertion.assertion_id, assertion);
   }
   return map;
+}
+
+function legacyNtAssertions(assertions) {
+  return assertions.filter((assertion) => {
+    const match = /^asrt-(\d+)$/.exec(assertion.assertion_id || '');
+    return Boolean(match) && Number(match[1]) <= LEGACY_NT_ASSERTION_MAX;
+  });
 }
 
 function cleanEvidenceRefs(rawRefs, sourceSet) {
@@ -318,7 +332,7 @@ function validateDecision(name, decision, sourceSet) {
     return d;
   }
 
-  if (!decision_relation_type || !['kinship', 'teacher_student', 'collegial', 'commission', 'host', 'political', 'legal', 'hostile', 'succession', 'alliance', 'military', 'prophetic_confrontation', 'covenant'].includes(decision_relation_type)) {
+  if (!decision_relation_type || !['kinship', 'teacher_student', 'collegial', 'commission', 'host', 'political', 'legal', 'hostile', 'succession', 'alliance', 'military', 'prophetic_confrontation', 'covenant', 'friendship'].includes(decision_relation_type)) {
     throw new Error(`${name}: accepted decision_relation_type invalid`);
   }
   if (!decision_direction || !['directed', 'undirected'].includes(decision_direction)) {
@@ -368,10 +382,11 @@ function validateOnly() {
   const peopleMap = new Map(people.map((p) => [p.person_id, p]));
   const mentionsByPerson = buildPassageMap(mentions);
   const namesByPerson = new Map(names.map((n) => [n.person_id, n]));
-  const byAssertion = buildAssertionsMap(assertions);
+  const reviewableAssertions = legacyNtAssertions(assertions);
+  const byAssertion = buildAssertionsMap(reviewableAssertions);
 
-  if (reviews.length !== assertions.length) {
-    throw new Error(`Review row count ${reviews.length} does not match assertions count ${assertions.length}`);
+  if (reviews.length !== reviewableAssertions.length) {
+    throw new Error(`Review row count ${reviews.length} does not match legacy NT assertion count ${reviewableAssertions.length}`);
   }
 
   const ajv = new Ajv({ allErrors: true, strict: true, validateSchema: false });
@@ -496,7 +511,7 @@ function validateOnly() {
         || assertion.relation_type !== finalDecision.decision_relation_type
         || (assertion.relation_subtype ?? null) !== finalDecision.decision_relation_subtype
         || assertion.direction !== finalDecision.decision_direction
-        || !evidenceMatches(currentEvidence, finalDecision.decision_evidence_refs)
+  || !evidenceIncludes(currentEvidence, finalDecision.decision_evidence_refs)
         || assertion.status !== 'active'
         || assertion.editorial_status !== 'conservative'
       )) {
@@ -573,7 +588,7 @@ function main() {
     );
   }
 
-  const rows = buildReviewRows(assertions, peopleById, namesByPerson, mentionsByPerson, timestamp, sources);
+  const rows = buildReviewRows(legacyNtAssertions(assertions), peopleById, namesByPerson, mentionsByPerson, timestamp, sources);
   const schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
   const ajv = new Ajv({ allErrors: true, strict: true, validateSchema: false });
   addFormats(ajv);

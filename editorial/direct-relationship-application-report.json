@@ -1,0 +1,18 @@
+{
+  "mode": "apply",
+  "total_review_rows": 6588,
+  "accepted_review_rows": 1,
+  "skipped_due_to_exact_match": 0,
+  "would_merge_existing": 0,
+  "would_create": 1,
+  "pending_count": 1,
+  "final_active_assertions": 10813,
+  "total_assertions": 10867,
+  "accepted_statuses": {
+    "textually_explicit": 1,
+    "reviewed_uncertain_hostile": 0
+  },
+  "created_ids": [
+    "asrt-10867"
+  ]
+}

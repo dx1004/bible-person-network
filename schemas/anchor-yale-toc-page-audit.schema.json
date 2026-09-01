@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Anchor Yale official person TOC page audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_id", "article_title", "locator", "volume", "page_label", "source_text_stored", "snippets_stored", "reviewed_at"],
+  "properties": {
+    "source_id": {"const": "source:0009"},
+    "article_title": {"type": "string", "pattern": "\\(Person\\)$"},
+    "locator": {"type": "string", "format": "uri"},
+    "volume": {"type": "integer", "minimum": 1, "maximum": 6},
+    "page_label": {"type": "string", "minLength": 1},
+    "source_text_stored": {"const": false},
+    "snippets_stored": {"const": false},
+    "reviewed_at": {"type": "string", "format": "date-time"}
+  }
+}

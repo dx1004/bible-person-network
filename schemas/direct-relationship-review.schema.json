@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Direct relationship discovery review ledger row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_id",
+    "candidate_relation_id",
+    "subject_person_id",
+    "object_person_id",
+    "subject_label",
+    "object_label",
+    "candidate_snapshot_sha256",
+    "existing_edge_status",
+    "evidence_refs",
+    "triage",
+    "proposed_assertion",
+    "round_a",
+    "round_b",
+    "final_decision"
+  ],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^drdr-\\d{6}$" },
+    "candidate_relation_id": { "type": "string", "pattern": "^drd-\\d{6}$" },
+    "subject_person_id": { "type": "string", "pattern": "^person-\\d{6}$" },
+    "object_person_id": { "type": "string", "pattern": "^person-\\d{6}$" },
+    "subject_label": { "type": "string", "minLength": 1 },
+    "object_label": { "type": "string", "minLength": 1 },
+    "candidate_snapshot_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "existing_edge_status": {
+      "enum": [
+        "none",
+        "active_existing",
+        "inactive_only",
+        "superseded_only",
+        "mixed_inactive_states"
+      ]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "passage",
+          "excerpt_hash",
+          "evidence_level",
+          "matched_relation_hints"
+        ],
+        "properties": {
+          "passage": { "type": "string", "minLength": 1 },
+          "excerpt_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "evidence_level": { "enum": ["ot_text", "nt_text"] },
+          "matched_relation_hints": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "triage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strong_cue_types",
+        "weak_only_trigger",
+        "passage_count",
+        "path_context_count",
+        "priority"
+      ],
+      "properties": {
+        "strong_cue_types": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "weak_only_trigger": { "type": "boolean" },
+        "passage_count": { "type": "integer", "minimum": 1 },
+        "path_context_count": { "type": "integer", "minimum": 0 },
+        "priority": { "enum": ["covered", "closed", "high", "normal", "low"] }
+      }
+    },
+    "proposed_assertion": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "subject_person_id",
+            "object_person_id",
+            "relation_type",
+            "relation_subtype",
+            "direction",
+            "evidence"
+          ],
+          "properties": {
+            "subject_person_id": {
+              "type": "string",
+              "pattern": "^person-\\d{6}$"
+            },
+            "object_person_id": {
+              "type": "string",
+              "pattern": "^person-\\d{6}$"
+            },
+            "relation_type": {
+              "enum": [
+                "kinship",
+                "teacher_student",
+                "collegial",
+                "commission",
+                "host",
+                "political",
+                "legal",
+                "hostile",
+                "succession",
+                "alliance",
+                "military",
+                "prophetic_confrontation",
+                "covenant",
+                "friendship"
+              ]
+            },
+            "relation_subtype": {
+              "type": ["string", "null"],
+              "enum": [
+                "parent",
+                "child",
+                "sibling",
+            "spouse",
+            "partner",
+            "concubine_partner",
+                "grandparent",
+                "grandchild",
+                "uncle_aunt",
+                "nephew_niece",
+                "cousin",
+                "parent_in_law",
+                "child_in_law",
+                "sibling_in_law",
+                "step_parent",
+                "step_child",
+                "other_specified",
+                null
+              ]
+            },
+            "direction": { "enum": ["directed", "undirected"] },
+            "evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "source_id",
+                  "passage",
+                  "evidence_level",
+                  "note",
+                  "certainty"
+                ],
+                "properties": {
+                  "source_id": { "const": "source:0003" },
+                  "passage": { "type": "string", "minLength": 1 },
+                  "evidence_level": { "enum": ["ot_text", "nt_text"] },
+                  "note": { "type": "string", "minLength": 1 },
+                  "certainty": { "type": "number", "minimum": 0, "maximum": 1 }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "round_a": { "$ref": "#/$defs/decision" },
+    "round_b": { "$ref": "#/$defs/decision" },
+    "final_decision": { "$ref": "#/$defs/decision" }
+  },
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "mode", "reason_code", "note", "reviewed_at"],
+      "properties": {
+        "status": {
+          "enum": [
+            "covered_existing",
+            "covered_composite_inference",
+            "textually_explicit_parent",
+            "textually_explicit_sibling",
+            "textually_explicit_host",
+            "textually_explicit_commission",
+            "textually_explicit_hostile",
+            "textually_explicit_covenant",
+            "textually_explicit_friendship",
+            "textually_explicit_alliance",
+            "textually_explicit_prophetic_confrontation",
+            "textually_explicit_teacher_student",
+            "textually_explicit_collegial",
+            "textually_explicit_political",
+            "textually_explicit_legal",
+            "textually_explicit_military",
+            "textually_explicit_succession",
+            "reviewed_uncertain_hostile",
+            "needs_textual_review",
+            "rejected_weak_trigger",
+            "rejected_collective_reference",
+            "rejected_non_pair_covenant",
+            "rejected_non_pair_commission",
+            "rejected_non_pair_prophetic",
+            "rejected_pair_not_stated",
+            "rejected_ambiguous_identity",
+            "rejected_prior_superseded"
+          ]
+        },
+        "mode": { "enum": ["editorial", "critic", "boardroom"] },
+        "reason_code": { "type": "string", "minLength": 1 },
+        "note": { "type": "string", "minLength": 1 },
+        "reviewed_at": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

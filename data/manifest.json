@@ -1,7 +1,7 @@
 {
   "dataset": "bible-person-network",
-  "version": "0.1.0",
-  "source_revision": "v1-editorial-2026-08-27",
+  "version": "0.2.0",
+  "source_revision": "bible-editorial-2026-08-30-isbe",
   "created_at": "2026-08-26T00:00:00Z",
   "curator": "nt-people data pipeline",
   "source_revisions": [
@@ -36,7 +36,8 @@
       "license": "CC BY 4.0",
       "version_sha": "efe428a0047bf7b9c3ce2624f60c252c6e435945",
       "scope": "ot",
-      "status": "pending"
+      "systematic_review_status": "completed",
+      "status": "active"
     },
     {
       "source_id": "source:0006",
@@ -45,8 +46,8 @@
       "url": "https://www.gutenberg.org/ebooks/2848",
       "scope": "history",
       "access_status": "locked_public_download",
-      "systematic_review_status": "not_started",
-      "status": "pending"
+      "systematic_review_status": "completed",
+      "status": "active"
     },
     {
       "source_id": "source:0007",
@@ -55,8 +56,8 @@
       "url": "https://archive.org/details/worksphilojudaeu01philuoft",
       "scope": "history",
       "access_status": "locked_public_download",
-      "systematic_review_status": "not_started",
-      "status": "pending"
+      "systematic_review_status": "completed",
+      "status": "active"
     },
     {
       "source_id": "source:0008",
@@ -65,8 +66,8 @@
       "url": "https://www.logos.com/product/36564/lexham-bible-dictionary",
       "scope": "bible",
       "access_status": "member_access_verified",
-      "systematic_review_status": "not_started",
-      "status": "pending"
+      "systematic_review_status": "completed",
+      "status": "active"
     },
     {
       "source_id": "source:0009",
@@ -75,24 +76,35 @@
       "url": "https://archive.org/details/anchorbibledicti0001unse_l6c5",
       "scope": "bible",
       "access_status": "controlled_digital_lending_verified",
-      "systematic_review_status": "not_started",
-      "status": "pending"
+      "systematic_review_status": "in_progress_optional",
+      "status": "active",
+      "environment_gate": "restricted_full_article_body_access_optional",
+      "release_required": false
+    },
+    {
+      "source_id": "source:0010",
+      "provider": "International Standard Bible Encyclopedia, James Orr et al., 1915, 5 vols.",
+      "license": "public_domain",
+      "url": "https://archive.org/details/the-international-standard-bible-encyclopedia-volume-1",
+      "scope": "bible",
+      "access_status": "locked_public_download",
+      "systematic_review_status": "completed",
+      "status": "active",
+      "release_required": true
     }
   ],
   "published_scope": {
-    "testament": "nt",
-    "status": "editorial_review_required",
-    "state": "no_ot_assertions_published"
+    "testament": "bible",
+    "status": "editorial_review_complete",
+    "state": "accepted_ot_assertions_published_isbe_coverage_complete"
   },
   "pipeline_gate": {
-    "stage": "ot_editorial_review",
+    "stage": "complete",
     "ot_candidate_count": 2720,
-    "ot_decisions_required": [
-      "people_decisions",
-      "identity_disambiguation",
-      "relationship_review",
-      "source_legal_clearance"
-    ]
+    "ot_candidate_pending": 0,
+    "cross_testament_pending": 0,
+    "source_pending": [],
+    "remaining_requirements": []
   },
   "supplemental_source": {
     "cuv_zip_sha256": "68df122e9195e071dc286f19ef53e530fcaadb3a16a7dc34b8430b7062f70598"

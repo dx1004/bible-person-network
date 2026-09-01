@@ -1,0 +1,16 @@
+{
+  "dataset": "mention-sense-application",
+  "total_mentions": 20546,
+  "reviewed_mentions": 20546,
+  "changed_mentions": 0,
+  "pending_mentions": 0,
+  "sense_counts": {
+    "person": 15829,
+    "people_group": 2892,
+    "tribe": 889,
+    "nation": 312,
+    "place": 158,
+    "ambiguous": 466
+  },
+  "output_snapshot_sha256": "b861b25bf59398688a62b6aebf51f6728bbe326cecb015914548f6f9a76dc00a"
+}

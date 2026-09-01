@@ -121,6 +121,12 @@ function normalizeCode(raw) {
   return match[1].toUpperCase();
 }
 
+function baseStrongCode(raw) {
+  const normalized = String(raw || '').toUpperCase();
+  const match = normalized.match(/^([GH][0-9]{4})[A-Z]?$/);
+  return match ? match[1] : normalized;
+}
+
 function gatherFiles() {
   const tahotDir = parseArg('tahot-data-dir', DEFAULT_TAHOT_DIR);
   const tothtDir = parseArg('toth-dir', DEFAULT_TOTHT_DIR);
@@ -266,6 +272,7 @@ function main() {
   const manifestCreatedAt = manifest.created_at;
 
   const codeToCandidateIds = new Map();
+  const baseCodeToCandidateIds = new Map();
   const rowsByCandidate = new Map();
 
   for (const candidate of candidates) {
@@ -285,6 +292,7 @@ function main() {
     const candidateCodes = Array.from(codes).sort();
     const buckets = {
       candidate,
+      candidate_refs: new Set(Array.isArray(candidate.ot_refs) ? candidate.ot_refs : []),
       tahot_lines: 0,
       totht_lines: 0,
       matched_codes: new Set(),
@@ -297,8 +305,14 @@ function main() {
     rowsByCandidate.set(candidate.candidate_id, buckets);
     for (const code of candidateCodes) {
       const list = codeToCandidateIds.get(code) || [];
-      list.push(candidate.candidate_id);
+      list.push({ candidateId: candidate.candidate_id, candidateCode: code });
       codeToCandidateIds.set(code, list);
+      const baseCode = baseStrongCode(code);
+      if (baseCode !== code) {
+        const baseList = baseCodeToCandidateIds.get(baseCode) || [];
+        baseList.push({ candidateId: candidate.candidate_id, candidateCode: code });
+        baseCodeToCandidateIds.set(baseCode, baseList);
+      }
     }
     buckets.source_code_hits = Object.fromEntries(candidateCodes.map((code) => [code, { tahot: 0, totht: 0, total: 0 }]));
   }
@@ -306,15 +320,26 @@ function main() {
   for (const source of sourceInventory) {
     for (const line of source.parsed_lines) {
       for (const code of line.codes) {
-        const candidateIds = codeToCandidateIds.get(code);
-        if (!candidateIds) continue;
+        const candidateEntries = [
+          ...(codeToCandidateIds.get(code) || []),
+          ...(baseCodeToCandidateIds.get(code) || [])
+        ];
+        if (!candidateEntries.length) continue;
 
-        for (const candidateId of candidateIds) {
+        const matchedEntries = candidateEntries.filter(({ candidateId }) => {
+          const bucket = rowsByCandidate.get(candidateId);
+          if (!bucket) return false;
+          if (!line.refs.length || !bucket.candidate_refs.size) return true;
+          return line.refs.some((ref) => bucket.candidate_refs.has(ref));
+        });
+        if (!matchedEntries.length) continue;
+
+        for (const { candidateId, candidateCode } of matchedEntries) {
           const bucket = rowsByCandidate.get(candidateId);
           if (!bucket) continue;
 
           const key = `${source.relativePath}:${line.lineNo}`;
-          const hitBucket = bucket.source_code_hits[code] || { tahot: 0, totht: 0, total: 0 };
+          const hitBucket = bucket.source_code_hits[candidateCode] || { tahot: 0, totht: 0, total: 0 };
           if (source.kind === 'tahot') {
             hitBucket.tahot += 1;
             bucket.tahot_lines += 1;
@@ -323,9 +348,9 @@ function main() {
             bucket.totht_lines += 1;
           }
           hitBucket.total += 1;
-          bucket.source_code_hits[code] = hitBucket;
-          bucket.matched_codes.add(code);
-          if (candidateIds.length > 1) bucket.ambiguous_codes.add(code);
+          bucket.source_code_hits[candidateCode] = hitBucket;
+          bucket.matched_codes.add(candidateCode);
+          if (matchedEntries.length > 1) bucket.ambiguous_codes.add(candidateCode);
           bucket.source_files_seen.add(source.source_path || source.relativePath);
           for (const ref of line.refs) {
             if (bucket.sample_refs.size >= 12) break;
@@ -340,7 +365,7 @@ function main() {
   for (const [candidateId, bucket] of rowsByCandidate.entries()) {
     const totalHits = bucket.tahot_lines + bucket.totht_lines;
     const covered = totalHits > 0;
-    const ambiguous = covered && bucket.ambiguous_codes.size > 0;
+    const ambiguous = covered && [...bucket.matched_codes].every((code) => bucket.ambiguous_codes.has(code));
     const status = !covered ? 'unmatched' : ambiguous ? 'ambiguous' : 'covered';
     const sourceCodeHits = Object.entries(bucket.source_code_hits).map(([code, hit]) => ({
       code,

@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-08-31T00:00:00Z",
+  "dataset": "composite-kinship-inference-review",
+  "rule": "grandparent_from_two_direct_parent_edges",
+  "input_counts": {
+    "assertions": 10896,
+    "active_assertions": 10842,
+    "direct_candidates": 6588
+  },
+  "review_counts": {
+    "candidates": 289,
+    "accepted": 289,
+    "rejected": 0,
+    "pending": 0
+  },
+  "invariants": {
+    "uses_two_active_parent_premises": true,
+    "preserves_premise_assertion_ids": true,
+    "does_not_modify_assertions": true,
+    "does_not_treat_path_as_textually_explicit": true,
+    "preserves_published_review_rows": true
+  },
+  "input_snapshot_sha256": "d59d16dc369c14463a7c9b389c7ace56a85ff37d1f45f193e47c6117430d4e04",
+  "row_snapshot_sha256": "c678090ae2434edbbbf5dc0c814e03081cee47afd1b241314dd6261d750189d8"
+}

@@ -44,6 +44,7 @@ function stripNameDecorators(text) {
 
 function mapEvidenceLevel(level = '') {
   const lowered = String(level).toLowerCase();
+  if (lowered.includes('inference')) return 'inference';
   if (lowered.includes('ancient')) return 'ancient';
   if (lowered.includes('modern')) return 'modern';
   if (lowered.includes('ot') || lowered.includes('旧约')) return 'ot_text';
@@ -69,10 +70,22 @@ function mapRelationTypeLabel(rawType, rawSubType, editorStatus) {
   const type = String(rawType || '').toLowerCase();
   const subType = String(rawSubType || '').toLowerCase();
   if (type === 'kinship') {
-    if (subType === 'parent') return '亲属关系-父母/祖先';
-    if (subType === 'child') return '亲属关系-子女/后代';
+    if (subType === 'parent') return '亲属关系-父母';
+    if (subType === 'child') return '亲属关系-子女';
     if (subType === 'sibling') return '亲属关系-手足';
-    if (subType === 'partner') return '亲属关系-婚姻/伴侣';
+    if (subType === 'spouse' || subType === 'partner') return '亲属关系-配偶';
+    if (subType === 'concubine_partner') return '亲属关系-妾／妃';
+    if (subType === 'grandparent') return '亲属关系-祖父母';
+    if (subType === 'grandchild') return '亲属关系-孙辈';
+    if (subType === 'uncle_aunt') return '亲属关系-叔伯姑舅姨';
+    if (subType === 'nephew_niece') return '亲属关系-侄甥';
+    if (subType === 'cousin') return '亲属关系-堂表亲';
+    if (subType === 'parent_in_law') return '亲属关系-岳父母/公婆';
+    if (subType === 'child_in_law') return '亲属关系-儿媳/女婿';
+    if (subType === 'sibling_in_law') return '亲属关系-姻亲手足';
+    if (subType === 'step_parent') return '亲属关系-继父母';
+    if (subType === 'step_child') return '亲属关系-继子女';
+    if (subType === 'other_specified') return '亲属关系-其他（已标明）';
     return '亲属关系-其他';
   }
   if (type === 'teacher_student') return '师徒';
@@ -95,6 +108,7 @@ function mapRelationTypeLabel(rawType, rawSubType, editorStatus) {
   if (type === 'military') return '军事指挥或明确交战';
   if (type === 'prophetic_confrontation') return '先知警告、责备或膏立';
   if (type === 'covenant') return '盟约';
+  if (type === 'friendship') return '友谊';
   if (editorStatus === 'pending' || editorStatus === 'review') return '候选关系';
   if (type === 'candidate') return '候选关系';
   return type ? `关系-${type}` : '候选关系';
@@ -313,15 +327,19 @@ async function loadJSON(fileName, fallback = []) {
     const reportAssertionsCount = Number(report?.counts?.assertions ?? assertions.length);
     const acceptedNames = names.filter((item) => item?.status === 'accepted');
     const acceptedMentions = mentions.filter((item) => item?.status === 'accepted');
+    const acceptedPeople = people.filter((item) => item?.status === 'accepted');
+    const nonAcceptedPeople = people.length - acceptedPeople.length;
     const nonAcceptedNames = names.filter((item) => item?.status !== 'accepted').length;
     const nonAcceptedMentions = mentions.filter((item) => item?.status !== 'accepted').length;
-    if (nonAcceptedNames || nonAcceptedMentions) {
-      console.warn(`[build:data] 跳过未接受条目: 名称 ${nonAcceptedNames}, 提及 ${nonAcceptedMentions}`);
+    if (nonAcceptedNames || nonAcceptedMentions || nonAcceptedPeople) {
+      console.warn(
+        `[build:data] 跳过未接受条目: 人物 ${nonAcceptedPeople}, 名称 ${nonAcceptedNames}, 提及 ${nonAcceptedMentions}`
+      );
     }
     const reportIdentityCount = Number(report?.counts?.identityOptions ?? identityOptionsInput.length);
 
     const personIdMap = new Map();
-  people.forEach((person, index) => {
+  acceptedPeople.forEach((person, index) => {
     const rawPersonId = String(person.person_id || '').trim();
     const normalizedPersonId = normalizeLegacyPersonId(rawPersonId);
     if (/^person-\d{6}$/.test(normalizedPersonId)) {
@@ -344,17 +362,16 @@ async function loadJSON(fileName, fallback = []) {
       const trimmed = String(personId || '').trim();
       if (!trimmed) return '';
       const normalized = normalizeLegacyPersonId(trimmed);
-      if (/^person-\d{6}$/.test(normalized)) {
-        return normalized;
-      }
-      return personIdMap.get(trimmed) || normalized;
+      if (personIdMap.has(trimmed)) return personIdMap.get(trimmed);
+      if (personIdMap.has(normalized)) return personIdMap.get(normalized);
+      return '';
     };
 
     const mapRelationPeople = (value) => mapPersonId(String(value || '').trim());
 
     const mapTopicPersonIds = (ids = []) => ids.map((id) => mapPersonId(id)).filter(Boolean);
 
-    const graphPeople = people.map((person, personIndex) => {
+    const graphPeople = acceptedPeople.map((person, personIndex) => {
         const personNames = acceptedNames.filter((n) => n.person_id === person.person_id);
       const personMentions = acceptedMentions.filter((item) => item.person_id === person.person_id);
       const personIdentityOptions = identityByPerson.get(person.person_id) ?? [];
@@ -506,6 +523,13 @@ async function loadJSON(fileName, fallback = []) {
 
       const type = isPendingCandidate ? `候选${relationType}` : relationType;
       const evidenceLevel = preferredEvidenceLevel;
+      const maximumEvidenceCertainty = evidenceEntries.reduce(
+        (maximum, entry) => Math.max(maximum, Number(entry.certainty) || 0),
+        0
+      );
+      const reviewState = rel.inference || maximumEvidenceCertainty < 0.75
+        ? 'reviewed_uncertain'
+        : 'confirmed';
       const certainty = confidenceToLevel(
         Number.isFinite(Number(rel.confidence)) ? rel.confidence : Number(evidenceEntries?.[0]?.certainty)
       );
@@ -527,6 +551,7 @@ async function loadJSON(fileName, fallback = []) {
         certainty,
         rawEvidenceLevel: rawEvidenceLevels[0] || undefined,
         evidenceLevel,
+        reviewState,
         evidenceLevels,
         sources: sourceIds,
         passages,
@@ -536,7 +561,8 @@ async function loadJSON(fileName, fallback = []) {
         era: bookEraMap[passageToBook(book).toUpperCase()] || '待审校',
         identityGuards: []
       };
-    });
+    })
+      .filter((relationship) => relationship.fromPerson && relationship.toPerson);
 
     const paulPersonId = graphPeople.find((person) => person.nameZh === '保罗')?.id || 'person-000000';
     const jesusPersonId = graphPeople.find((person) => person.nameZh === '耶稣')?.id || 'person-000000';
@@ -591,12 +617,23 @@ async function loadJSON(fileName, fallback = []) {
       {
         id: 'herodFamily',
         name: '希律家族',
-        relationTypes: [
-          '亲属关系-父母/祖先',
-          '亲属关系-子女/后代',
-          '亲属关系-手足',
-          '亲属关系-婚姻/伴侣',
-          '亲属关系-其他'
+    relationTypes: [
+      '亲属关系-父母',
+      '亲属关系-子女',
+      '亲属关系-手足',
+      '亲属关系-配偶',
+      '亲属关系-祖父母',
+      '亲属关系-孙辈',
+      '亲属关系-叔伯姑舅姨',
+      '亲属关系-侄甥',
+      '亲属关系-堂表亲',
+      '亲属关系-岳父母/公婆',
+      '亲属关系-儿媳/女婿',
+      '亲属关系-姻亲手足',
+      '亲属关系-继父母',
+      '亲属关系-继子女',
+      '亲属关系-其他（已标明）',
+      '亲属关系-其他'
         ],
         bookIncludes: [],
         eraIncludes: [],
@@ -611,21 +648,27 @@ async function loadJSON(fileName, fallback = []) {
       {
         id: 'family',
         name: '家谱/亲属',
-        relationTypes: [
-          '亲属关系-父母/祖先',
-          '亲属关系-子女/后代',
-          '亲属关系-手足',
-          '亲属关系-婚姻/伴侣',
-          '亲属关系-其他',
-          '候选亲属关系-父母/祖先',
-          '候选亲属关系-子女/后代',
-          '候选亲属关系-手足',
-          '候选亲属关系-婚姻/伴侣',
-          '候选亲属关系-其他'
-        ],
+    relationTypes: withCandidateVariants([
+      '亲属关系-父母',
+      '亲属关系-子女',
+      '亲属关系-手足',
+      '亲属关系-配偶',
+      '亲属关系-祖父母',
+      '亲属关系-孙辈',
+      '亲属关系-叔伯姑舅姨',
+      '亲属关系-侄甥',
+      '亲属关系-堂表亲',
+      '亲属关系-岳父母/公婆',
+      '亲属关系-儿媳/女婿',
+      '亲属关系-姻亲手足',
+      '亲属关系-继父母',
+      '亲属关系-继子女',
+      '亲属关系-其他（已标明）',
+      '亲属关系-其他',
+    ]),
         bookIncludes: [],
         eraIncludes: [],
-        evidenceIncludes: ['nt_text', 'ot_text', 'ancient', 'modern'],
+    evidenceIncludes: ['nt_text', 'ot_text', 'ancient', 'modern', 'inference'],
         graphMode: 'family_tree'
       },
       {
@@ -657,10 +700,10 @@ async function loadJSON(fileName, fallback = []) {
           '差派',
           '接待',
           '司法行为',
-          '候选亲属关系-父母/祖先',
-          '候选亲属关系-子女/后代',
+        '候选亲属关系-父母',
+        '候选亲属关系-子女',
           '候选亲属关系-手足',
-          '候选亲属关系-婚姻/伴侣',
+        '候选亲属关系-配偶',
           '候选亲属关系-其他'
         ]),
         bookIncludes: ['ACT'],
@@ -701,7 +744,7 @@ async function loadJSON(fileName, fallback = []) {
       topicPresets
     };
 
-    const expectedPeople = reportPeopleCount;
+    const expectedPeople = acceptedPeople.length;
     const expectedRelationships = Number(report?.counts?.publishedRelationships ?? publishedAssertions.length);
     const peopleCount = graph.people.length;
 

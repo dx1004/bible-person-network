@@ -6,7 +6,7 @@
   "required": ["candidate_id", "source_id", "matched_queries", "hit_count", "locators", "locators_capped", "status", "false_positive_risk_flags"],
   "properties": {
     "candidate_id": { "type": "string", "pattern": "^otc-\\d{4}$" },
-    "source_id": { "type": "string", "enum": ["source:0006", "source:0007"] },
+    "source_id": { "type": "string", "enum": ["source:0006", "source:0007", "source:0010"] },
     "matched_queries": { "type": "array", "items": { "type": "string", "minLength": 2 }, "uniqueItems": true },
     "hit_count": { "type": "integer", "minimum": 0 },
     "locators": {
@@ -17,7 +17,7 @@
         "additionalProperties": false,
         "required": ["source_path", "line", "matched_query"],
         "properties": {
-          "source_path": { "type": "string", "pattern": "^\\.sources/(josephus-whiston-gutenberg|philo-yonge-1854-55)/[^/]+\\.txt$" },
+        "source_path": { "type": "string", "pattern": "^\\.sources/(josephus-whiston-gutenberg|philo-yonge-1854-55|isbe-1915)/[^/]+\\.txt$" },
           "line": { "type": "integer", "minimum": 1 },
           "matched_query": { "type": "string", "minLength": 2 },
           "work": { "type": "string", "minLength": 1 },

@@ -6,7 +6,7 @@
   "required": ["review_id", "assertion_id", "subject_person_id", "object_person_id", "relation_type", "direction", "nt_passage_alignment", "evidence_snapshot", "assertion_snapshot", "assertion_signature", "round1", "round2", "final_decision", "created_at", "updated_at"],
   "properties": {
     "review_id": { "type": "string", "pattern": "^rrr-\\d{4}$" },
-    "assertion_id": { "type": "string", "pattern": "^asrt-\\d{4}$" },
+    "assertion_id": { "type": "string", "pattern": "^asrt-\\d{4,6}$" },
     "subject_person_id": {
       "type": "string",
       "anyOf": [
@@ -36,10 +36,11 @@
         "alliance",
         "military",
         "prophetic_confrontation",
-        "covenant"
+        "covenant",
+        "friendship"
       ]
     },
-    "relation_subtype": { "type": "string", "enum": ["parent", "child", "sibling", "partner"] },
+    "relation_subtype": { "type": "string", "enum": ["parent", "child", "sibling", "spouse", "partner", "concubine_partner", "grandparent", "grandchild", "uncle_aunt", "nephew_niece", "cousin", "parent_in_law", "child_in_law", "sibling_in_law", "step_parent", "step_child", "other_specified"] },
     "direction": { "type": "string", "enum": ["directed", "undirected"] },
     "nt_passage_alignment": {
       "type": "string",
@@ -111,10 +112,11 @@
             "alliance",
             "military",
             "prophetic_confrontation",
-            "covenant"
+            "covenant",
+            "friendship"
           ]
         },
-        "relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "partner"] },
+        "relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "spouse", "partner", "concubine_partner", "grandparent", "grandchild", "uncle_aunt", "nephew_niece", "cousin", "parent_in_law", "child_in_law", "sibling_in_law", "step_parent", "step_child", "other_specified"] },
         "direction": { "type": "string", "enum": ["directed", "undirected"] },
         "evidence": {
           "type": "array",
@@ -149,9 +151,9 @@
         "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
         "decision_relation_type": {
           "type": ["string", "null"],
-          "enum": [null, "kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile", "succession", "alliance", "military", "prophetic_confrontation", "covenant"]
+          "enum": [null, "kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile", "succession", "alliance", "military", "prophetic_confrontation", "covenant", "friendship"]
         },
-        "decision_relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "partner"] },
+        "decision_relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "spouse", "partner", "concubine_partner", "grandparent", "grandchild", "uncle_aunt", "nephew_niece", "cousin", "parent_in_law", "child_in_law", "sibling_in_law", "step_parent", "step_child", "other_specified"] },
         "decision_direction": { "type": ["string", "null"], "enum": [null, "directed", "undirected"] },
         "decision_evidence_refs": {
           "type": "array",
@@ -181,9 +183,9 @@
         "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
         "decision_relation_type": {
           "type": ["string", "null"],
-          "enum": [null, "kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile", "succession", "alliance", "military", "prophetic_confrontation", "covenant"]
+          "enum": [null, "kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile", "succession", "alliance", "military", "prophetic_confrontation", "covenant", "friendship"]
         },
-        "decision_relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "partner"] },
+        "decision_relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "spouse", "partner", "concubine_partner", "grandparent", "grandchild", "uncle_aunt", "nephew_niece", "cousin", "parent_in_law", "child_in_law", "sibling_in_law", "step_parent", "step_child", "other_specified"] },
         "decision_direction": { "type": ["string", "null"], "enum": [null, "directed", "undirected"] },
         "decision_evidence_refs": {
           "type": "array",
@@ -213,9 +215,9 @@
         "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
         "decision_relation_type": {
           "type": ["string", "null"],
-          "enum": [null, "kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile", "succession", "alliance", "military", "prophetic_confrontation", "covenant"]
+          "enum": [null, "kinship", "teacher_student", "collegial", "commission", "host", "political", "legal", "hostile", "succession", "alliance", "military", "prophetic_confrontation", "covenant", "friendship"]
         },
-        "decision_relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "partner"] },
+        "decision_relation_subtype": { "type": ["string", "null"], "enum": [null, "parent", "child", "sibling", "spouse", "partner", "concubine_partner", "grandparent", "grandchild", "uncle_aunt", "nephew_niece", "cousin", "parent_in_law", "child_in_law", "sibling_in_law", "step_parent", "step_child", "other_specified"] },
         "decision_direction": { "type": ["string", "null"], "enum": [null, "directed", "undirected"] },
         "decision_evidence_refs": {
           "type": "array",

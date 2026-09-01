@@ -173,7 +173,10 @@ function main() {
   const defaultIdentityKeys = new Set(identityOptions
     .filter((option) => option.status === 'independent' && option.identity_scope === 'default')
     .map((option) => option.identity_key));
-  assert(sblAudit.length === people.length, `sblgnt-name-audit.jsonl: expected ${people.length} rows, got ${sblAudit.length}`);
+  assert(
+    sblAudit.length === defaultIdentityKeys.size,
+    `sblgnt-name-audit.jsonl: expected ${defaultIdentityKeys.size} NT identity rows, got ${sblAudit.length}`
+  );
   for (const key of defaultIdentityKeys) {
     assert(seenAuditPersonKeys.has(key), `sblgnt-name-audit.jsonl: missing default identity ${key}`);
   }

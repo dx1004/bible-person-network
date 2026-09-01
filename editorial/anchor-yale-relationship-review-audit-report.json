@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-08-30T05:26:37.417Z",
+  "source_id": "source:0009",
+  "mode": "apply",
+  "assertion_rows": 3246,
+  "assertion_coverage": 3246,
+  "source_context_capture": {
+    "used": false,
+    "source": null,
+    "derived_row_count": 2049,
+    "derived_assertion_count": 1452
+  },
+  "full_rows_written": 3246,
+  "derived_rows_written": 2049,
+  "output_mode_with_capture": "full-only",
+  "headword_status_distribution": {
+    "mapped_direct": 3050,
+    "mapped_ambiguous": 0,
+    "no_headword_match": 202,
+    "unknown_person": 239
+  },
+  "relationship_review_reasons": {
+    "no_headword_match": 202,
+    "ambiguous_candidate": 0,
+    "no_subject_mapping": 213,
+    "no_object_mapping": 219,
+    "metadata_not_corroborated": 3246,
+    "multi_match": 0
+  },
+  "review_status_distribution": {
+    "pending": 0,
+    "reviewed_no_evidence": 1421,
+    "reviewed_inconclusive": 202,
+    "reviewed_not_applicable": 239,
+    "context_match": 1384,
+    "pending_exception": 0
+  },
+  "source_boundary": {
+    "source_text_stored": false,
+    "snippets_stored": false
+  },
+  "limitation": "Anchor Yale relationship review uses captured context only when --capture is supplied."
+}

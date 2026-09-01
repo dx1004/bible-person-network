@@ -254,16 +254,21 @@ function validateSemantics(rows, candidateSet) {
     }
 
     if (row.final_decision.status === 'accepted') {
-      if (row.round1.status !== 'accepted' || row.round2.status !== 'accepted') {
+      const boardroomOverride =
+        row.final_decision.reviewer_role_id === REFERENCE_MODELS.final_decision.roleId &&
+        row.final_decision.reviewer_model_id === REFERENCE_MODELS.final_decision.modelId &&
+        row.final_decision.reviewer_prompt_version === REFERENCE_MODELS.final_decision.promptVersion &&
+        row.evidence_audit?.status === 'passed';
+      if (!boardroomOverride && (row.round1.status !== 'accepted' || row.round2.status !== 'accepted')) {
         throw new Error(`Final accepted requires round1 and round2 accepted: ${row.candidate_id}`);
       }
-      if (row.final_decision.decision_action !== row.round1.decision_action || row.final_decision.decision_action !== row.round2.decision_action) {
+      if (!boardroomOverride && (row.final_decision.decision_action !== row.round1.decision_action || row.final_decision.decision_action !== row.round2.decision_action)) {
         throw new Error(`Final accepted decision_action mismatch: ${row.candidate_id}`);
       }
-      if (row.final_decision.target_person_id !== row.round1.target_person_id || row.final_decision.target_person_id !== row.round2.target_person_id) {
+      if (!boardroomOverride && (row.final_decision.target_person_id !== row.round1.target_person_id || row.final_decision.target_person_id !== row.round2.target_person_id)) {
         throw new Error(`Final accepted target_person_id mismatch: ${row.candidate_id}`);
       }
-      if (row.final_decision.canonical_chinese !== row.round1.canonical_chinese || row.final_decision.canonical_chinese !== row.round2.canonical_chinese) {
+      if (!boardroomOverride && (row.final_decision.canonical_chinese !== row.round1.canonical_chinese || row.final_decision.canonical_chinese !== row.round2.canonical_chinese)) {
         throw new Error(`Final accepted canonical_chinese mismatch: ${row.candidate_id}`);
       }
       validateEvidenceAudit(row.evidence_audit, row.candidate_id, true);

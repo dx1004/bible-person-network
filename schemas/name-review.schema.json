@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Name variant review snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_id",
+    "name_id",
+    "person_id",
+    "name_text",
+    "round1",
+    "round2",
+    "final_decision",
+    "source_id",
+    "snapshot",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^nr-\\d{4}$" },
+    "name_id": { "type": "string", "pattern": "^name-\\d{4}$" },
+    "person_id": {
+      "type": "string",
+      "anyOf": [
+        { "pattern": "^nt-people-\\d{4}$" },
+        { "pattern": "^person-\\d{6}$" }
+      ]
+    },
+    "name_text": { "type": "string", "minLength": 1 },
+    "round1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reviewer",
+        "decision_reason",
+        "evidence_refs",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["accepted", "rejected", "pending"] },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "decision_reason": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "reviewed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "round2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reviewer",
+        "decision_reason",
+        "evidence_refs",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["accepted", "rejected", "pending"] },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "decision_reason": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "reviewed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "final_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reviewer",
+        "decision_reason",
+        "evidence_refs",
+        "reviewed_at"
+      ],
+      "properties": {
+        "status": { "type": "string", "enum": ["accepted", "rejected", "pending"] },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "decision_reason": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "reviewed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "review_roles": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["round1", "round2", "final_decision"],
+      "properties": {
+        "round1": {
+          "type": "object",
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "editorial_a" },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "round2": {
+          "type": "object",
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "critic_b" },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "final_decision": {
+          "type": "object",
+          "required": ["reviewer_role_id", "reviewer_model_id", "reviewer_prompt_version"],
+          "properties": {
+            "reviewer_role_id": { "type": "string", "const": "boardroom_adjudicator" },
+            "reviewer_model_id": { "type": "string", "minLength": 1 },
+            "reviewer_prompt_version": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewed_name_ids",
+        "round1_input",
+        "round2_input",
+        "signature"
+      ],
+      "properties": {
+        "reviewed_name_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^name-\\d{4}$" }
+        },
+        "round1_input": {
+          "type": "object",
+          "required": ["path", "line_count", "sha256"],
+          "additionalProperties": false,
+          "properties": {
+            "path": { "type": "string", "minLength": 1 },
+            "line_count": { "type": "integer", "minimum": 1 },
+            "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+          }
+        },
+        "round2_input": {
+          "type": "object",
+          "required": ["path", "line_count", "sha256"],
+          "additionalProperties": false,
+          "properties": {
+            "path": { "type": "string", "minLength": 1 },
+            "line_count": { "type": "integer", "minimum": 1 },
+            "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+          }
+        },
+        "signature": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "source_id": { "type": "string", "pattern": "^source:\\d{4}(,source:\\d{4})?$" },
+    "notes": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

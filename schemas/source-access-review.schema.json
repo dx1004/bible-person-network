@@ -5,6 +5,7 @@
   "additionalProperties": false,
   "required": [
     "source_id",
+    "release_required",
     "edition_lock",
     "provider",
     "license_status",
@@ -18,7 +19,8 @@
     "checked_at"
   ],
   "properties": {
-    "source_id": { "type": "string", "enum": ["source:0006", "source:0007", "source:0008", "source:0009"] },
+    "source_id": { "type": "string", "enum": ["source:0006", "source:0007", "source:0008", "source:0009", "source:0010"] },
+    "release_required": { "type": "boolean" },
     "edition_lock": { "type": "string", "minLength": 1 },
     "provider": { "type": "string", "minLength": 1 },
     "license_status": {

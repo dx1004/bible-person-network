@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-08-31T00:00:00Z",
+  "dataset": "extended-kinship-candidates",
+  "scope": [
+    "uncle_aunt",
+    "cousin"
+  ],
+  "counts": {
+    "total": 5700,
+    "uncle_aunt": 2811,
+    "cousin": 2889,
+    "needs_three_round_review": 9,
+    "covered_existing": 5641,
+    "rejected_ambiguous_identity": 0,
+    "rejected_existing_assertion_conflict": 0,
+    "rejected_primary_relationship_conflict": 50,
+    "second_order": 0
+  },
+  "invariants": {
+    "uses_active_assertions_only": true,
+    "preserves_path_person_ids": true,
+    "preserves_premise_assertion_ids": true,
+    "maximum_one_accepted_inference_premise": true,
+    "does_not_modify_assertions": true,
+    "does_not_publish_candidates": true
+  },
+  "input_snapshot_sha256": "f8017b6be6770eba3856b2fff704a57fae8476928515f2d4599cd1e4bbee9316",
+  "row_snapshot_sha256": "daf4e7c2fdd613b708e5974780af5f286a8ab11f6050614388b5444737c83be0"
+}
