@@ -305,7 +305,7 @@ appRoot.innerHTML = `
           </div>
         </div>
         <details id="graph-legend" class="graph-legend reading-surface">
-          <summary><i class="ph ph-info" aria-hidden="true"></i><span>图例</span><small>线条含义</small><i class="ph ph-caret-up graph-legend-caret" aria-hidden="true"></i></summary>
+          <summary><i class="ph ph-info" aria-hidden="true"></i><span class="legend-closed-label">图例</span><span class="legend-open-label">收起图例</span><small class="legend-closed-label">线条含义</small><small class="legend-open-label">返回关系图</small><i class="ph ph-caret-up graph-legend-caret" aria-hidden="true"></i></summary>
           <div class="legend-block"><section><strong>确认程度</strong><span class="legend-line review-confirmed">明确确认</span><span class="legend-line review-reviewed_uncertain">已复核／结论不确定</span></section><section><strong>线段类型</strong><span class="legend-line direct-relationship">直连关系</span><span class="legend-line path-edge">联系路径（2-4 度）</span></section><section><strong>证据来源</strong><span class="legend-line evidence-nt_text">新约经文</span><span class="legend-line evidence-ot_text">旧约经文</span><span class="legend-line evidence-ancient">古代原始史料</span><span class="legend-line evidence-modern">现代权威工具书</span><span class="legend-line evidence-inference">推论关系</span></section><section><strong>路径长度</strong><span class="legend-line path-distance-2">2 度路径</span><span class="legend-line path-distance-3">3 度路径</span><span class="legend-line path-distance-4">4 度路径</span></section></div>
         </details>
         <div class="sr-only" aria-live="polite"><strong id="evidence-ribbon-title">选择一条关系线查看出处</strong><span id="evidence-ribbon-meta">人物关系及出处会显示在右侧详情。</span><span id="graph-status">正在载入关系图…</span></div>
