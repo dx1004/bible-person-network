@@ -139,7 +139,7 @@ function gatherFiles() {
   }
   return all.map((filePath) => ({
     path: filePath,
-    source_path: path.relative(ROOT, filePath),
+      source_path: path.relative(ROOT, filePath).split(path.sep).join('/'),
     kind: filePath.includes(`${path.sep}OLD format TOTHT${path.sep}`) ? 'totht' : 'tahot',
     relativePath: path.relative(ROOT, filePath)
   }));

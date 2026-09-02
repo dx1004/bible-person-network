@@ -205,13 +205,14 @@ if (APPLY) {
   writeJsonlAtomic(path.join(DATA, 'people.jsonl'), people);
   writeJsonlAtomic(path.join(DATA, 'names.jsonl'), names);
   writeJsonlAtomic(path.join(DATA, 'mentions.jsonl'), mentions);
-  fs.mkdirSync(EXPORTS, { recursive: true });
-  writeJsonAtomic(path.join(EXPORTS, 'old-testament-candidate-person-map.json'), {
-    generated_at: STAMP,
-    source_id: 'source:0002',
-    rows: mapRows
-  });
-  writeJsonAtomic(path.join(EXPORTS, 'old-testament-person-migration-report.json'), report);
 }
+
+fs.mkdirSync(EXPORTS, { recursive: true });
+writeJsonAtomic(path.join(EXPORTS, 'old-testament-candidate-person-map.json'), {
+  generated_at: STAMP,
+  source_id: 'source:0002',
+  rows: mapRows
+});
+writeJsonAtomic(path.join(EXPORTS, 'old-testament-person-migration-report.json'), report);
 
 console.log(JSON.stringify(report, null, 2));
