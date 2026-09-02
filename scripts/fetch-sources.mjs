@@ -203,6 +203,8 @@ function fetchGitSources() {
     if (!fs.existsSync(path.join(target, '.git'))) {
       run('git', ['clone', '--filter=blob:none', '--no-checkout', source.url, target]);
     }
+    run('git', ['config', 'core.autocrlf', 'false'], target);
+    run('git', ['config', 'core.eol', 'lf'], target);
     run('git', ['fetch', '--depth', '1', 'origin', source.commit], target);
     run('git', ['checkout', '--detach', source.commit], target);
     const actual = run('git', ['rev-parse', 'HEAD'], target);
