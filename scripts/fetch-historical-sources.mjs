@@ -8,12 +8,58 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const REVIEW_PATH = path.join(ROOT, 'editorial', 'source-access-review.jsonl');
 const rows = fs.readFileSync(REVIEW_PATH, 'utf8').trim().split('\n').filter(Boolean).map((line) => JSON.parse(line));
 const SOURCES_ROOT = path.resolve(ROOT, '.sources');
+const MAX_DOWNLOAD_ATTEMPTS = 4;
+const DOWNLOAD_TIMEOUT_MS = 30_000;
+const RETRY_BASE_DELAY_MS = 1_000;
+const TRANSIENT_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 function sha256(buffer) { return crypto.createHash('sha256').update(buffer).digest('hex'); }
 function resolveSourcePath(localPath) {
   const resolved = path.resolve(ROOT, localPath);
   if (!resolved.startsWith(`${SOURCES_ROOT}${path.sep}`)) throw new Error(`source path escapes .sources: ${localPath}`);
   return resolved;
+}
+
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+async function downloadWithRetry(url) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= MAX_DOWNLOAD_ATTEMPTS; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), DOWNLOAD_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(url, {
+        redirect: 'follow',
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const error = new Error(`${url}: HTTP ${response.status}`);
+        error.retryable = TRANSIENT_HTTP_STATUSES.has(response.status);
+        throw error;
+      }
+
+      return Buffer.from(await response.arrayBuffer());
+    } catch (error) {
+      lastError = error;
+      const retryable = error.retryable !== false;
+      if (!retryable || attempt === MAX_DOWNLOAD_ATTEMPTS) throw error;
+
+      const delay = RETRY_BASE_DELAY_MS * (2 ** (attempt - 1));
+      console.warn(
+        `[historical-source] transient download failure; retrying ${attempt + 1}/${MAX_DOWNLOAD_ATTEMPTS} in ${delay}ms: ${error.message}`,
+      );
+      await wait(delay);
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  throw lastError;
 }
 
 for (const row of rows.filter((item) => item.access_status === 'locked_public_download')) {
@@ -26,9 +72,7 @@ for (const row of rows.filter((item) => item.access_status === 'locked_public_do
         continue;
       }
     }
-    const response = await fetch(file.url, { redirect: 'follow' });
-    if (!response.ok) throw new Error(`${file.url}: HTTP ${response.status}`);
-    const buffer = Buffer.from(await response.arrayBuffer());
+    const buffer = await downloadWithRetry(file.url);
     if (buffer.length !== file.bytes) throw new Error(`${file.local_path}: byte mismatch`);
     if (sha256(buffer) !== file.sha256) throw new Error(`${file.local_path}: SHA-256 mismatch`);
     fs.mkdirSync(path.dirname(target), { recursive: true });

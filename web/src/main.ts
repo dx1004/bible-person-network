@@ -1257,6 +1257,13 @@ function relationshipDirection(relationship: Relationship, personId: string) {
 function renderInspector() {
   if (!currentModel) return; const person = currentModel.personMap.get(selectedPersonId) || originalPersonById.get(selectedPersonId);
   if (!person) { inspectorContent.innerHTML = '<div class="empty-state"><strong>请选择人物</strong><p>可从左侧索引或图中节点进入。</p></div>'; return; }
+  const preserveListScroll = inspectorContent.dataset.personId === person.id;
+  const relationshipListScrollTop = preserveListScroll
+    ? inspectorContent.querySelector<HTMLElement>('[data-list-kind="relationships"]')?.scrollTop || 0
+    : 0;
+  const pathListScrollTop = preserveListScroll
+    ? inspectorContent.querySelector<HTMLElement>('[data-list-kind="paths"]')?.scrollTop || 0
+    : 0;
   const relationships = focusRelationships(currentModel); const identityPerson = originalPersonById.get(person.id) || person; const selectedIdentity = getSelectedIdentity(identityPerson); const selectedRelationship = relationships.find((relationship) => relationship.id === selectedRelationId);
   const selectedPath = visiblePathRows.find((path) => path.id === selectedPathId);
   const selectedRelationshipHtml = selectedRelationship ? (() => {
@@ -1287,7 +1294,7 @@ function renderInspector() {
   const relationRows = relationships.map((relationship) => {
     const otherId = relationship.fromPerson === person.id ? relationship.toPerson : relationship.fromPerson; const other = currentModel?.personMap.get(otherId) || originalPersonById.get(otherId);
     const relationshipState = relationship.reviewState || inferReviewState(relationship);
-    return `<button type="button" data-onclick="delegated" class="relation-row evidence-border-${relationship.evidenceLevel} review-${relationshipState}" data-relation-id="${escapeHtml(relationship.id)}" aria-pressed="${relationship.id === selectedRelationId}"><span class="relation-row-main"><strong>${escapeHtml(personDisplayName(other) || otherId)}</strong><small><span class="relation-type-chip ${relationshipTypeClass(relationship)}">${escapeHtml(relationship.type)}</span>${escapeHtml(relationshipDirection(relationship, person.id))}</small></span><span class="relation-row-meta"><span>${escapeHtml(evidenceLabel[relationship.evidenceLevel])}</span><span>${escapeHtml(reviewStateLabel[relationshipState])}</span><span>${relationship.passages.length} 处</span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`;
+    return `<button type="button" data-onclick="delegated" class="relation-row evidence-border-${relationship.evidenceLevel} review-${relationshipState}" data-relation-id="${escapeHtml(relationship.id)}" aria-pressed="${relationship.id === selectedRelationId}"><span class="relation-row-main"><strong>${escapeHtml(personDisplayName(other) || otherId)}</strong><small><span class="relation-type-chip ${relationshipTypeClass(relationship)}">${escapeHtml(relationship.type)}</span><span class="relation-direction">${escapeHtml(relationshipDirection(relationship, person.id))}</span></small></span><span class="relation-row-meta"><span class="relation-row-meta-copy"><span class="relation-evidence-label">${escapeHtml(evidenceLabel[relationship.evidenceLevel])}</span><span class="relation-review-label review-${relationshipState}">${escapeHtml(reviewStateLabel[relationshipState])}</span><span class="relation-passage-count">${relationship.passages.length} 处</span></span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`;
   }).join('');
   const scopedMentions = person.mentions.filter((mention) => {
     if (filters.scope === 'bible') return true;
@@ -1303,14 +1310,21 @@ function renderInspector() {
     : filters.scope === 'ot'
       ? (hasNT && hasOT ? '<div class="alias-line"><button type="button" class="secondary-button" data-go-scope="nt">查看其新约出处</button></div>' : '')
       : '';
-  const pathRows = visiblePathRows.map((path) => `<button type="button" data-onclick="delegated" class="relation-row path-row${path.pathPurpose === 'kinship_explanation' ? ' kinship-explanation-row' : ''}" data-path-id="${escapeHtml(path.id)}" aria-pressed="${path.id === selectedPathId}"><span class="relation-row-main"><strong>${escapeHtml(path.targetLabel)}</strong><small>${escapeHtml(pathRouteSummaryLabel(path))}</small></span><span class="relation-row-meta"><span>${path.pathPurpose === 'kinship_explanation' ? '亲属构成' : '联系'} ${path.routeDistance} 度</span><span>${path.steps.length + 1} 节点</span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`).join('');
+  const pathRows = visiblePathRows.map((path) => `<button type="button" data-onclick="delegated" class="relation-row path-row${path.pathPurpose === 'kinship_explanation' ? ' kinship-explanation-row' : ''}" data-path-id="${escapeHtml(path.id)}" aria-pressed="${path.id === selectedPathId}"><span class="relation-row-main"><strong>${escapeHtml(path.targetLabel)}</strong><small>${escapeHtml(pathRouteSummaryLabel(path))}</small></span><span class="relation-row-meta"><span class="relation-row-meta-copy"><span>${path.pathPurpose === 'kinship_explanation' ? '亲属构成' : '联系'} ${path.routeDistance} 度</span><span>${path.steps.length + 1} 节点</span></span><i class="ph ph-caret-right" aria-hidden="true"></i></span></button>`).join('');
   inspectorContent.innerHTML = `
       <section class="person-summary"><div class="person-title-row"><i class="ph ph-user-circle large-person-icon" aria-hidden="true"></i><div><p class="eyebrow">选中人物</p><h3>${escapeHtml(personDisplayName(person))}</h3><p>${escapeHtml(person.nameLat || '')}</p></div></div><div class="person-era-line"><span class="era-badge prominent">${escapeHtml(person.era)}</span>${person.era === '旧约背景' ? '<span>此人物生活在旧约时期，但因被新约点名而收录。</span>' : ''}</div><div class="alias-line">${personDisplayName(person) !== person.nameZh ? `<span>${escapeHtml(person.nameZh)}</span>` : ''}${person.aliases.slice(0, 8).map((alias) => `<span>${escapeHtml(alias)}</span>`).join('')}</div><label class="identity-field" for="person-identity"><span>身份选项</span><select id="person-identity" ${identityPerson.identityOptions.length < 2 ? 'disabled' : ''}>${identityPerson.identityOptions.map((option) => `<option value="${escapeHtml(option.id)}" ${option.id === selectedIdentity?.id ? 'selected' : ''}>${escapeHtml(option.label)} · ${escapeHtml(option.status)}</option>`).join('')}</select></label>${person.notes ? `<p class="editor-note"><i class="ph ph-info" aria-hidden="true"></i>${escapeHtml(person.notes)}</p>` : ''}</section>
-    <section class="inspector-section"><div class="section-heading"><h3>关系总览</h3><span>${relationships.length}</span></div><div class="relation-list">${relationRows || '<div class="empty-state compact"><strong>无匹配关系</strong><p>可调整专题或证据层。</p></div>'}</div></section>
-    <section class="inspector-section"><div class="section-heading"><h3>路径总览</h3><span>${visiblePathRows.length}</span></div><div class="relation-list">${pathRows || '<div class="empty-state compact"><strong>无可视路径</strong><p>可打开路径显示后查看 2-4 度关系链。</p></div>'}</div></section>
+    <section class="inspector-section"><div class="section-heading"><h3>关系总览</h3><span>${relationships.length}</span></div><div class="relation-list" data-list-kind="relationships">${relationRows || '<div class="empty-state compact"><strong>无匹配关系</strong><p>可调整专题或证据层。</p></div>'}</div></section>
+    <section class="inspector-section"><div class="section-heading"><h3>路径总览</h3><span>${visiblePathRows.length}</span></div><div class="relation-list" data-list-kind="paths">${pathRows || '<div class="empty-state compact"><strong>无可视路径</strong><p>可打开路径显示后查看 2-4 度关系链。</p></div>'}</div></section>
     ${selectedRelationshipHtml}
     ${selectedPathHtml}
     <details class="mention-details"><summary>${mentionScopeTitle}出现位置 <span>${scopedMentions.length}</span></summary><ul class="mention-list">${mentionRows}</ul>${moreMentions ? `<p class="list-limit-note">另有 ${moreMentions} 处；完整位置保存在公开数据文件中。</p>` : ''}</details>${scopeSwitcher}`;
+  inspectorContent.dataset.personId = person.id;
+  if (preserveListScroll) {
+    const relationshipList = inspectorContent.querySelector<HTMLElement>('[data-list-kind="relationships"]');
+    const pathList = inspectorContent.querySelector<HTMLElement>('[data-list-kind="paths"]');
+    if (relationshipList) relationshipList.scrollTop = relationshipListScrollTop;
+    if (pathList) pathList.scrollTop = pathListScrollTop;
+  }
   const identitySelect = document.getElementById('person-identity') as HTMLSelectElement | null; if (identitySelect) identitySelect.onchange = () => applyPersonIdentity(person.id, identitySelect.value);
 }
 function renderCountsAndMeta() {
