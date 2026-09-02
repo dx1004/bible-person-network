@@ -147,7 +147,7 @@ function readCuvUsfm(usfmDir) {
     const book = BOOK_ALIASES[rawBook] || rawBook;
     if (!BOOKS.has(book)) continue;
 
-    fileList.push(path.relative(ROOT, full));
+    fileList.push(path.relative(ROOT, full).split(path.sep).join('/'));
     let chapter = null;
     let currentPassage = null;
 
