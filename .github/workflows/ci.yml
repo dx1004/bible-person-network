@@ -29,6 +29,10 @@ jobs:
         run: npm ci
       - name: Install web dependencies
         run: npm --prefix web ci
+      - name: Fetch locked public sources
+        run: |
+          npm run fetch:sources
+          npm run fetch:historical-sources
       - name: Validate data and build the static site
         run: npm run check
       - name: Dependency audit

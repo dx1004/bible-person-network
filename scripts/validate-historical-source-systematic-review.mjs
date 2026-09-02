@@ -13,6 +13,17 @@ const readJsonl = (file) => fs.readFileSync(file, 'utf8').trim().split('\n').fil
 });
 const sha256 = (file) => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const hits = readJsonl(path.join(EDITORIAL, 'historical-source-person-hits.jsonl'));
+const existingReport = fs.existsSync(REPORT) ? JSON.parse(fs.readFileSync(REPORT, 'utf8')) : null;
+const sourceHash = (sourceId, sourcePath) => {
+  const fullPath = path.join(ROOT, sourcePath);
+  if (fs.existsSync(fullPath)) return sha256(fullPath);
+  const recorded = existingReport?.sources?.[sourceId]?.source_files
+    ?.find((row) => row.source_path === sourcePath)?.sha256;
+  if (!/^[a-f0-9]{64}$/.test(String(recorded || ''))) {
+    throw new Error(`missing source file and locked checksum: ${sourcePath}`);
+  }
+  return recorded;
+};
 const configs = {
   'source:0006': {
     label: 'josephus',
@@ -72,12 +83,12 @@ for (const [sourceId,cfg] of Object.entries(configs)) {
     final_counts:finalCounts,
     retained_relationship_evidence:relationships,
     review_complete:true,
-    source_files:[...cfg.paths.keys()].map((sourcePath)=>({source_path:sourcePath,sha256:sha256(path.join(ROOT,sourcePath))}))
+    source_files:[...cfg.paths.keys()].map((sourcePath)=>({source_path:sourcePath,sha256:sourceHash(sourceId,sourcePath)}))
   };
 }
 if (errors.length) throw new Error(`historical source systematic review failed (${errors.length}):\n${errors.slice(0,100).join('\n')}`);
 if (writeReport) fs.writeFileSync(REPORT, `${JSON.stringify(report,null,2)}\n`);
 else if (fs.existsSync(REPORT)) {
-  const existing = JSON.parse(fs.readFileSync(REPORT,'utf8')); if (JSON.stringify(existing)!==JSON.stringify(report)) throw new Error('historical systematic review report is stale');
+  if (JSON.stringify(existingReport)!==JSON.stringify(report)) throw new Error('historical systematic review report is stale');
 }
 console.log(JSON.stringify(report,null,2));
