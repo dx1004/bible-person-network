@@ -246,7 +246,6 @@ appRoot.innerHTML = `
           <div class="dataset-stat"><strong id="people-total">—</strong><span>人物</span></div>
           <div class="dataset-stat"><strong id="relations-total">—</strong><span>关系</span></div>
         </div>
-        <button id="header-fit" class="header-action" type="button" data-onclick="direct"><i class="ph ph-layout" aria-hidden="true"></i><span>视图</span></button>
       <a class="header-action" href="https://github.com/dx1004/bible-person-network" target="_blank" rel="noopener noreferrer"><i class="ph ph-book-open" aria-hidden="true"></i><span>帮助</span></a>
       </div>
     </header>
@@ -357,7 +356,6 @@ const reviewWarning = document.getElementById('review-warning') as HTMLDivElemen
 const graphToolbarActions = document.querySelector('.graph-toolbar-actions') as HTMLDivElement;
 const zoomControls = document.querySelector('.zoom-controls') as HTMLDivElement;
 const fitGraphButton = document.getElementById('fit-graph') as HTMLButtonElement | null;
-const headerFitButton = document.getElementById('header-fit') as HTMLButtonElement | null;
 const fitGraphInspectorButton = document.getElementById('fit-graph-inspector') as HTMLButtonElement | null;
 const centerFocusButton = document.getElementById('center-focus') as HTMLButtonElement | null;
 const zoomInButton = document.getElementById('zoom-in') as HTMLButtonElement | null;
@@ -1484,7 +1482,6 @@ zoomOutButton?.addEventListener('click', () => {
   cy.zoom({ level: Math.max(0.25, cy.zoom() / 1.2), renderedPosition: { x: graphContainer.clientWidth / 2, y: graphContainer.clientHeight / 2 } });
 });
 fitGraphButton?.addEventListener('click', fitGraphComfortably);
-headerFitButton?.addEventListener('click', fitGraphComfortably);
 fitGraphInspectorButton?.addEventListener('click', fitGraphComfortably);
 centerFocusButton?.addEventListener('click', () => { const focus = cy?.$id(selectedPersonId); if (focus?.length) cy?.animate({ center: { eles: focus }, zoom: Math.max(cy.zoom(), 0.9), duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220 }); });
 document.addEventListener('keydown', (event) => { if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === 'k') { event.preventDefault(); searchInput.focus(); } });
