@@ -568,7 +568,7 @@ const connectionPathCount = deterministicRows.filter((row) => row.path_purpose =
 const kinshipExplanationCount = deterministicRows.filter((row) => row.path_purpose === 'kinship_explanation').length;
 
 const reportWithoutHash = {
-  generated_at: new Date().toISOString(),
+  generated_at: manifest.created_at,
   audit_version: 'v3',
   manifest_created_at: manifest.created_at,
   input_snapshot: {
