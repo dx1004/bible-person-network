@@ -490,7 +490,7 @@ function findStepFile(dir) {
 function computeHash(filePaths) {
   const hash = crypto.createHash('sha256');
   for (const filePath of filePaths.sort()) {
-    hash.update(filePath);
+    hash.update(path.relative(ROOT, filePath).split(path.sep).join('/'));
     hash.update('\u0000');
     hash.update(fs.readFileSync(filePath));
     hash.update('\n');

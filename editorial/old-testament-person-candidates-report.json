@@ -57,6 +57,6 @@
   },
   "output_path": "editorial/old-testament-person-candidates.jsonl",
   "report_path": "editorial/old-testament-person-candidates-report.json",
-  "output_checksum": "a7c3003dd5efa5dd1c89d9eca469cc0ea49757cb109a55b12b68f1480751bc46",
+  "output_checksum": "99d631c5aa4d81a738243b73591c00421213210d078933dd75514bc5fd2d6dad",
   "note": "All OT candidates remain pending until explicit editorial review."
 }
