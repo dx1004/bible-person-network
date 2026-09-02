@@ -275,13 +275,18 @@ appRoot.innerHTML = `
       <section class="graph-pane" aria-labelledby="graph-heading">
         <div class="graph-filterbar">
           <div class="topic-strip"><strong>专题视图：</strong><div id="topic-shortcuts" class="topic-shortcuts" aria-label="专题快捷选择"></div></div>
-        <div class="evidence-filter-row"><strong>证据层（可多选）</strong><div class="evidence-controls" role="group" aria-label="证据层筛选">
-            ${ALL_EVIDENCE.map((level) => `<label class="evidence-toggle evidence-${level}"><input type="checkbox" value="${level}" checked><i class="ph ph-check-square" aria-hidden="true"></i>${evidenceLabel[level]}</label>`).join('')}
-          </div><span id="evidence-summary-text" class="sr-only">全部</span><button id="show-legend" class="legend-button" type="button" data-onclick="direct" aria-label="查看图例说明"><i class="ph ph-info" aria-hidden="true"></i>图例说明</button></div>
-        <div class="evidence-filter-row"><strong>关系显示</strong><div class="evidence-controls" role="group" aria-label="关系显示类型">
-            <label class="evidence-toggle"><input type="checkbox" id="show-direct-edges" ${DEFAULT_SHOW_DIRECT_EDGES ? 'checked' : ''}><i class="ph ph-link-simple-horizontal" aria-hidden="true"></i>直连关系</label>
-            <label class="evidence-toggle"><input type="checkbox" id="show-path-edges" ${DEFAULT_SHOW_PATH_EDGES ? 'checked' : ''}><i class="ph ph-path" aria-hidden="true"></i>联系路径（2-4度）</label>
-          </div></div>
+          <details class="graph-options">
+            <summary><span><i class="ph ph-sliders-horizontal" aria-hidden="true"></i>筛选与显示</span><small id="evidence-summary-text">全部证据 · 直连关系</small><i class="ph ph-caret-down graph-options-caret" aria-hidden="true"></i></summary>
+            <div class="graph-options-panel">
+              <fieldset class="graph-option-group"><legend>证据层 <span>可多选</span></legend><div class="evidence-controls" role="group" aria-label="证据层筛选">
+                ${ALL_EVIDENCE.map((level) => `<label class="evidence-toggle evidence-${level}"><input type="checkbox" value="${level}" checked><i class="ph ph-check-square" aria-hidden="true"></i>${evidenceLabel[level]}</label>`).join('')}
+              </div></fieldset>
+              <fieldset class="graph-option-group"><legend>关系显示</legend><div class="evidence-controls" role="group" aria-label="关系显示类型">
+                <label class="evidence-toggle"><input type="checkbox" id="show-direct-edges" ${DEFAULT_SHOW_DIRECT_EDGES ? 'checked' : ''}><i class="ph ph-link-simple-horizontal" aria-hidden="true"></i>直连关系</label>
+                <label class="evidence-toggle"><input type="checkbox" id="show-path-edges" ${DEFAULT_SHOW_PATH_EDGES ? 'checked' : ''}><i class="ph ph-path" aria-hidden="true"></i>联系路径（2-4度）</label>
+              </div></fieldset>
+            </div>
+          </details>
         </div>
         <div class="graph-toolbar">
           <div class="focus-heading reading-surface"><p class="eyebrow">当前焦点 · 一度关系</p><h2 id="graph-heading" tabindex="-1">选择人物查看一度关系</h2><p id="focus-subtitle">点击人物节点切换焦点</p></div>
@@ -299,12 +304,11 @@ appRoot.innerHTML = `
             <button id="zoom-out" class="icon-button" type="button" data-onclick="direct" aria-label="缩小"><i class="ph ph-minus" aria-hidden="true"></i></button>
           </div>
         </div>
-        <div class="graph-footer reading-surface" tabindex="-1" aria-live="polite">
-          <div class="legend-block"><strong>关系确认程度</strong><span class="legend-line review-confirmed">明确确认</span><span class="legend-line review-reviewed_uncertain">已复核／结论不确定</span><strong>线段类型</strong><span class="legend-line direct-relationship">直连关系（按证据与确认状态）</span><span class="legend-line path-edge">联系路径（2-4 度）</span><strong>证据来源</strong><span class="legend-line evidence-nt_text">新约经文</span><span class="legend-line evidence-ot_text">旧约经文</span><span class="legend-line evidence-ancient">古代原始史料</span><span class="legend-line evidence-modern">现代权威工具书</span><span class="legend-line evidence-inference">推论关系</span><strong>路径长度</strong><span class="legend-line path-distance-2">2 度路径</span><span class="legend-line path-distance-3">3 度路径</span><span class="legend-line path-distance-4">4 度路径</span></div>
-          <div class="ribbon-heading"><span>当前选择</span><strong id="evidence-ribbon-title">选择一条关系线查看出处</strong><small id="evidence-ribbon-meta">人物关系及出处会显示在这里。</small></div>
-          <p id="graph-status">正在载入关系图…</p>
-          <button type="button" class="ribbon-action" data-onclick="delegated" data-drawer-target="details">查看完整资料 <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
-        </div>
+        <details id="graph-legend" class="graph-legend reading-surface">
+          <summary><i class="ph ph-info" aria-hidden="true"></i><span>图例</span><small>线条含义</small><i class="ph ph-caret-up graph-legend-caret" aria-hidden="true"></i></summary>
+          <div class="legend-block"><section><strong>确认程度</strong><span class="legend-line review-confirmed">明确确认</span><span class="legend-line review-reviewed_uncertain">已复核／结论不确定</span></section><section><strong>线段类型</strong><span class="legend-line direct-relationship">直连关系</span><span class="legend-line path-edge">联系路径（2-4 度）</span></section><section><strong>证据来源</strong><span class="legend-line evidence-nt_text">新约经文</span><span class="legend-line evidence-ot_text">旧约经文</span><span class="legend-line evidence-ancient">古代原始史料</span><span class="legend-line evidence-modern">现代权威工具书</span><span class="legend-line evidence-inference">推论关系</span></section><section><strong>路径长度</strong><span class="legend-line path-distance-2">2 度路径</span><span class="legend-line path-distance-3">3 度路径</span><span class="legend-line path-distance-4">4 度路径</span></section></div>
+        </details>
+        <div class="sr-only" aria-live="polite"><strong id="evidence-ribbon-title">选择一条关系线查看出处</strong><span id="evidence-ribbon-meta">人物关系及出处会显示在右侧详情。</span><span id="graph-status">正在载入关系图…</span></div>
       </section>
       <aside class="inspector-pane reading-surface" aria-labelledby="inspector-heading">
         <div class="pane-heading inspector-heading"><div><p class="eyebrow">人物详情</p><h2 id="inspector-heading" tabindex="-1">人物与关系</h2></div><div class="pane-actions"><button id="fit-graph-inspector" class="icon-button inspector-fit" type="button" data-onclick="direct" aria-label="适应关系图"><i class="ph ph-arrows-out" aria-hidden="true"></i></button><button class="icon-button drawer-close mobile-close" type="button" data-onclick="direct" data-mobile-target="graph" data-drawer-close aria-label="关闭详情"><i class="ph ph-x" aria-hidden="true"></i></button></div></div>
@@ -563,7 +567,13 @@ function syncEvidenceControls() {
   document.querySelectorAll<HTMLInputElement>('.evidence-toggle input[type="checkbox"][value]').forEach((input) => {
     if (ALL_EVIDENCE.includes(input.value as EvidenceLevel)) input.checked = filters.evidences.has(input.value as EvidenceLevel);
   });
-  evidenceSummaryText.textContent = filters.evidences.size === ALL_EVIDENCE.length ? '全部' : filters.evidences.size === 0 ? '未选择' : `${filters.evidences.size} 项已选`;
+  const evidenceSummary = filters.evidences.size === ALL_EVIDENCE.length
+    ? '全部证据'
+    : filters.evidences.size === 0
+      ? '未选证据'
+      : `${filters.evidences.size} 项证据`;
+  const displaySummary = [showDirectEdges ? '直连' : '', showPathEdges ? '路径' : ''].filter(Boolean).join(' + ') || '未显示关系';
+  evidenceSummaryText.textContent = `${evidenceSummary} · ${displaySummary}`;
 }
 function renderTopicControls() {
   if (!data) return;
@@ -1442,12 +1452,14 @@ showDirectEdgesInput?.addEventListener('change', (event) => {
   if (!showDirectEdgesInput) return;
   showDirectEdges = showDirectEdgesInput.checked;
   selectedRelationId = showDirectEdges ? selectedRelationId : '';
+  syncEvidenceControls();
   renderDataViews();
 });
 showPathEdgesInput?.addEventListener('change', (event) => {
   if (!showPathEdgesInput) return;
   showPathEdges = showPathEdgesInput.checked;
   selectedPathId = '';
+  syncEvidenceControls();
   renderDataViews();
 });
 document.querySelector('.advanced-filters')?.addEventListener('change', (event) => { const input = (event.target as HTMLElement).closest<HTMLInputElement>('input[data-filter-kind]'); if (!input) return; const targetSet = input.dataset.filterKind === 'book' ? filters.books : input.dataset.filterKind === 'era' ? filters.eras : filters.relations; if (input.checked) targetSet.add(input.value); else targetSet.delete(input.value); markFiltersCustom(); renderDataViews(); });
@@ -1474,7 +1486,6 @@ zoomOutButton?.addEventListener('click', () => {
 fitGraphButton?.addEventListener('click', fitGraphComfortably);
 headerFitButton?.addEventListener('click', fitGraphComfortably);
 fitGraphInspectorButton?.addEventListener('click', fitGraphComfortably);
-document.getElementById('show-legend')?.addEventListener('click', () => document.querySelector<HTMLElement>('.graph-footer')?.focus());
 centerFocusButton?.addEventListener('click', () => { const focus = cy?.$id(selectedPersonId); if (focus?.length) cy?.animate({ center: { eles: focus }, zoom: Math.max(cy.zoom(), 0.9), duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220 }); });
 document.addEventListener('keydown', (event) => { if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === 'k') { event.preventDefault(); searchInput.focus(); } });
 let resizeTimer = 0;
