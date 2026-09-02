@@ -193,7 +193,7 @@ input[type='checkbox'] { width: 16px; height: 16px; margin: 0; accent-color: var
 .section-heading h3 { padding: 8px 2px; color: var(--blue); font-size: var(--text-ui); }
 .section-heading > span, .mention-details summary > span { color: var(--muted); font-family: var(--font-mono); font-size: var(--text-xs); }
 .relation-list { display: grid; max-height: clamp(190px, 26vh, 240px); overflow: auto; }
-.relation-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; align-items: center; width: 100%; min-height: 58px; padding: 8px 5px 8px 9px; border: 0; border-bottom: 1px solid #eaedf1; border-left: 3px solid transparent; color: #263248; text-align: left; background: transparent; }
+.relation-row { display: grid; grid-template-columns: minmax(0,1fr); gap: 6px; align-items: start; width: 100%; min-height: 72px; padding: 9px 7px 9px 9px; border: 0; border-bottom: 1px solid #eaedf1; border-left: 3px solid transparent; color: #263248; text-align: left; background: transparent; }
 .relation-row:hover, .relation-row[aria-pressed='true'] { background: #f6f9fd; }
 .evidence-border-nt_text { border-left-color: var(--blue); }
 .evidence-border-ot_text { border-left-color: #8b62d9; }
@@ -203,7 +203,10 @@ input[type='checkbox'] { width: 16px; height: 16px; margin: 0; accent-color: var
 .relation-row-main, .relation-row-meta { display: grid; gap: 3px; min-width: 0; }
 .relation-row-main strong { overflow: hidden; font-size: var(--text-ui); font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 .relation-row-main small, .relation-row-meta { color: #606d81; font-size: var(--text-xs); }
-.relation-row-meta { grid-template-columns: auto auto auto 1fr; }
+.relation-row-main small { display: flex; gap: 5px; align-items: center; min-width: 0; line-height: 1.5; }
+.relation-row-meta { display: flex; gap: 3px 6px; align-items: center; flex-wrap: wrap; line-height: 1.45; }
+.relation-row-meta > span { white-space: nowrap; }
+.relation-row-meta > .ph { margin-left: auto; flex: 0 0 auto; }
 .review-confirmed { border-left-color: #557995; }
 .review-reviewed_uncertain { border-left-color: #B7791F; }
 .relation-row.path-row { border-left-color: #8b62d9; }
@@ -212,7 +215,7 @@ input[type='checkbox'] { width: 16px; height: 16px; margin: 0; accent-color: var
 .relation-review-chip { display: inline-flex; gap: 4px; align-items: center; margin-left: 8px; padding: 0 6px; border-radius: 999px; border: 1px solid transparent; color: #3f4c5d; font-size: 11px; line-height: 1.4; }
 .relation-review-chip.review-confirmed { border-color: #a9c1d7; background: #edf6ff; color: #315b7f; }
 .relation-review-chip.review-reviewed_uncertain { border-color: #e4c894; background: #fff6e6; color: #7a4d1d; }
-.relation-type-chip { display: inline-flex; align-items: center; width: fit-content; margin-right: 6px; padding: 1px 6px; border: 1px solid #d7dee8; border-radius: 999px; background: #f5f7fa; color: #46546a; font-size: 11px; font-weight: 650; line-height: 1.45; }
+.relation-type-chip { display: inline-flex; align-items: center; flex: 0 0 auto; width: fit-content; margin-right: 1px; padding: 1px 6px; border: 1px solid #d7dee8; border-radius: 999px; background: #f5f7fa; color: #46546a; font-size: 11px; font-weight: 650; line-height: 1.45; white-space: nowrap; word-break: keep-all; }
 .relation-type-kinship { border-color: #c9b8e8; background: #f4effc; color: #65459b; }
 .relation-type-teacher_student { border-color: #a8c8e7; background: #edf6ff; color: #315f86; }
 .relation-type-collegial { border-color: #a9d1bd; background: #eef8f2; color: #31694b; }
@@ -318,7 +321,6 @@ code { padding: 3px 5px; border: 1px solid var(--line); border-radius: 4px; colo
   .graph-options-panel { position: fixed; z-index: 50; top: auto; right: 10px; bottom: 64px; left: 10px; width: auto; max-height: 62vh; overflow: auto; }
   .legend-block { grid-template-columns: 1fr; min-width: min(280px, calc(100vw - 40px)); }
   .relation-row { grid-template-columns: minmax(0,1fr); }
-.relation-row-meta { grid-template-columns: auto auto 1fr auto; }
   .site-footer-links { display: grid; grid-template-columns: 1fr; width: auto; gap: 6px; }
   .site-footer-link { font-size: var(--text-xs); }
   .site-footer-link span { font-size: var(--text-xs); }
