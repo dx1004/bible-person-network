@@ -62,6 +62,45 @@ async function downloadWithRetry(url) {
   throw lastError;
 }
 
+async function downloadCandidates(url) {
+  const candidates = [url];
+  const parsed = new URL(url);
+  const archiveMatch = parsed.pathname.match(/^\/download\/([^/]+)\/(.+)$/);
+  if (!archiveMatch || parsed.hostname !== 'archive.org') return candidates;
+
+  const [, encodedIdentifier, encodedFilePath] = archiveMatch;
+  try {
+    const metadataUrl = `https://archive.org/metadata/${encodedIdentifier}`;
+    const metadata = JSON.parse((await downloadWithRetry(metadataUrl)).toString('utf8'));
+    const directory = typeof metadata.dir === 'string' ? metadata.dir.replace(/\/$/, '') : '';
+    const mirrors = [metadata.d1, metadata.d2]
+      .filter((host, index, hosts) => typeof host === 'string' && host && hosts.indexOf(host) === index)
+      .map((host) => `https://${host}${directory}/${encodedFilePath}`);
+    return [...mirrors, ...candidates];
+  } catch (error) {
+    console.warn(`[historical-source] unable to resolve Internet Archive mirrors; using canonical URL: ${error.message}`);
+    return candidates;
+  }
+}
+
+async function downloadLockedSource(url) {
+  const candidates = await downloadCandidates(url);
+  let lastError;
+
+  for (const candidate of candidates) {
+    try {
+      return await downloadWithRetry(candidate);
+    } catch (error) {
+      lastError = error;
+      if (candidate !== candidates.at(-1)) {
+        console.warn(`[historical-source] mirror unavailable; trying next official URL: ${error.message}`);
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 for (const row of rows.filter((item) => item.access_status === 'locked_public_download')) {
   for (const file of row.files) {
     const target = resolveSourcePath(file.local_path);
@@ -72,7 +111,7 @@ for (const row of rows.filter((item) => item.access_status === 'locked_public_do
         continue;
       }
     }
-    const buffer = await downloadWithRetry(file.url);
+    const buffer = await downloadLockedSource(file.url);
     if (buffer.length !== file.bytes) throw new Error(`${file.local_path}: byte mismatch`);
     if (sha256(buffer) !== file.sha256) throw new Error(`${file.local_path}: SHA-256 mismatch`);
     fs.mkdirSync(path.dirname(target), { recursive: true });
