@@ -392,6 +392,34 @@ function passageTestament(passage = '') {
   if (!book || book === '新约') return 'nt';
   return 'ot';
 }
+const STEP_BOOK_CODES: Record<string, string> = {
+  GEN: 'Gen', EXO: 'Exod', LEV: 'Lev', NUM: 'Num', DEU: 'Deut', JOS: 'Josh', JDG: 'Judg', RUT: 'Ruth',
+  '1SA': '1Sam', '2SA': '2Sam', '1KI': '1Kgs', '2KI': '2Kgs', '1CH': '1Chr', '2CH': '2Chr',
+  EZR: 'Ezra', NEH: 'Neh', EST: 'Esth', JOB: 'Job', PSA: 'Ps', PRO: 'Prov', ECC: 'Eccl', SNG: 'Song',
+  ISA: 'Isa', JER: 'Jer', LAM: 'Lam', EZK: 'Ezek', DAN: 'Dan', HOS: 'Hos', JOL: 'Joel', AMO: 'Amos',
+  OBA: 'Obad', JON: 'Jonah', MIC: 'Mic', NAM: 'Nah', HAB: 'Hab', ZEP: 'Zeph', HAG: 'Hag', ZEC: 'Zech', MAL: 'Mal',
+  MAT: 'Matt', MRK: 'Mark', LUK: 'Luke', JHN: 'John', ACT: 'Acts', ROM: 'Rom', '1CO': '1Cor', '2CO': '2Cor',
+  GAL: 'Gal', EPH: 'Eph', PHP: 'Phil', COL: 'Col', '1TH': '1Thess', '2TH': '2Thess', '1TI': '1Tim',
+  '2TI': '2Tim', TIT: 'Titus', PHM: 'Phlm', HEB: 'Heb', JAS: 'Jas', '1PE': '1Pet', '2PE': '2Pet',
+  '1JN': '1John', '2JN': '2John', '3JN': '3John', JUD: 'Jude', REV: 'Rev',
+};
+function stepBibleReference(passage: string) {
+  const normalized = String(passage || '').trim().replace(/^STEP:/i, '');
+  const match = normalized.match(/^([1-3]?[A-Z]{2,3})\s+(\d+):(\d+)(?:-(\d+))?$/i);
+  if (!match) return null;
+  const book = STEP_BOOK_CODES[match[1].toUpperCase()];
+  if (!book) return null;
+  return `${book}.${match[2]}.${match[3]}${match[4] ? `-${match[4]}` : ''}`;
+}
+function stepBiblePassageUrl(passages: string[]) {
+  const references = unique(passages.map(stepBibleReference).filter((reference): reference is string => Boolean(reference)));
+  return references.length ? `https://www.stepbible.org/?q=${encodeURIComponent(`reference=${references.join(';')}`)}` : null;
+}
+function passageLink(passage: string) {
+  const url = stepBiblePassageUrl([passage]);
+  if (!url) return `<code>${escapeHtml(passage)}</code>`;
+  return `<a class="passage-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="在 STEP Bible 查看 ${escapeHtml(passage)}"><code>${escapeHtml(passage)}</code><i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>`;
+}
 function testamentSetFromBooks(books: string[] = []) {
   return unique(books.map((book) => passageTestament(`${book} 1:1`)));
 }
@@ -1214,9 +1242,12 @@ function renderGraph() {
   }
 }
 
-function sourceLink(sourceId: string) {
+function sourceLink(sourceId: string, passages: string[] = []) {
   const source = sourceById.get(sourceId); if (!source) return `<span>${escapeHtml(sourceId)}</span>`; if (!source.url) return `<span>${escapeHtml(source.label)}</span>`;
-  return `<a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.label)} <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>`;
+  const isStepBible = /^https?:\/\/(?:www\.)?stepbible\.org(?:[/?#]|$)/i.test(source.url);
+  const url = isStepBible ? stepBiblePassageUrl(passages) || source.url : source.url;
+  const title = isStepBible && passages.length ? ` title="在 STEP Bible 查看所列经文"` : '';
+  return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"${title}>${escapeHtml(source.label)} <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>`;
 }
 function relationshipDirection(relationship: Relationship, personId: string) {
   if (relationship.direction === 'undirected' || relationship.direction === 'bidirectional') return '双向／无方向';
@@ -1236,7 +1267,7 @@ function renderInspector() {
       ? `${personDisplayName(from)} ↔ ${personDisplayName(to)}`
       : `${personDisplayName(from)} → ${personDisplayName(to)}`;
     const selectedReviewState = selectedRelationship.reviewState || inferReviewState(selectedRelationship);
-    return `<section class="selected-relation" aria-label="选中关系"><div class="section-kicker"><i class="ph ph-circle evidence-dot evidence-${selectedRelationship.evidenceLevel}" aria-hidden="true"></i>${escapeHtml(evidenceLabel[selectedRelationship.evidenceLevel])}<span class="relation-type-chip ${relationshipTypeClass(selectedRelationship)}">${escapeHtml(selectedRelationship.type)}</span><span class="relation-review-chip review-${selectedReviewState}">${escapeHtml(reviewStateLabel[selectedReviewState])}</span></div><h3>${escapeHtml(headline)}</h3><p>${escapeHtml(relationshipDirection(selectedRelationship, person.id))} · ${certaintyLabel[selectedRelationship.certainty]}确定度</p><div class="passage-list">${selectedRelationship.passages.map((passage) => `<code>${escapeHtml(passage)}</code>`).join('')}</div><div class="source-links">${selectedRelationship.sources.map(sourceLink).join('')}</div>${other ? `<button type="button" data-onclick="delegated" class="secondary-button" data-go-person="${escapeHtml(other.id)}">转到${escapeHtml(personDisplayName(other))}</button>` : ''}</section>`;
+      return `<section class="selected-relation" aria-label="选中关系"><div class="section-kicker"><i class="ph ph-circle evidence-dot evidence-${selectedRelationship.evidenceLevel}" aria-hidden="true"></i>${escapeHtml(evidenceLabel[selectedRelationship.evidenceLevel])}<span class="relation-type-chip ${relationshipTypeClass(selectedRelationship)}">${escapeHtml(selectedRelationship.type)}</span><span class="relation-review-chip review-${selectedReviewState}">${escapeHtml(reviewStateLabel[selectedReviewState])}</span></div><h3>${escapeHtml(headline)}</h3><p>${escapeHtml(relationshipDirection(selectedRelationship, person.id))} · ${certaintyLabel[selectedRelationship.certainty]}确定度</p><div class="passage-list">${selectedRelationship.passages.map(passageLink).join('')}</div><div class="source-links">${selectedRelationship.sources.map((sourceId) => sourceLink(sourceId, selectedRelationship.passages)).join('')}</div>${other ? `<button type="button" data-onclick="delegated" class="secondary-button" data-go-person="${escapeHtml(other.id)}">转到${escapeHtml(personDisplayName(other))}</button>` : ''}</section>`;
   })() : '';
   if (selectedRelationship) {
     const from = currentModel.personMap.get(selectedRelationship.fromPerson) || originalPersonById.get(selectedRelationship.fromPerson);
@@ -1262,7 +1293,7 @@ function renderInspector() {
     if (filters.scope === 'bible') return true;
     return passageTestament(mention.passage) === filters.scope;
   });
-  const mentionRows = scopedMentions.slice(0, 24).map((mention) => `<li><code>${escapeHtml(mention.passage)}</code><span>${sourceLink(mention.sourceId)}</span></li>`).join('');
+  const mentionRows = scopedMentions.slice(0, 24).map((mention) => `<li>${passageLink(mention.passage)}<span>${sourceLink(mention.sourceId, [mention.passage])}</span></li>`).join('');
   const moreMentions = Math.max(0, scopedMentions.length - 24);
   const mentionScopeTitle = filters.scope === 'ot' ? '旧约' : filters.scope === 'nt' ? '新约' : '全书';
   const hasNT = (person.testamentCounts?.nt || 0) > 0;

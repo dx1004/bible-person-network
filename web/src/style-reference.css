@@ -231,6 +231,10 @@ input[type='checkbox'] { width: 16px; height: 16px; margin: 0; accent-color: var
 .selected-relation > p { margin-bottom: 7px; color: #566176; font-size: var(--text-sm); line-height: 1.55; }
 .passage-list, .source-links { display: flex; gap: 5px; flex-wrap: wrap; margin: 7px 0; }
 code { padding: 3px 5px; border: 1px solid var(--line); border-radius: 4px; color: #40506a; font-family: var(--font-mono); font-size: var(--text-xs); background: #fff; }
+.passage-link { display: inline-flex; gap: 3px; align-items: center; color: #3569a8; text-decoration: none; }
+.passage-link code { color: inherit; border-color: #bfd3eb; background: #f8fbff; }
+.passage-link:hover code, .passage-link:focus-visible code { border-color: #78a5d9; background: #edf6ff; }
+.passage-link .ph { font-size: 11px; }
 .source-links a, .source-links span, .mention-list a, .mention-list span { font-size: var(--text-xs); }
 .primary-button, .secondary-button { display: inline-flex; align-items: center; justify-content: center; min-height: var(--control); padding: 0 10px; border: 1px solid #a9bfdc; border-radius: 6px; color: #30425b; background: #fff; }
 .secondary-button { width: 100%; margin-top: 7px; }
