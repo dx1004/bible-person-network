@@ -413,7 +413,7 @@ function stepBibleReference(passage: string) {
 }
 function stepBiblePassageUrl(passages: string[]) {
   const references = unique(passages.map(stepBibleReference).filter((reference): reference is string => Boolean(reference)));
-  return references.length ? `https://www.stepbible.org/?q=${encodeURIComponent(`reference=${references.join(';')}`)}` : null;
+  return references.length ? `https://www.stepbible.org/?q=${encodeURIComponent(`version=CUns|reference=${references.join(';')}`)}` : null;
 }
 function passageLink(passage: string) {
   const url = stepBiblePassageUrl([passage]);
