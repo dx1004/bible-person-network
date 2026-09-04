@@ -403,6 +403,26 @@ const STEP_BOOK_CODES: Record<string, string> = {
   '2TI': '2Tim', TIT: 'Titus', PHM: 'Phlm', HEB: 'Heb', JAS: 'Jas', '1PE': '1Pet', '2PE': '2Pet',
   '1JN': '1John', '2JN': '2John', '3JN': '3John', JUD: 'Jude', REV: 'Rev',
 };
+const BOOK_LABELS_ZH: Record<string, string> = {
+  GEN: '创', EXO: '出', LEV: '利', NUM: '民', DEU: '申', JOS: '书', JDG: '士', RUT: '得',
+  '1SA': '撒上', '2SA': '撒下', '1KI': '王上', '2KI': '王下', '1CH': '代上', '2CH': '代下',
+  EZR: '拉', NEH: '尼', EST: '斯', JOB: '伯', PSA: '诗', PRO: '箴', ECC: '传', SNG: '歌',
+  ISA: '赛', JER: '耶', LAM: '哀', EZK: '结', DAN: '但', HOS: '何', JOL: '珥', AMO: '摩',
+  OBA: '俄', JON: '拿', MIC: '弥', NAM: '鸿', HAB: '哈', ZEP: '番', HAG: '该', ZEC: '亚', MAL: '玛',
+  MAT: '太', MRK: '可', LUK: '路', JHN: '约', ACT: '徒', ROM: '罗', '1CO': '林前', '2CO': '林后',
+  GAL: '加', EPH: '弗', PHP: '腓', COL: '西', '1TH': '帖前', '2TH': '帖后', '1TI': '提前',
+  '2TI': '提后', TIT: '多', PHM: '门', HEB: '来', JAS: '雅', '1PE': '彼前', '2PE': '彼后',
+  '1JN': '约壹', '2JN': '约贰', '3JN': '约叁', JUD: '犹', REV: '启',
+};
+function bookDisplayName(book: string) {
+  const normalized = String(book || '').trim().toUpperCase();
+  return BOOK_LABELS_ZH[normalized] || book;
+}
+function passageDisplayName(passage: string) {
+  const normalized = String(passage || '').trim().replace(/^STEP:/i, '');
+  const match = normalized.match(/^([1-3]?[A-Z]{2,3})(\s+.*)$/i);
+  return match ? `${bookDisplayName(match[1])}${match[2]}` : normalized;
+}
 function stepBibleReference(passage: string) {
   const normalized = String(passage || '').trim().replace(/^STEP:/i, '');
   const match = normalized.match(/^([1-3]?[A-Z]{2,3})\s+(\d+):(\d+)(?:-(\d+))?$/i);
@@ -417,8 +437,9 @@ function stepBiblePassageUrl(passages: string[]) {
 }
 function passageLink(passage: string) {
   const url = stepBiblePassageUrl([passage]);
-  if (!url) return `<code>${escapeHtml(passage)}</code>`;
-  return `<a class="passage-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="在 STEP Bible 查看 ${escapeHtml(passage)}"><code>${escapeHtml(passage)}</code><i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>`;
+  const label = passageDisplayName(passage);
+  if (!url) return `<code>${escapeHtml(label)}</code>`;
+  return `<a class="passage-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="在 STEP Bible 查看 ${escapeHtml(label)}"><code>${escapeHtml(label)}</code><i class="ph ph-arrow-square-out" aria-hidden="true"></i></a>`;
 }
 function testamentSetFromBooks(books: string[] = []) {
   return unique(books.map((book) => passageTestament(`${book} 1:1`)));
@@ -614,7 +635,7 @@ function renderAdvancedFilters() {
   const relationTypes = unique(data.relationships.map((relationship) => relationship.type)).filter(Boolean).sort((a, b) => a.localeCompare(b, 'zh-Hans'));
   const eras = unique(data.people.map((person) => person.era)).filter(Boolean).sort((a, b) => a.localeCompare(b, 'zh-Hans'));
   eraFilters.innerHTML = eras.map((era) => `<label><input type="checkbox" data-filter-kind="era" value="${escapeHtml(era)}" ${filters.eras.has(era) ? 'checked' : ''}><span>${escapeHtml(era)}</span></label>`).join('');
-  bookFilters.innerHTML = books.map((book) => `<label><input type="checkbox" data-filter-kind="book" value="${escapeHtml(book)}" ${filters.books.has(book) ? 'checked' : ''}><span>${escapeHtml(book)}</span></label>`).join('');
+  bookFilters.innerHTML = books.map((book) => `<label><input type="checkbox" data-filter-kind="book" value="${escapeHtml(book)}" ${filters.books.has(book) ? 'checked' : ''}><span>${escapeHtml(bookDisplayName(book))}</span></label>`).join('');
   relationFilters.innerHTML = relationTypes.map((type) => `<label><input type="checkbox" data-filter-kind="relation" value="${escapeHtml(type)}" ${filters.relations.has(type) ? 'checked' : ''}><span>${escapeHtml(type)}</span></label>`).join('');
 }
 function renderPeopleList() {
@@ -1281,7 +1302,7 @@ function renderInspector() {
     const to = currentModel.personMap.get(selectedRelationship.toPerson) || originalPersonById.get(selectedRelationship.toPerson);
     const selectedReviewState = selectedRelationship.reviewState || inferReviewState(selectedRelationship);
     evidenceRibbonTitle.textContent = `${personDisplayName(from) || selectedRelationship.fromPerson} · ${selectedRelationship.type} · ${personDisplayName(to) || selectedRelationship.toPerson}`;
-    evidenceRibbonMeta.textContent = `${evidenceLabel[selectedRelationship.evidenceLevel]} · ${reviewStateLabel[selectedReviewState]} · ${certaintyLabel[selectedRelationship.certainty]}确定度 · ${selectedRelationship.passages.join('、') || '出处待补'}`;
+    evidenceRibbonMeta.textContent = `${evidenceLabel[selectedRelationship.evidenceLevel]} · ${reviewStateLabel[selectedReviewState]} · ${certaintyLabel[selectedRelationship.certainty]}确定度 · ${selectedRelationship.passages.map(passageDisplayName).join('、') || '出处待补'}`;
   }
   const selectedPathHtml = selectedPath ? (() => {
     const pathKind = selectedPath.pathPurpose === 'kinship_explanation' ? '亲属构成路径' : '联系路径';
